@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // AUTOLOAD E INCLUSÃO DE DEPENDÊNCIAS
 // -----------------------------------------------------------------------------
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config/loadEnv.php';
 require_once __DIR__ . '/config/Auth.php';
 require_once __DIR__ . '/api/controllers/AlunoController.php';
 require_once __DIR__ . '/api/controllers/TurmaController.php';

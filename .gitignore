@@ -1,3 +1,9 @@
 Sistema SEF.zip
 Thumbs.db
 .DS_Store
+
+# Ignora o arquivo de variáveis de ambiente
+.env
+
+# Ignora a pasta de dependências do Composer (MUITO IMPORTANTE)
+/vendor/
