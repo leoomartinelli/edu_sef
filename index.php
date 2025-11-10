@@ -80,6 +80,7 @@ $publicRoutes = [
     '/api/auth/login' => true,
     '/api/auth/forgot-password' => true, // <-- ADICIONE ESTA LINHA
     '/api/auth/reset-password' => true,  // <-- ADICIONE ESTA LINHA
+    '/api/auth/confirm-email-and-send-code' => true,
 ];
 
 if (!isset($publicRoutes[$requestUri]) && strpos($requestUri, '/api/') === 0) {
@@ -166,7 +167,12 @@ switch (true) {
     // <-- CORRIGIDO: Adicionado o 'case' que estava faltando -->
     case $requestUri === '/api/auth/forgot-password':
         if ($requestMethod === 'POST')
-            $authController->forgotPassword();
+            $authController->requestResetByUsername();
+        break;
+
+    case $requestUri === '/api/auth/confirm-email-and-send-code':
+        if ($requestMethod === 'POST')
+            $authController->confirmEmailAndSendCode();
         break;
 
     case $requestUri === '/api/auth/reset-password':

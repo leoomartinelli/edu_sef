@@ -148,21 +148,19 @@ class AuthController
             return;
         }
 
+        // <-- ALTERADO: Validação de e-mail é necessária
+        if (!$addemail) {
+            $this->sendResponse(400, ['success' => false, 'message' => 'O e-mail é obrigatório.']);
+            return;
+        }
+
         $idUsuario = getUserIdFromToken();
         if (!$idUsuario) {
             $this->sendResponse(401, ['success' => false, 'message' => 'Token inválido ou não fornecido.']);
             return;
         }
 
-        $existingUser = $this->usuarioModel->findByEmail($addemail);
 
-        if ($existingUser && $existingUser['id_usuario'] != $idUsuario) {
-            $this->sendResponse(409, [
-                'success' => false,
-                'message' => 'O e-mail fornecido (' . $addemail . ') já está em uso por outra conta.'
-            ]);
-            return;
-        }
 
         if ($this->usuarioModel->updatePasswordAndStatus($idUsuario, $newPassword, $addemail)) {
             $this->sendResponse(200, ['success' => true, 'message' => 'Senha alterada com sucesso! Você já pode fazer o login.']);
@@ -226,34 +224,33 @@ class AuthController
     /**
      * Inicia o processo de "Esqueci a Senha".
      */
-    public function forgotPassword()
+    public function requestResetByUsername()
     {
         $data = json_decode(file_get_contents("php://input"), true);
-        $email = $data['email'] ?? null;
+        $username = $data['username'] ?? null; // <-- ALTERADO: Recebe username (RA_SEF)
 
-        if (!$email) {
-            $this->sendResponse(400, ['success' => false, 'message' => 'O e-mail é obrigatório.']);
+        if (!$username) {
+            $this->sendResponse(400, ['success' => false, 'message' => 'O Usuário (RA) é obrigatório.']);
             return;
         }
 
-        $usuario = $this->usuarioModel->findByEmail($email);
+        $usuario = $this->usuarioModel->findByUsername($username); // <-- ALTERADO: Busca por username
 
-        if ($usuario) {
-            $token = $this->usuarioModel->setResetToken($usuario['id_usuario']);
-
-            if ($token) {
-                $n8nWebhookUrl = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook-test/reset-password';
-                $payload = [
-                    'email' => $usuario['email'],
-                    'code' => $token
-                ];
-                $this->sendToN8n($n8nWebhookUrl, $payload);
-            }
+        // Verifica se o usuário existe E se ele tem um e-mail cadastrado
+        if (!$usuario || empty($usuario['email'])) {
+            $this->sendResponse(404, [
+                'success' => false,
+                'message' => 'Usuário não encontrado ou sem e-mail cadastrado para recuperação.'
+            ]);
+            return;
         }
 
+        // Se encontrou, retorna o e-mail mascarado
+        $maskedEmail = $this->maskEmail($usuario['email']);
         $this->sendResponse(200, [
             'success' => true,
-            'message' => 'Se um e-mail correspondente for encontrado, um código de recuperação será enviado.'
+            'message' => 'Encontramos um e-mail. Confirme-o para continuar.',
+            'masked_email' => $maskedEmail
         ]);
     }
 
@@ -278,4 +275,69 @@ class AuthController
         }
     }
 
+
+
+    private function maskEmail($email)
+    {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            list($user, $domain) = explode('@', $email);
+            list($domain_name, $domain_tld) = explode('.', $domain);
+
+            // Mascara o usuário: exibe os 2 primeiros e o último
+            $user_masked = substr($user, 0, 2) . str_repeat('*', max(1, strlen($user) - 3)) . substr($user, -1);
+
+            // Mascara o domínio: exibe o primeiro e o último
+            $domain_masked = substr($domain_name, 0, 1) . str_repeat('*', max(1, strlen($domain_name) - 2)) . substr($domain_name, -1);
+
+            return $user_masked . '@' . $domain_masked . '.' . $domain_tld;
+        }
+        return "E-mail inválido";
+    }
+
+    public function confirmEmailAndSendCode()
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $username = $data['username'] ?? null;
+        $full_email = $data['full_email'] ?? null;
+
+        if (!$username || !$full_email) {
+            $this->sendResponse(400, ['success' => false, 'message' => 'Dados incompletos.']);
+            return;
+        }
+
+        $usuario = $this->usuarioModel->findByUsername($username);
+
+        if (!$usuario) {
+            $this->sendResponse(404, ['success' => false, 'message' => 'Usuário não encontrado.']);
+            return;
+        }
+
+        // Compara o e-mail digitado com o e-mail do banco (ignorando maiúsculas/minúsculas)
+        if (strtolower(trim($full_email)) !== strtolower(trim($usuario['email']))) {
+            $this->sendResponse(400, [
+                'success' => false,
+                'message' => 'O e-mail digitado não confere com o e-mail cadastrado para este usuário.'
+            ]);
+            return;
+        }
+
+        // E-mail BATEU! Agora sim, geramos o token e enviamos o e-mail.
+        $token = $this->usuarioModel->setResetToken($usuario['id_usuario']);
+
+        if ($token) {
+            $n8nWebhookUrl = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/reset-password';
+            $payload = [
+                'email' => $usuario['email'],
+                'code' => $token
+            ];
+            $this->sendToN8n($n8nWebhookUrl, $payload);
+
+            $this->sendResponse(200, [
+                'success' => true,
+                'message' => 'E-mail confirmado! Um código de recuperação foi enviado.'
+            ]);
+        } else {
+            $this->sendResponse(500, ['success' => false, 'message' => 'Erro ao gerar o código de recuperação.']);
+        }
+    }
 }
