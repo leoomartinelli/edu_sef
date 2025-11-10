@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Principal - Sistema SEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-mask-money/lib/simple-mask-money.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+        }
+
+        .step-circle {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background-color: #e5e7eb;
+            color: #6b7280;
+            border: 2px solid transparent;
+        }
+
+        .step-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #e5e7eb;
+        }
+
+        .step.active .step-circle {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        .step.completed .step-circle {
+            background-color: #34d399;
+            color: white;
+        }
+
+        .step.completed .step-line {
+            background-color: #34d399;
+        }
+
+        .btn-stepper:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn-info {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-info:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-small {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
+                Financeiro</a>
+            <div class="flex items-center space-x-4">
+
+                <div class="relative group">
+                    <button
+                        class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        Consultas <span class="ml-1">▼</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Alunos</a>
+                <a href="crud_turmas.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Turmas</a>
+                <a href="crud_professores.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Professores</a>
+                <a href="crud_disciplinas.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Disciplinas</a>
+                <a href="conteudo_programatico.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ">Conteúdo
+                    Programático</a>
+                <a href="crud_mensalidades.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Mensalidades</a>
+                <a href="gerenciar_contratos.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Contratos</a>
+                <a href="financeiro.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Financeiro</a>
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Gerenciar
+                    Usuários</a>
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-7xl py-12 px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+
+            <a href="#" id="start-onboarding-btn"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 border-2 border-dashed border-indigo-300 hover:border-indigo-500">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Matrícula Rápida (Passo a Passo)</h2>
+                <p class="text-sm text-gray-900">INICIE UMA NOVA MATRÍCULA DE FORMA GUIADA, COMEÇANDO PELA CONSULTA DO
+                    CPF DO RESPONSÁVEL.
+                </p>
+            </a>
+            <a href="crud_consultar_cpf.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zM12 15.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Consulta CPF</h2>
+                <p class="text-sm text-gray-500">Verifique a situação de inadimplência de um CPF.</p>
+            </a>
+
+            <a href="crud_consulta_detalhada_cpf.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75c0-.231-.035-.454-.1-.664M6.75 7.5h1.5v.75h-1.5V7.5zM6 15.75v3.75c0 1.104.896 2 2 2h4.5a1 1 0 001-1V7.5a1 1 0 00-1-1H5.375c-.621 0-1.125.504-1.125 1.125v9.75c0 .621.504 1.125 1.125 1.125z" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Relatório Detalhado</h2>
+                <p class="text-sm text-gray-500">Gere um relatório completo com dados cadastrais e financeiros.</p>
+            </a>
+
+            <a href="crud_alunos.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.684v.109c0 1.113-.285-2.16-.786-3.07m-9.182-6.374a5.25 5.25 0 017.424 0l.001.001.001.001a5.25 5.25 0 010 7.424l-.001.001-.001.001a5.25 5.25 0 01-7.424 0z" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Alunos</h2>
+                <p class="text-sm text-gray-500">Cadastre, edite e visualize os dados dos alunos.</p>
+            </a>
+
+            <a href="#" id="btn-abrir-modal-importar"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Importar Alunos</h2>
+                <p class="text-sm text-gray-500">Faça o upload em massa de alunos via planilha.</p>
+            </a>
+
+            <a href="crud_turmas.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Turmas</h2>
+                <p class="text-sm text-gray-500">Crie e organize turmas por período e ano letivo.</p>
+            </a>
+
+            <a href="crud_professores.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0L12 21m0-9v-5.592A2.975 2.975 0 009.025 3.375c-1.621 0-2.925 1.328-2.925 2.975V12m0 0l-1.07-1.07m1.07 1.07l-2.293 2.293m2.293-2.293l2.293 2.293M9 12l2.293-2.293m0 0l2.293 2.293m-2.293-2.293l-2.293 2.293m2.293-2.293l2.293-2.293" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Professores</h2>
+                <p class="text-sm text-gray-500">Gerencie o cadastro e a alocação de professores.</p>
+            </a>
+
+            <a href="crud_disciplinas.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Disciplinas</h2>
+                <p class="text-sm text-gray-500">Crie disciplinas e associe-as às turmas do sistema.</p>
+            </a>
+
+            <a href="financeiro.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15zM21 21l-5.197-5.197" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Painel Financeiro</h2>
+                <p class="text-sm text-gray-500">Acesse o dashboard financeiro com balanço geral.</p>
+            </a>
+
+            <a href="crud_mensalidades.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V6.75m0 0h18" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Mensalidades</h2>
+                <p class="text-sm text-gray-500">Controle os pagamentos e gere cobranças avulsas.</p>
+            </a>
+
+            <a href="gerenciar_contratos.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Contratos</h2>
+                <p class="text-sm text-gray-500">Visualize, valide e gerencie os contratos dos alunos.</p>
+            </a>
+
+            <a href="gerenciar_usuarios.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg></div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Usuários</h2>
+                <p class="text-sm text-gray-500">Gerencie as contas e permissões de acesso ao sistema.</p>
+            </a>
+
+            <a href="https://app.souionica.com.br/login" target="_blank" rel="noopener noreferrer"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Portal do Aluno (Iônica)</h2>
+                <p class="text-sm text-gray-500">Acesse o ambiente de aprendizado e materiais de estudo.</p>
+            </a>
+
+            <a href="https://meet.google.com/landing?authuser=0" target="_blank" rel="noopener noreferrer"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 4.5h-9A2.25 2.25 0 0 0 2.25 6.75v9A2.25 2.25 0 0 0 4.5 18.75Z" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Reunião (Google Meet)</h2>
+                <p class="text-sm text-gray-500">Inicie ou participe de uma videochamada.</p>
+            </a>
+
+        </div>
+
+        <section id="mural-avisos-section" class="mt-12">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Mural de Avisos</h2>
+            <div id="avisos-container" class="space-y-4">
+            </div>
+        </section>
+        <div class="mt-8">
+            <button id="btn-novo-aviso"
+                class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">
+                + Criar Novo Aviso
+            </button>
+        </div>
+
+        <div id="modal-novo-aviso"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-2xl">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Criar Novo Aviso</h2>
+                <form id="form-novo-aviso">
+                    <div class="mb-4">
+                        <label for="aviso-titulo" class="block text-sm font-medium text-gray-700">Título</label>
+                        <input type="text" id="aviso-titulo"
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="aviso-mensagem" class="block text-sm font-medium text-gray-700">Mensagem</label>
+                        <textarea id="aviso-mensagem" rows="5"
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="aviso-turma" class="block text-sm font-medium text-gray-700">Enviar para a Turma
+                            (Opcional)</label>
+                        <select id="aviso-turma" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Se nenhuma turma for selecionada, o aviso será enviado
+                            para todos (apenas para admins).</p>
+                    </div>
+                    <div class="flex justify-end space-x-4 mt-6">
+                        <button type="button" id="btn-cancelar-aviso"
+                            class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
+                        <button type="submit"
+                            class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700">Publicar
+                            Aviso</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="modal-importar-alunos"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-2xl">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Importar Alunos em Massa</h2>
+                <p class="mb-4 text-gray-600">
+                    Faça o upload de uma planilha (.xlsx) para cadastrar múltiplos alunos, responsáveis e turmas de uma
+                    só vez.
+                    <a href="/templates/Template.xlsm" download
+                        class="text-blue-600 hover:underline font-semibold">Baixe o modelo aqui.</a>
+                </p>
+                <div class="flex items-center space-x-4">
+                    <input type="file" id="arquivoAlunos" accept=".xlsx, .xls, .xlsm"
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <button id="btnImportar"
+                        class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                        Importar
+                    </button>
+                </div>
+                <div id="importStatus" class="mt-4 text-sm"></div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="btn-cancelar-importar"
+                        class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="onboarding-modal"
+        class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-4xl transform transition-all">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Nova Matrícula: Passo a Passo</h2>
+                <button id="close-onboarding-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <div id="onboarding-message-area" class="message hidden"></div>
+
+            <div class="flex items-center mb-8 text-xs md:text-sm">
+                <div id="step-marker-1" class="step active flex-1">
+                    <div class="step-circle">1</div>
+                    <div class="ml-2 font-semibold">Consulta CPF</div>
+                </div>
+                <div class="step-line"></div>
+                <div id="step-marker-2" class="step flex-1">
+                    <div class="step-circle">2</div>
+                    <div class="ml-2 font-semibold">Dados do Aluno</div>
+                </div>
+                <div class="step-line"></div>
+                <div id="step-marker-3" class="step flex-1">
+                    <div class="step-circle">3</div>
+                    <div class="ml-2 font-semibold">Endereço</div>
+                </div>
+                <div class="step-line"></div>
+                <div id="step-marker-4" class="step flex-1">
+                    <div class="step-circle">4</div>
+                    <div class="ml-2 font-semibold">Responsáveis</div>
+                </div>
+                <div class="step-line"></div>
+                <div id="step-marker-5" class="step flex-1">
+                    <div class="step-circle">5</div>
+                    <div class="ml-2 font-semibold">Financeiro</div>
+                </div>
+            </div>
+
+            <form id="onboarding-full-form" class="max-h-[65vh] overflow-y-auto p-2">
+                <div id="step-1-content" class="step-content">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">1. Autorização e Verificação de CPF</h3>
+                    <p class="text-gray-600 mb-4">Preencha os dados do responsável financeiro para autorizar a consulta
+                        de dados via mensagem de celular.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label for="onboarding-resp-nome" class="block text-sm font-medium text-gray-700 mb-1">Nome
+                                Completo</label><input type="text" id="onboarding-resp-nome"
+                                class="w-full p-3 border border-gray-300 rounded-lg"></div>
+
+                        <div>
+                            <label for="onboarding-resp-telefone"
+                                class="block text-sm font-medium text-gray-700 mb-1">Telefone (com DDD)</label>
+                            <div class="flex items-center gap-2">
+                                <select id="onboarding-resp-telefone-ddi"
+                                    class="p-3 border border-gray-300 rounded-lg bg-gray-50"
+                                    style="flex-shrink: 0; width: auto; padding-right: 2.5rem;">
+                                    <option value="55" selected>🇧🇷 +55</option>
+                                    <option value="1">🇺🇸 +1</option>
+                                    <option value="351">🇵🇹 +351</option>
+                                    <option value="44">🇬🇧 +44</option>
+                                    <option value="49">🇩🇪 +49</option>
+                                    <option value="999">Outro</option>
+                                </select>
+                                <input type="tel" id="onboarding-resp-telefone" maxlength="15"
+                                    class="w-full p-3 border border-gray-300 rounded-lg">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4"><label for="onboarding-resp-cpf"
+                            class="block text-sm font-medium text-gray-700 mb-1">CPF</label><input type="text"
+                            id="onboarding-resp-cpf" maxlength="11"
+                            class="w-full p-3 border border-gray-300 rounded-lg"></div>
+                    <div class="mt-4 flex justify-end"><button type="button" id="onboarding-consultar-cpf-btn"
+                            class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700">Enviar
+                            Autorização e Consultar</button></div>
+                    <div id="onboarding-cpf-result" class="mt-4 p-4 rounded-lg hidden"></div>
+                </div>
+
+                <div id="step-2-content" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">2. Dados Pessoais do Aluno</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="form-group"><label for="onboarding-nome_aluno">Nome Completo <span
+                                    class="text-red-500">*</span></label><input type="text" id="onboarding-nome_aluno"
+                                name="nome_aluno" required></div>
+                        <div class="form-group"><label for="onboarding-ra_sef">RA SEF (Gerado
+                                automaticamente)</label><input type="text" id="onboarding-ra_sef" name="ra_sef" readonly
+                                class="bg-gray-200"></div>
+                        <div class="form-group"><label for="onboarding-ra">RA (Opcional)</label><input type="text"
+                                id="onboarding-ra" name="ra"></div>
+                        <div class="form-group"><label for="onboarding-data_nascimento">Data de Nascimento</label><input
+                                type="date" id="onboarding-data_nascimento" name="data_nascimento"></div>
+                        <div class="form-group"><label for="onboarding-idade">Idade</label><input type="number"
+                                id="onboarding-idade" name="idade" readonly class="bg-gray-200"></div>
+                        <div class="form-group"><label for="onboarding-rg_aluno">RG do Aluno</label><input type="text"
+                                id="onboarding-rg_aluno" name="rg_aluno"></div>
+                        <div class="form-group"><label for="onboarding-cpf_aluno">CPF do Aluno</label><input type="text"
+                                id="onboarding-cpf_aluno" name="cpf_aluno"></div>
+                        <div class="form-group">
+                            <label for="onboarding-id_turma">Turma</label>
+                            <div class="flex items-center gap-2">
+                                <select id="onboarding-id_turma" name="id_turma" class="flex-grow">
+                                    <option value="">Selecione</option>
+                                </select>
+                                <button type="button" onclick="openAddTurmaModal()"
+                                    class="btn-info btn-small flex-shrink-0">Nova</button>
+                            </div>
+                        </div>
+                        <div class="form-group"><label for="onboarding-periodo">Período</label><select
+                                id="onboarding-periodo" name="periodo">
+                                <option value="">Selecione</option>
+                                <option>Manhã</option>
+                                <option>Tarde</option>
+                                <option>Noite</option>
+                            </select></div>
+                        <div class="form-group">
+                            <label for="onboarding-ano_inicio">Ano de Início (Ano Letivo) <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" id="onboarding-ano_inicio" name="ano_inicio" placeholder="Ex: 2025"
+                                min="2020" max="2050" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="onboarding-data_inicio">Data de Início das Aulas (Opcional)</label>
+                            <input type="date" id="onboarding-data_inicio" name="data_inicio">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-3-content" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">3. Endereço do Aluno</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="form-group"><label for="onboarding-cep">CEP</label><input type="text"
+                                id="onboarding-cep" name="cep" maxlength="9"></div>
+                        <div class="form-group md:col-span-2"><label for="onboarding-endereco">Endereço</label><input
+                                type="text" id="onboarding-endereco" name="endereco"></div>
+                        <div class="form-group"><label for="onboarding-complemento">Complemento</label><input
+                                type="text" id="onboarding-complemento" name="complemento"></div>
+                        <div class="form-group"><label for="onboarding-bairro">Bairro</label><input type="text"
+                                id="onboarding-bairro" name="bairro"></div>
+                        <div class="form-group"><label for="onboarding-cidade">Cidade</label><input type="text"
+                                id="onboarding-cidade" name="cidade"></div>
+                        <div class="form-group"><label for="onboarding-estado">Estado (UF)</label><input type="text"
+                                id="onboarding-estado" name="estado" maxlength="2"></div>
+                    </div>
+                </div>
+
+                <div id="step-4-content" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">4. Dados dos Responsáveis</h3>
+                    <div class="md:col-span-3 mt-4">
+                        <h3 class="text-lg font-semibold border-b pb-1">Responsável Financeiro <span
+                                class="text-red-500">*</span></h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                        <div class="form-group"><label for="onboarding-nome_resp_financeiro">Nome</label><input
+                                type="text" id="onboarding-nome_resp_financeiro" name="nome_resp_financeiro" required>
+                        </div>
+                        <div class="form-group"><label for="onboarding-cpf_resp_financeiro">CPF</label><input
+                                type="text" id="onboarding-cpf_resp_financeiro" name="cpf_resp_financeiro" required>
+                        </div>
+
+                        <div class="form-group"><label for="onboarding-data_nascimento_resp_financeiro">Data de
+                                Nascimento</label><input type="date" id="onboarding-data_nascimento_resp_financeiro"
+                                name="data_nascimento_resp_financeiro">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="onboarding-celular_resp_financeiro">Celular</label>
+                            <div class="flex items-center gap-2">
+                                <select id="onboarding-celular_resp_financeiro-ddi"
+                                    style="width: auto; flex-shrink: 0; padding-right: 2.5rem;">
+                                    <option value="55" selected>🇧🇷 +55</option>
+                                    <option value="1">🇺🇸 +1</option>
+                                    <option value="351">🇵🇹 +351</option>
+                                    <option value="44">🇬🇧 +44</option>
+                                    <option value="49">🇩🇪 +49</option>
+                                    <option value="999">Outro</option>
+                                </select>
+                                <input type="text" id="onboarding-celular_resp_financeiro"
+                                    name="celular_resp_financeiro">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="onboarding-telefone_resp_financeiro">Telefone</label>
+                            <div class="flex items-center gap-2">
+                                <select id="onboarding-telefone_resp_financeiro-ddi"
+                                    style="width: auto; flex-shrink: 0; padding-right: 2.5rem;">
+                                    <option value="55" selected>🇧🇷 +55</option>
+                                    <option value="1">🇺🇸 +1</option>
+                                    <option value="351">🇵🇹 +351</option>
+                                    <option value="44">🇬🇧 +44</option>
+                                    <option value="49">🇩🇪 +49</option>
+                                    <option value="999">Outro</option>
+                                </select>
+                                <input type="text" id="onboarding-telefone_resp_financeiro"
+                                    name="telefone_resp_financeiro">
+                            </div>
+                        </div>
+                        <div class="form-group md:col-span-2"><label
+                                for="onboarding-email_resp_financeiro">Email</label><input type="email"
+                                id="onboarding-email_resp_financeiro" name="email_resp_financeiro"></div>
+                    </div>
+                    <div class="md:col-span-3 mt-6">
+                        <h3 class="text-lg font-semibold border-b pb-1">Responsável Pedagógico</h3>
+                        <p class="text-sm text-gray-600">Preencha se for diferente do financeiro.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                        <div class="form-group"><label for="onboarding-nome_resp_pedagogico">Nome</label><input
+                                type="text" id="onboarding-nome_resp_pedagogico" name="nome_resp_pedagogico"></div>
+                        <div class="form-group"><label for="onboarding-cpf_resp_pedagogico">CPF</label><input
+                                type="text" id="onboarding-cpf_resp_pedagogico" name="cpf_resp_pedagogico"></div>
+
+                        <div class="form-group"><label for="onboarding-data_nascimento_resp_pedagogico">Data de
+                                Nascimento</label><input type="date" id="onboarding-data_nascimento_resp_pedagogico"
+                                name="data_nascimento_resp_pedagogico">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="onboarding-celular_resp_pedagogico">Celular</label>
+                            <div class="flex items-center gap-2">
+                                <select id="onboarding-celular_resp_pedagogico-ddi"
+                                    style="width: auto; flex-shrink: 0; padding-right: 2.5rem;">
+                                    <option value="55" selected>🇧🇷 +55</option>
+                                    <option value="1">🇺🇸 +1</option>
+                                    <option value="351">🇵🇹 +351</option>
+                                    <option value="44">🇬🇧 +44</option>
+                                    <option value="49">🇩🇪 +49</option>
+                                    <option value="999">Outro</option>
+                                </select>
+                                <input type="text" id="onboarding-celular_resp_pedagogico"
+                                    name="celular_resp_pedagogico">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="onboarding-telefone_resp_pedagogico">Telefone</label>
+                            <div class="flex items-center gap-2">
+                                <select id="onboarding-telefone_resp_pedagogico-ddi"
+                                    style="width: auto; flex-shrink: 0; padding-right: 2.5rem;">
+                                    <option value="55" selected>🇧🇷 +55</option>
+                                    <option value="1">🇺🇸 +1</option>
+                                    <option value="351">🇵🇹 +351</option>
+                                    <option value="44">🇬🇧 +44</option>
+                                    <option value="49">🇩🇪 +49</option>
+                                    <option value="999">Outro</option>
+                                </select>
+                                <input type="text" id="onboarding-telefone_resp_pedagogico"
+                                    name="telefone_resp_pedagogico">
+                            </div>
+                        </div>
+                        <div class="form-group md:col-span-2"><label
+                                for="onboarding-email_resp_pedagogico">Email</label><input type="email"
+                                id="onboarding-email_resp_pedagogico" name="email_resp_pedagogico"></div>
+                    </div>
+                </div>
+
+                <div id="step-5-content" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">5. Financeiro e Finalização</h3>
+
+                    <div class="form-group mb-4 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="onboarding-bolsista-check"
+                                class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="font-semibold text-lg text-indigo-800">Aluno Bolsista (Bolsa de Estudo)</span>
+                        </label>
+                        <p class="text-sm text-gray-600 mt-2 ml-8">Marcar esta opção irá zerar e bloquear os campos de
+                            Anuidade, Matrícula e Dia de Vencimento.</p>
+                    </div>
+
+                    <div id="onboarding-bolsa-material-block"
+                        class="form-group mb-6 p-4 border border-amber-300 rounded-lg bg-amber-50 hidden">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="onboarding-bolsa-material-check"
+                                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500">
+                            <span class="font-semibold text-lg text-amber-800">Bolsa para Material Didático</span>
+                        </label>
+                        <p class="text-sm text-gray-600 mt-2 ml-8">Marcar esta opção irá zerar e bloquear os campos de
+                            Material Didático (Valor Total e Parcelas).</p>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-gray-50" id="bloco-anuidade-escolar">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Anuidade Escolar</h4>
+
+
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="form-group"><label for="onboarding-valor_anuidade_total">Valor da Anuidade
+                                    (Total) <span class="text-red-500">*</span></label><input type="text"
+                                    id="onboarding-valor_anuidade_total" name="valor_anuidade_total" required></div>
+                            <div class="form-group"><label for="onboarding-valor_matricula">Valor da Matrícula <span
+                                        class="text-red-500">*</span></label><input type="text"
+                                    id="onboarding-valor_matricula" name="valor_matricula" required></div>
+                            <div class="form-group"><label for="onboarding-dia_vencimento_mensalidades">Dia de
+                                    Vencimento <span class="text-red-500">*</span></label><input type="number"
+                                    id="onboarding-dia_vencimento_mensalidades" name="dia_vencimento_mensalidades"
+                                    min="1" max="31" required></div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border rounded-lg bg-gray-50 mt-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Material Didático</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="form-group"><label for="onboarding-valor_anuidade_material">Valor Total do
+                                    Material <span class="text-red-500">*</span></label><input type="text"
+                                    id="onboarding-valor_anuidade_material" name="valor_anuidade_material" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="onboarding-numero_parcelas_material">Nº de Parcelas (Material) <span
+                                        class="text-red-500">*</span></label>
+                                <select id="onboarding-numero_parcelas_material" name="numero_parcelas_material"
+                                    required class="w-full p-3 border border-gray-300 rounded-lg">
+                                    <script>
+                                        for (let i = 1; i <= 12; i++) { document.write(`<option value="${i}">${i}x</option>`); }
+                                    </script>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="onboarding-valor_parcela_material">Valor de Cada
+                                    Parcela
+                                    (Material)</label><input type="text" id="onboarding-valor_parcela_material"
+                                    name="valor_parcela_material" readonly class="bg-gray-200"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="mt-8 pt-6 border-t flex justify-between items-center">
+                <button id="onboarding-back-btn"
+                    class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Voltar</button>
+                <span id="onboarding-step-indicator" class="text-sm font-semibold text-gray-500">Passo 1 de 5</span>
+                <button id="onboarding-next-btn"
+                    class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 btn-stepper">Avançar</button>
+                <button id="onboarding-save-btn"
+                    class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 btn-stepper hidden">Salvar
+                    Matrícula</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="onboarding-turmaModal"
+        class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden"
+        style="z-index: 1050;">
+        <div class="bg-white rounded-lg shadow-xl p-8" style="max-width: 500px;">
+            <span class="close-button" onclick="closeAddTurmaModal()">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Cadastrar Nova Turma</h2>
+            <div id="onboarding-turma-modal-message-area" class="message hidden"></div>
+            <form id="onboarding-turma-form">
+                <div class="space-y-4">
+                    <div class="form-group"><label for="onboarding-turma_nome_turma">Nome da Turma <span
+                                class="text-red-500">*</span></label><input type="text" id="onboarding-turma_nome_turma"
+                            required></div>
+                    <div class="form-group"><label for="onboarding-turma_periodo">Período</label><select
+                            id="onboarding-turma_periodo">
+                            <option value="">Selecione</option>
+                            <option>Manhã</option>
+                            <option>Tarde</option>
+                            <option>Noite</option>
+                        </select></div>
+                    <div class="form-group"><label for="onboarding-turma_ano_letivo">Ano Letivo</label><input
+                            type="number" id="onboarding-turma_ano_letivo"></div>
+                    <div class="form-group"><label for="onboarding-turma_descricao">Descrição</label><input type="text"
+                            id="onboarding-turma_descricao"></div>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit"
+                        class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700">Salvar
+                        Turma</button>
+                    <button type="button"
+                        class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300"
+                        onclick="closeAddTurmaModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <footer class="text-center py-8 text-gray-500 text-sm">
+        <p>&copy; 2024-2025 Sistema SEF. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const API_BASE_URL = '/index.php/api';
+        const API_BASE_URL_ALUNOS = '/api/alunos';
+        const API_BASE_URL_TURMAS = '/api/turmas';
+        const AUTORIZACAO_WEBHOOK_URL = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/autorizacao-consulta';
+        const CONSULTA_CPF_WEBHOOK_URL = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/consultar-cpf';
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-onboarding-btn');
+            const modal = document.getElementById('onboarding-modal');
+            const closeBtn = document.getElementById('close-onboarding-modal');
+            const backBtn = document.getElementById('onboarding-back-btn');
+            const nextBtn = document.getElementById('onboarding-next-btn');
+            const saveBtn = document.getElementById('onboarding-save-btn');
+            const stepIndicator = document.getElementById('onboarding-step-indicator');
+            const consultarCpfBtn = document.getElementById('onboarding-consultar-cpf-btn');
+            const fullForm = document.getElementById('onboarding-full-form');
+
+            const respNomeInput = document.getElementById('onboarding-resp-nome');
+            const respTelefoneInput = document.getElementById('onboarding-resp-telefone');
+            const respCpfInput = document.getElementById('onboarding-resp-cpf');
+            const cpfResultDiv = document.getElementById('onboarding-cpf-result');
+            const onboardingMessageArea = document.getElementById('onboarding-message-area');
+
+            let currentStep = 1;
+            const totalSteps = 5;
+
+            // --- INÍCIO: LÓGICA DE MÁSCARA DE MOEDA ---
+            const currencyFieldIds = [
+                'onboarding-valor_anuidade_total',
+                'onboarding-valor_matricula',
+                'onboarding-valor_anuidade_material'
+            ];
+
+            const moneyMaskConfig = {
+                prefix: 'R$ ',
+                fixed: true,
+                fractionDigits: 2,
+                decimalSeparator: ',',
+                thousandsSeparator: '.',
+                cursor: 'end'
+            };
+
+            // Instancia a máscara nos campos
+            currencyFieldIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    SimpleMaskMoney.setMask(element, moneyMaskConfig);
+                }
+            });
+
+            // --- INÍCIO DA LÓGICA DE BOLSISTA (ATUALIZADA) ---
+
+            // Seleciona os checkboxes e o bloco
+            const bolsistaCheckbox = document.getElementById('onboarding-bolsista-check');
+            const bolsaMaterialBlock = document.getElementById('onboarding-bolsa-material-block');
+            const bolsaMaterialCheckbox = document.getElementById('onboarding-bolsa-material-check');
+
+            // Define quais campos cada checkbox controla
+            const camposBolsaGeral = [
+                document.getElementById('onboarding-valor_anuidade_total'),
+                document.getElementById('onboarding-valor_matricula'),
+
+            ];
+            const camposBolsaMaterial = [
+                document.getElementById('onboarding-valor_anuidade_material'),
+                document.getElementById('onboarding-numero_parcelas_material'),
+                document.getElementById('onboarding-dia_vencimento_mensalidades')
+            ];
+
+            // Função helper para travar/destravar campos
+            function travarCampos(campos, travar) {
+                campos.forEach(el => {
+                    if (el) {
+                        el.disabled = travar;
+                        el.readOnly = travar;
+                        el.classList.toggle('bg-gray-200', travar);
+
+                        if (travar) {
+                            if (el.SimpleMaskMoney) { // Se for campo de moeda, zera
+                                el.SimpleMaskMoney.formatToMask(0);
+                            } else { // Se for outro (dia vencimento, nro parcelas), limpa
+                                el.value = (el.tagName === 'SELECT') ? '1' : '';
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Listener 1: Checkbox Principal (Bolsista)
+            bolsistaCheckbox.addEventListener('change', () => {
+                const isBolsista = bolsistaCheckbox.checked;
+
+                // Trava/destrava os campos de Anuidade/Matrícula
+                travarCampos(camposBolsaGeral, isBolsista);
+
+                if (isBolsista) {
+                    // Mostra o bloco de bolsa de material
+                    bolsaMaterialBlock.classList.remove('hidden');
+                } else {
+                    // Esconde o bloco de bolsa de material
+                    bolsaMaterialBlock.classList.add('hidden');
+
+                    // Se desmarcar o principal, desmarca e destrava o de material também
+                    if (bolsaMaterialCheckbox.checked) {
+                        bolsaMaterialCheckbox.checked = false;
+                        // Dispara o evento 'change' no checkbox de material para destravar os campos
+                        bolsaMaterialCheckbox.dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+
+            // Listener 2: Checkbox de Bolsa de Material
+            bolsaMaterialCheckbox.addEventListener('change', () => {
+                const isBolsistaMaterial = bolsaMaterialCheckbox.checked;
+
+                // Trava/destrava os campos de Material
+                travarCampos(camposBolsaMaterial, isBolsistaMaterial);
+
+                // Força o recálculo da parcela (que será R$ 0,00 se travado)
+                window.calcularParcelaMaterialGlobal();
+            });
+
+            // --- FIM DA LÓGICA DE BOLSISTA (ATUALIZADA) ---
+
+            // Função para obter o valor numérico puro do campo
+            function getNumericValueFromCurrency(id) {
+                const element = document.getElementById(id);
+                if (element && element.SimpleMaskMoney) {
+                    return element.SimpleMaskMoney.getNumber();
+                }
+                const value = element ? element.value : '0';
+                const number = parseFloat(value.replace(/R\$\s?/, '').replace(/\./g, '').replace(',', '.'));
+                return isNaN(number) ? 0 : number;
+            }
+
+            // --- FIM: LÓGICA DE MÁSCARA DE MOEDA ---
+
+
+            function displayOnboardingMessage(message, type) {
+                onboardingMessageArea.textContent = message;
+                onboardingMessageArea.className = `message ${type}`;
+                onboardingMessageArea.classList.remove('hidden');
+                setTimeout(() => onboardingMessageArea.classList.add('hidden'), 5000);
+            }
+
+            function updateStepUI() {
+                document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`step-${currentStep}-content`).classList.remove('hidden');
+
+                for (let i = 1; i <= totalSteps; i++) {
+                    const marker = document.getElementById(`step-marker-${i}`);
+                    marker.classList.remove('active', 'completed');
+                    if (i < currentStep) marker.classList.add('completed');
+                    else if (i === currentStep) marker.classList.add('active');
+                }
+
+                backBtn.style.display = currentStep === 1 ? 'none' : 'block';
+                nextBtn.style.display = currentStep === totalSteps ? 'none' : 'block';
+                saveBtn.style.display = currentStep === totalSteps ? 'block' : 'none';
+
+                stepIndicator.textContent = `Passo ${currentStep} de ${totalSteps}`;
+            }
+
+            function resetModal() {
+                currentStep = 1;
+                fullForm.reset();
+                // Limpa os campos de moeda com a API da biblioteca
+                currencyFieldIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.SimpleMaskMoney) {
+                        el.SimpleMaskMoney.formatToMask(0);
+                    }
+                });
+                // Reseta os DDIs para 55 (Brasil)
+                document.querySelectorAll('select[id$="-ddi"]').forEach(select => {
+                    select.value = '55';
+                });
+
+                cpfResultDiv.innerHTML = '';
+                cpfResultDiv.className = 'mt-4 p-4 rounded-lg hidden';
+                onboardingMessageArea.classList.add('hidden');
+                nextBtn.disabled = true;
+                consultarCpfBtn.disabled = false;
+                consultarCpfBtn.textContent = 'Enviar Autorização e Consultar';
+                updateStepUI();
+            }
+
+            function validateStep(step) {
+                let isValid = true;
+                let requiredInputs = [];
+                switch (step) {
+                    case 2:
+                        requiredInputs = ['onboarding-nome_aluno', 'onboarding-ano_inicio'];
+                        break;
+                    case 4:
+                        requiredInputs = ['onboarding-nome_resp_financeiro', 'onboarding-cpf_resp_financeiro'];
+                        break;
+
+                    // --- INÍCIO DA VALIDAÇÃO ATUALIZADA (BOLSISTA) ---
+                    case 5:
+                        const isBolsista = document.getElementById('onboarding-bolsista-check').checked;
+
+                        if (!isBolsista) {
+                            // Se NÃO for bolsista, todos os campos financeiros são obrigatórios
+                            requiredInputs = ['onboarding-dia_vencimento_mensalidades'];
+
+                            if (getNumericValueFromCurrency('onboarding-valor_anuidade_total') <= 0) {
+                                document.getElementById('onboarding-valor_anuidade_total').style.borderColor = 'red';
+                                isValid = false;
+                            } else {
+                                document.getElementById('onboarding-valor_anuidade_total').style.borderColor = '';
+                            }
+                            if (getNumericValueFromCurrency('onboarding-valor_matricula') <= 0) {
+                                document.getElementById('onboarding-valor_matricula').style.borderColor = 'red';
+                                isValid = false;
+                            } else {
+                                document.getElementById('onboarding-valor_matricula').style.borderColor = '';
+                            }
+                        } else {
+                            // Se FOR bolsista, nenhum campo financeiro é obrigatório
+                            requiredInputs = []; // Array de campos obrigatórios fica vazio
+
+                            // Limpa qualquer borda vermelha que possa ter ficado
+                            document.getElementById('onboarding-valor_anuidade_total').style.borderColor = '';
+                            document.getElementById('onboarding-valor_matricula').style.borderColor = '';
+                            document.getElementById('onboarding-dia_vencimento_mensalidades').style.borderColor = '';
+                        }
+                        break; // Fim do case 5
+                    // --- FIM DA VALIDAÇÃO ATUALIZADA (BOLSISTA) ---
+                }
+                for (const id of requiredInputs) {
+                    const input = document.getElementById(id);
+                    if (!input.value.trim()) {
+                        input.style.borderColor = 'red';
+                        isValid = false;
+                    } else {
+                        input.style.borderColor = '';
+                    }
+                }
+                if (!isValid) displayOnboardingMessage('Por favor, preencha todos os campos obrigatórios (*).', 'error');
+                return isValid;
+            }
+
+            startBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                resetModal();
+                fetchTurmas();
+                modal.classList.remove('hidden');
+            });
+
+            closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+            backBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStepUI();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (validateStep(currentStep) && currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepUI();
+                }
+            });
+
+            consultarCpfBtn.addEventListener('click', async () => {
+                const nome = respNomeInput.value.trim();
+                const cpf = respCpfInput.value.replace(/\D/g, '');
+
+                // ============= LÓGICA DE DDI MODIFICADA (Passo 1) =============
+                const ddi = document.getElementById('onboarding-resp-telefone-ddi').value;
+                const numero = respTelefoneInput.value.replace(/\D/g, '');
+                const telefone = ddi + numero; // Combina DDI + Numero
+                // =============================================================
+
+                if (nome.length < 3 || numero.length < 10 || cpf.length !== 11) {
+                    cpfResultDiv.textContent = 'Por favor, preencha todos os campos corretamente.';
+                    cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-700';
+                    cpfResultDiv.classList.remove('hidden');
+                    return;
+                }
+
+                consultarCpfBtn.disabled = true;
+                consultarCpfBtn.textContent = 'Aguardando...';
+                nextBtn.disabled = true;
+
+                cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-blue-100 text-blue-700';
+                cpfResultDiv.classList.remove('hidden');
+                cpfResultDiv.innerHTML = `Enviando solicitação...`;
+
+                try {
+                    const token = localStorage.getItem('jwt_token');
+                    if (!token) throw new Error('Usuário não autenticado.');
+
+                    const response = await fetch(AUTORIZACAO_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ nome, telefone, cpf }) // Envia o número já combinado
+                    });
+                    const result = await response.json();
+
+                    if (result.status === 'autorizado') {
+                        // ============= LÓGICA DE AUTO-POPULATE MODIFICADA (Passo 4) =============
+                        const ddi_step1 = document.getElementById('onboarding-resp-telefone-ddi').value;
+                        const numero_step1 = respTelefoneInput.value.replace(/\D/g, '');
+
+                        document.getElementById('onboarding-nome_resp_financeiro').value = nome;
+                        document.getElementById('onboarding-cpf_resp_financeiro').value = cpf;
+
+                        // Preenche os campos do Passo 4 separadamente
+                        document.getElementById('onboarding-celular_resp_financeiro-ddi').value = ddi_step1;
+                        document.getElementById('onboarding-celular_resp_financeiro').value = numero_step1;
+                        // ========================================================================
+
+                        await handleCpfConsultation(cpf, token);
+                    } else {
+                        cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-yellow-100 text-yellow-800';
+                        cpfResultDiv.innerHTML = `<strong>Não Autorizado:</strong> ${result.motivo}`;
+                    }
+                } catch (error) {
+                    cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-700';
+                    cpfResultDiv.textContent = `Erro de comunicação: ${error.message}.`;
+                } finally {
+                    consultarCpfBtn.disabled = false;
+                    consultarCpfBtn.textContent = 'Enviar Autorização e Consultar';
+                }
+            });
+
+            async function handleCpfConsultation(cpf, token) {
+                cpfResultDiv.innerHTML = `Consultando CPF...`;
+                try {
+                    const responseLocal = await fetch(`${API_BASE_URL}/pendencias/consultar`, {
+                        method: 'POST', // <-- 1. Mudamos o método para POST
+                        headers: {
+                            'Content-Type': 'application/json', // <-- 2. Avisamos que estamos enviando dados em formato JSON
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ cpf: cpf }) // <-- 3. Enviamos o CPF aqui, no corpo da requisição
+                    });
+                    if (responseLocal.ok) {
+                        const localResult = await responseLocal.json();
+                        renderCpfResult(localResult); return;
+                    }
+                    if (responseLocal.status === 404) {
+                        cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-yellow-100 text-yellow-800';
+                        cpfResultDiv.innerHTML = `
+                            <p class="font-semibold mb-2">CPF não encontrado na nossa base.</p>
+                            <p class="mb-4">Deseja realizar uma consulta externa?</p>
+                            <div class="flex justify-end space-x-3">
+                                <button id="onboarding-cancel-webhook" class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Não</button>
+                                <button id="onboarding-confirm-webhook" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Sim</button>
+                            </div>`;
+                        document.getElementById('onboarding-confirm-webhook').onclick = () => executeExternalSearch(cpf, token);
+                        document.getElementById('onboarding-cancel-webhook').onclick = () => {
+                            cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-800';
+                            cpfResultDiv.innerHTML = '<strong>Avanço permitido.</strong>';
+                            nextBtn.disabled = false;
+                        };
+                        return;
+                    }
+                    throw new Error('Erro ao consultar CPF localmente.');
+                } catch (error) {
+                    cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-700';
+                    cpfResultDiv.textContent = `Erro: ${error.message}`;
+                }
+            }
+
+            async function carregarAvisos() {
+                window.showLoader();
+                const container = document.getElementById('avisos-container');
+                const token = localStorage.getItem('jwt_token');
+                const userRole = localStorage.getItem('user_role');
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/avisos`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        container.innerHTML = '';
+                        if (result.data.length > 0) {
+                            result.data.forEach(aviso => {
+                                const dataFormatada = new Date(aviso.data_criacao).toLocaleString('pt-BR');
+                                let targetInfo = aviso.nome_turma ? `<span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">${aviso.nome_turma}</span>` : `<span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Aviso Geral</span>`;
+                                let deleteButton = userRole === 'admin' ? `<button title="Apagar aviso" class="btn-delete-aviso text-gray-400 hover:text-red-600" data-aviso-id="${aviso.id_aviso}"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : '';
+                                container.innerHTML += `<div class="aviso-card bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500"><div class="flex justify-between items-start mb-2"><h3 class="text-xl font-bold text-gray-800">${aviso.titulo}</h3><div class="flex items-center gap-4">${targetInfo}${deleteButton}</div></div><p class="text-gray-600 mb-4">${aviso.mensagem}</p><div class="text-xs text-gray-500 text-right">Publicado por: <strong>${aviso.nome_criador}</strong> em ${dataFormatada}</div></div>`;
+                            });
+                        } else {
+                            container.innerHTML = '<p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">Nenhum aviso para exibir no momento.</p>';
+                        }
+                    } else {
+                        container.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">Erro ao carregar avisos: ${result.message}</p>`;
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar avisos:", error);
+                    container.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">Erro de conexão ao carregar avisos.</p>`;
+                } finally {
+                    window.hideLoader();
+                }
+            }
+
+            document.addEventListener('click', async function (event) {
+                const deleteButton = event.target.closest('.btn-delete-aviso');
+                if (deleteButton) {
+                    const avisoId = deleteButton.dataset.avisoId;
+                    if (confirm('Tem certeza de que deseja apagar este aviso? Esta ação não pode ser desfeita.')) {
+                        window.showLoader();
+                        const token = localStorage.getItem('jwt_token');
+                        try {
+                            const response = await fetch(`${API_BASE_URL}/avisos/${avisoId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                            const result = await response.json();
+                            if (response.ok && result.success) {
+                                alert('Aviso apagado com sucesso!');
+                                deleteButton.closest('.aviso-card').remove();
+                            } else {
+                                alert('Erro ao apagar o aviso: ' + result.message);
+                            }
+                        } catch (error) {
+                            console.error("Erro ao deletar aviso:", error);
+                            alert('Erro de conexão ao tentar apagar o aviso.');
+                        } finally {
+                            window.hideLoader();
+                        }
+                    }
+                }
+            });
+
+            const btnNovoAviso = document.getElementById('btn-novo-aviso');
+            const modalAviso = document.getElementById('modal-novo-aviso');
+            const btnCancelarAviso = document.getElementById('btn-cancelar-aviso');
+            const formAviso = document.getElementById('form-novo-aviso');
+            const selectTurma = document.getElementById('aviso-turma');
+
+            async function popularTurmasAviso() {
+                const userRole = localStorage.getItem('user_role');
+                const token = localStorage.getItem('jwt_token');
+                let turmas = [];
+                if (userRole === 'admin') {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/turmas`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        const result = await response.json(); if (result.success) turmas = result.data;
+                    } catch (e) { console.error("Erro ao buscar turmas para admin", e); }
+                } else if (userRole === 'professor') {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/professor/dashboard`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        const result = await response.json(); if (result.success) turmas = result.data.turmas;
+                    } catch (e) { console.error("Erro ao buscar turmas para professor", e); }
+                }
+                selectTurma.innerHTML = userRole === 'professor' ? '<option value="">-- Selecione uma turma --</option>' : '<option value="">-- Aviso Geral (Todos) --</option>';
+                turmas.forEach(turma => { selectTurma.innerHTML += `<option value="${turma.id_turma}">${turma.nome_turma}</option>`; });
+            }
+
+            btnNovoAviso.addEventListener('click', async () => {
+                window.showLoader();
+                try {
+                    await popularTurmasAviso();
+                    modalAviso.classList.remove('hidden');
+                } catch (error) {
+                    console.error("Erro ao carregar turmas para o modal de avisos:", error);
+                    alert("Ocorreu um erro ao carregar a lista de turmas. Tente novamente.");
+                } finally {
+                    window.hideLoader();
+                }
+            });
+            btnCancelarAviso.addEventListener('click', () => modalAviso.classList.add('hidden'));
+
+            formAviso.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitButton = formAviso.querySelector('button[type="submit"]');
+                const originalButtonContent = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Publicando...</span>`;
+                const token = localStorage.getItem('jwt_token');
+                const avisoData = { titulo: document.getElementById('aviso-titulo').value, mensagem: document.getElementById('aviso-mensagem').value, id_turma: document.getElementById('aviso-turma').value };
+                try {
+                    const response = await fetch(`${API_BASE_URL}/avisos`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(avisoData) });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert('Aviso publicado com sucesso!');
+                        modalAviso.classList.add('hidden');
+                        formAviso.reset();
+                        carregarAvisos();
+                    } else { alert(`Erro: ${result.message}`); }
+                } catch (error) { alert('Erro de conexão ao criar aviso.'); } finally {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonContent;
+                }
+            });
+
+            async function executeExternalSearch(cpf, token) {
+                try {
+                    cpfResultDiv.innerHTML = `Realizando consulta externa...`;
+                    const responseWebhook = await fetch(CONSULTA_CPF_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ cpf: cpf }) });
+                    if (!responseWebhook.ok) { const errorBody = await responseWebhook.json(); throw new Error(errorBody.message || 'Erro no serviço externo.'); }
+                    const webhookResult = await responseWebhook.json(); if (!Array.isArray(webhookResult) || webhookResult.length === 0) { throw new Error("Formato de resposta do webhook inválido."); }
+                    const dataParaSalvar = webhookResult[0];
+                    await fetch(`${API_BASE_URL}/pendencias/salvar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ cpf: cpf, nome: dataParaSalvar.nome, cep: dataParaSalvar.cep, pendencias: dataParaSalvar.results || [] }) });
+                    renderCpfResult(dataParaSalvar);
+                } catch (error) {
+                    cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-700';
+                    cpfResultDiv.textContent = `Erro na consulta externa: ${error.message}`;
+                    nextBtn.disabled = true;
+                }
+            }
+
+            function renderCpfResult(data) {
+                const totalPendencias = data.total_pendencias || (data.results ? data.results.length : 0) || 0;
+                if (totalPendencias === 0) {
+                    cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-800';
+                    cpfResultDiv.innerHTML = `<strong>✅ CPF Válido:</strong> Nenhuma pendência encontrada.`;
+                    nextBtn.disabled = false;
+                } else {
+                    cpfResultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-700';
+                    cpfResultDiv.innerHTML = `<strong>❌ Atenção:</strong> ${totalPendencias} pendência(s) encontrada(s). Matrícula bloqueada.`;
+                    nextBtn.disabled = true;
+                }
+            }
+
+            saveBtn.addEventListener('click', async () => {
+                if (!validateStep(currentStep)) return;
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Salvando...';
+
+                // ============= LÓGICA DE DDI MODIFICADA (Salvando Formulário) =============
+                // Lista de IDs dos inputs de telefone (sem o sufixo -ddi)
+                const phoneFieldsToCombine = [
+                    'onboarding-celular_resp_financeiro',
+                    'onboarding-telefone_resp_financeiro',
+                    'onboarding-celular_resp_pedagogico',
+                    'onboarding-telefone_resp_pedagogico'
+                ];
+
+                const originalValues = {}; // Para restaurar os valores no 'finally'
+
+                // Combina DDI + Numero e salva o valor original
+                phoneFieldsToCombine.forEach(id => {
+                    const numEl = document.getElementById(id);
+                    if (numEl) {
+                        originalValues[id] = numEl.value; // Salva o valor original (só o número)
+                        const ddiEl = document.getElementById(`${id}-ddi`);
+                        if (ddiEl) {
+                            const ddi = ddiEl.value;
+                            const numero = numEl.value.replace(/\D/g, '');
+                            if (numero) { // Só combina se houver um número
+                                numEl.value = ddi + numero; // Define o valor combinado no input
+                            }
+                        }
+                    }
+                });
+                // =========================================================================
+
+                const formData = new FormData(fullForm);
+                const alunoData = {};
+                formData.forEach((value, key) => {
+                    alunoData[key] = value === '' ? null : value;
+                });
+
+                // Pega o valor numérico puro dos campos de moeda
+                alunoData['valor_anuidade_total'] = getNumericValueFromCurrency('onboarding-valor_anuidade_total');
+                alunoData['valor_matricula'] = getNumericValueFromCurrency('onboarding-valor_matricula');
+                alunoData['valor_anuidade_material'] = getNumericValueFromCurrency('onboarding-valor_anuidade_material');
+
+                try {
+                    const response = await fetch(API_BASE_URL_ALUNOS, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                        body: JSON.stringify(alunoData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Matrícula realizada com sucesso! O contrato e as mensalidades foram gerados.');
+                        modal.classList.add('hidden');
+                    } else {
+                        displayOnboardingMessage(result.message, 'error');
+                    }
+                } catch (error) {
+                    displayOnboardingMessage('Erro de conexão ao salvar matrícula.', 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Salvar Matrícula';
+
+                    // ============= RESTAURA OS VALORES ORIGINAIS =============
+                    phoneFieldsToCombine.forEach(id => {
+                        if (originalValues[id] !== undefined) {
+                            document.getElementById(id).value = originalValues[id];
+                        }
+                    });
+                    // =========================================================
+                }
+            });
+
+            const materialAnuidadeInput = document.getElementById('onboarding-valor_anuidade_material');
+            const materialParcelasSelect = document.getElementById('onboarding-numero_parcelas_material');
+            const materialValorParcelaInput = document.getElementById('onboarding-valor_parcela_material');
+
+            function calcularParcelaMaterial() {
+                const totalMaterial = getNumericValueFromCurrency('onboarding-valor_anuidade_material');
+                const numParcelasMaterial = parseInt(materialParcelasSelect.value) || 1;
+
+                let valorParcela = 0;
+                if (totalMaterial > 0 && numParcelasMaterial > 0) {
+                    valorParcela = totalMaterial / numParcelasMaterial;
+                }
+
+                materialValorParcelaInput.value = valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            materialAnuidadeInput.addEventListener('input', calcularParcelaMaterial);
+            materialParcelasSelect.addEventListener('change', calcularParcelaMaterial);
+
+            document.getElementById('onboarding-data_nascimento').addEventListener('change', (e) => {
+                if (e.target.value) {
+                    const birthDate = new Date(e.target.value);
+                    let age = new Date().getFullYear() - birthDate.getFullYear();
+                    const m = new Date().getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && new Date().getDate() < birthDate.getDate())) age--;
+                    document.getElementById('onboarding-idade').value = age;
+                } else {
+                    document.getElementById('onboarding-idade').value = '';
+                }
+            });
+
+            document.getElementById('onboarding-cep').addEventListener('blur', async (e) => {
+                const cep = e.target.value.replace(/\D/g, '');
+                if (cep && cep.length === 8) {
+                    try {
+                        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                        const data = await response.json();
+                        if (!data.erro) {
+                            document.getElementById('onboarding-endereco').value = data.logradouro || '';
+                            document.getElementById('onboarding-bairro').value = data.bairro || '';
+                            document.getElementById('onboarding-cidade').value = data.localidade || '';
+                            document.getElementById('onboarding-estado').value = data.uf || '';
+                        }
+                    } catch (e) {
+                        console.error("Erro ao buscar CEP:", e);
+                    }
+                }
+            });
+
+            async function fetchTurmas() {
+                try {
+                    const response = await fetch(API_BASE_URL_TURMAS, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                    if (!response.ok) return;
+                    const result = await response.json();
+                    if (result.success) {
+                        const select = document.getElementById('onboarding-id_turma');
+                        select.innerHTML = '<option value="">Selecione a Turma</option>';
+                        result.data.forEach(turma => {
+                            select.innerHTML += `<option value="${turma.id_turma}">${turma.nome_turma}</option>`;
+                        });
+                    }
+                } catch (e) {
+                    console.error("Erro ao carregar turmas:", e);
+                }
+            }
+
+            const turmaModal = document.getElementById('onboarding-turmaModal');
+            const turmaForm = document.getElementById('onboarding-turma-form');
+            const turmaMsgArea = document.getElementById('onboarding-turma-modal-message-area');
+            window.openAddTurmaModal = () => turmaModal.classList.remove('hidden');
+            window.closeAddTurmaModal = () => turmaModal.classList.add('hidden');
+            turmaForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const turmaData = { nome_turma: document.getElementById('onboarding-turma_nome_turma').value, periodo: document.getElementById('onboarding-turma_periodo').value, ano_letivo: document.getElementById('onboarding-turma_ano_letivo').value, descricao: document.getElementById('onboarding-turma_descricao').value, };
+                const response = await fetch(API_BASE_URL_TURMAS, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }, body: JSON.stringify(turmaData) });
+                const result = await response.json();
+                if (result.success) {
+                    await fetchTurmas();
+                    document.getElementById('onboarding-id_turma').value = result.data.id_turma;
+                    closeAddTurmaModal();
+                } else {
+                    turmaMsgArea.textContent = result.message;
+                    turmaMsgArea.className = 'message error';
+                    turmaMsgArea.classList.remove('hidden');
+                }
+            });
+            carregarAvisos();
+        });
+
+        const modalImportar = document.getElementById('modal-importar-alunos');
+        const btnAbrirModalImportar = document.getElementById('btn-abrir-modal-importar');
+        const btnCancelarImportar = document.getElementById('btn-cancelar-importar');
+
+        const btnImportar = document.getElementById('btnImportar');
+        const inputArquivo = document.getElementById('arquivoAlunos');
+        const importStatus = document.getElementById('importStatus');
+
+        btnAbrirModalImportar.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Reseta o modal ao abrir
+            inputArquivo.value = '';
+            importStatus.innerHTML = '';
+            importStatus.className = 'mt-4 text-sm'; // Limpa classes de erro/sucesso
+            btnImportar.disabled = false;
+            btnImportar.textContent = 'Importar';
+
+            modalImportar.classList.remove('hidden');
+        });
+
+        btnCancelarImportar.addEventListener('click', () => {
+            modalImportar.classList.add('hidden');
+        });
+
+        btnImportar.addEventListener('click', async () => {
+            const file = inputArquivo.files[0];
+            if (!file) {
+                importStatus.innerHTML = `<p class="text-red-600 font-semibold">Por favor, selecione um arquivo para importar.</p>`;
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('arquivo_alunos', file);
+
+            btnImportar.disabled = true;
+            btnImportar.textContent = 'Importando...';
+            importStatus.innerHTML = `<p class="text-blue-600">Enviando e processando o arquivo. Isso pode levar alguns minutos...</p>`;
+
+            try {
+                const response = await fetch(`${API_BASE_URL_ALUNOS}/importar`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                        // Não defina 'Content-Type', o navegador faz isso por você com FormData
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    importStatus.innerHTML = `<p class="text-green-600 font-semibold">${result.message}</p>`;
+                    inputArquivo.value = ''; // Limpa o campo de arquivo
+
+                    // Fecha o modal automaticamente após 3 segundos de sucesso
+                    setTimeout(() => {
+                        modalImportar.classList.add('hidden');
+                    }, 3000);
+
+                } else {
+                    // Monta uma mensagem de erro detalhada
+                    let errorHtml = `<p class="text-red-600 font-semibold">${result.message || 'Ocorreu um erro na importação.'}</p>`;
+                    if (result.errors && Array.isArray(result.errors) && result.errors.length > 0) {
+                        errorHtml += '<ul class="list-disc list-inside mt-2 text-red-500 max-h-40 overflow-y-auto">';
+                        result.errors.forEach(err => {
+                            errorHtml += `<li>${err}</li>`;
+                        });
+                        errorHtml += '</ul>';
+                    }
+                    importStatus.innerHTML = errorHtml;
+                }
+
+            } catch (error) {
+                importStatus.innerHTML = `<p class="text-red-600">Ocorreu um erro de conexão ao tentar importar. Verifique o console para mais detalhes.</p>`;
+                console.error('Erro na requisição de importação:', error);
+            } finally {
+                // Só re-habilita o botão se não tiver dado sucesso (pois em caso de sucesso o modal fecha)
+                if (response && !response.ok) {
+                    btnImportar.disabled = false;
+                    btnImportar.textContent = 'Importar';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

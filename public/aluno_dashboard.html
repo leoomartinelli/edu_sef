@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Aluno - Sistema SEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center max-w-7xl px-4">
+            <a href="#" class="text-white text-2xl font-bold">EDU SEF - Portal do Aluno</a>
+            <div class="flex items-center space-x-4">
+                <a href="trocar_senha.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Trocar
+                    Senha</a>
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-7xl py-12 px-4">
+        <div class="text-center mb-12">
+            <h1 id="welcome-message" class="text-4xl font-extrabold text-gray-800 mb-2">Carregando...</h1>
+            <p id="turma-info" class="text-lg text-gray-600"></p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <a id="btn-financeiro" href="aluno_mensalidades_view.html"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V6.75m0 0h18" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Financeiro</h2>
+                <p class="text-sm text-gray-500">Acesse suas mensalidades e realize pagamentos.</p>
+            </a>
+
+            <a id="btn-boletim" href="#"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75c0-.231-.035-.454-.1-.664M6.75 7.5h1.5v.75h-1.5V7.5zM6 15.75v3.75c0 1.104.896 2 2 2h4.5a1 1 0 001-1V7.5a1 1 0 00-1-1H5.375c-.621 0-1.125.504-1.125 1.125v9.75c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Boletim</h2>
+                <p class="text-sm text-gray-500">Consulte suas notas, frequência e desempenho acadêmico.</p>
+            </a>
+
+            <a href="https://app.souionica.com.br/login" target="_blank" rel="noopener noreferrer"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Portal do Aluno (Iônica)</h2>
+                <p class="text-sm text-gray-500">Acesse o ambiente de aprendizado e materiais de estudo.</p>
+            </a>
+
+            <a href="https://meet.google.com/landing?authuser=0" target="_blank" rel="noopener noreferrer"
+                class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                <div class="w-14 h-14 mb-4 text-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 4.5h-9A2.25 2.25 0 0 0 2.25 6.75v9A2.25 2.25 0 0 0 4.5 18.75Z" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Reunião (Google Meet)</h2>
+                <p class="text-sm text-gray-500">Inicie ou participe de uma videochamada com seus professores.</p>
+            </a>
+        </div>
+
+        <section id="mural-avisos-section" class="mt-16">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Mural de Avisos</h2>
+            <div id="avisos-container" class="space-y-4">
+            </div>
+        </section>
+
+        <div id="error-message" class="hidden mt-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+    </main>
+
+    <footer class="text-center py-8 text-gray-500 text-sm">
+        <p>&copy; 2024-2025 Sistema SEF. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const API_LOGIN_URL = 'login.html';
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        // NOVO: Função para carregar os avisos
+        async function carregarAvisos() {
+            const container = document.getElementById('avisos-container');
+            const token = localStorage.getItem('jwt_token');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/avisos`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    container.innerHTML = '';
+                    if (result.data.length > 0) {
+                        result.data.forEach(aviso => {
+                            const dataFormatada = new Date(aviso.data_criacao).toLocaleString('pt-BR');
+
+                            let targetInfo = '';
+                            if (aviso.nome_turma) {
+                                targetInfo = `<span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">${aviso.nome_turma}</span>`;
+                            } else {
+                                targetInfo = `<span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Aviso Geral</span>`;
+                            }
+
+                            const avisoCard = `
+                                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-xl font-bold text-gray-800">${aviso.titulo}</h3>
+                                        ${targetInfo}
+                                    </div>
+                                    <p class="text-gray-600 mb-4">${aviso.mensagem}</p>
+                                    <div class="text-xs text-gray-500 text-right">
+                                        Publicado por: <strong>${aviso.nome_criador}</strong> em ${dataFormatada}
+                                    </div>
+                                </div>
+                            `;
+                            container.innerHTML += avisoCard;
+                        });
+                    } else {
+                        container.innerHTML = '<p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">Nenhum aviso para exibir no momento.</p>';
+                    }
+                } else {
+                    container.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">Erro ao carregar avisos: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar avisos:", error);
+                container.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">Erro de conexão ao carregar avisos.</p>`;
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            window.showLoader(); // Usa o loader global
+
+            const token = localStorage.getItem('jwt_token');
+            const errorMessage = document.getElementById('error-message');
+
+            if (!token) {
+                logout();
+                return;
+            }
+
+            try {
+                const decodedToken = JSON.parse(atob(token.split('.')[1]));
+                const alunoRA = decodedToken?.data?.username;
+
+                if (!alunoRA) {
+                    throw new Error("Token de autenticação inválido ou incompleto.");
+                }
+
+                const response = await fetch(`${API_BASE_URL}/alunos?ra=${alunoRA}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.message || "Falha ao carregar os dados do aluno.");
+                }
+
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    const alunoData = result.data[0];
+
+                    document.getElementById('welcome-message').textContent = `Olá, ${alunoData.nome_aluno}!`;
+                    document.getElementById('turma-info').textContent = `Turma: ${alunoData.nome_turma || 'Não atribuída'} | RA: ${alunoData.ra}`;
+
+                    const currentYear = new Date().getFullYear();
+
+                    const boletimHref = `boletim_aluno_view.html?idAluno=${alunoData.id_aluno}&nomeAluno=${encodeURIComponent(alunoData.nome_aluno)}&raAluno=${alunoData.ra}&turmaAluno=${encodeURIComponent(alunoData.nome_turma || 'N/A')}&anoLetivo=${currentYear}`;
+                    document.getElementById('btn-boletim').href = boletimHref;
+
+                    // Após carregar os dados do aluno, carrega os avisos
+                    await carregarAvisos();
+
+                } else {
+                    throw new Error(result.message || "Não foi possível encontrar os dados do aluno.");
+                }
+
+            } catch (error) {
+                console.error("Erro no carregamento do dashboard:", error);
+                errorMessage.textContent = `Ocorreu um erro ao carregar suas informações. Detalhes: ${error.message}`;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                window.hideLoader(); // Esconde o loader global
+            }
+        });
+    </script>
+</body>
+
+</html>

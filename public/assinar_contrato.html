@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assinatura de Contrato - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Estilo para o campo de assinatura */
+        .signature-canvas {
+            border: 2px dashed #cbd5e1;
+            /* Borda cinza tracejada */
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            cursor: crosshair;
+            /* Cursor de mira */
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div id="main-content" class="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Assinatura de Contrato</h1>
+        <p class="text-gray-600 mb-6">Revise o contrato abaixo e assine eletronicamente para continuar.</p>
+
+        <div class="w-full h-[60vh] border rounded-md mb-6">
+            <iframe id="contract-pdf" src="" class="w-full h-full"></iframe>
+        </div>
+
+        <a id="download-contract-link" href="#" class="inline-block text-blue-600 underline hover:text-blue-800 mb-6">
+            Baixar cópia do Contrato
+        </a>
+
+        <form id="signature-form" class="space-y-4">
+
+            <div>
+                <label class="block text-md font-medium text-gray-700">Assine no espaço abaixo:</label>
+                <div class="mt-1 relative w-full">
+                    <canvas id="signature-pad-canvas" class="signature-canvas w-full h-48 bg-gray-50"></canvas>
+                    <button type"button" id="clear-signature-btn"
+                        class="absolute top-2 right-2 text-sm text-blue-600 hover:underline">Limpar</button>
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <input id="agree-checkbox" name="agree" type="checkbox"
+                    class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                <label for="agree-checkbox" class="ml-2 block text-sm text-gray-900">
+                    Li e concordo com todos os termos e condições do contrato acima.
+                </label>
+            </div>
+
+            <button type="submit" id="submit-signature-btn"
+                class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50">
+                Assinar e Finalizar
+            </button>
+        </form>
+    </div>
+
+    <div id="loading-message" class="text-center">
+        <p class="text-lg text-gray-600">Carregando informações do contrato...</p>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api'; // Verifique se '/api' é o prefixo correto para sua API
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_temporary');
+            const contractId = localStorage.getItem('contract_id');
+            const contractPath = localStorage.getItem('contract_path');
+
+            // 1. Validação inicial (igual ao que você tinha)
+            if (!token || !contractId || !contractPath) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Informações de contrato inválidas. Por favor, faça o login novamente.'
+                }).then(() => {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                });
+                return;
+            }
+
+            document.getElementById('loading-message').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+
+            // 2. Configura o PDF no iframe e link de download
+            document.getElementById('contract-pdf').src = `/${contractPath}`;
+            const downloadLink = document.getElementById('download-contract-link');
+            downloadLink.href = `/${contractPath}`;
+            downloadLink.setAttribute('download', 'Contrato.pdf');
+
+            // --- 3. Configuração do Signature Pad ---
+            const canvas = document.getElementById('signature-pad-canvas');
+            const signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(249, 250, 251)' // Cor Tailwind 'bg-gray-50'
+            });
+
+            // Função para ajustar o tamanho do canvas (importante para mobile)
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear(); // Limpa ao redimensionar
+            }
+            window.addEventListener("resize", resizeCanvas);
+            resizeCanvas(); // Ajusta o tamanho pela primeira vez
+
+            // 4. Configura o botão de Limpar
+            document.getElementById('clear-signature-btn').addEventListener('click', () => {
+                signaturePad.clear();
+            });
+
+            // --- 5. Configuração do Formulário de Envio ---
+            const signatureForm = document.getElementById('signature-form');
+            const submitButton = document.getElementById('submit-signature-btn');
+            const agreeCheckbox = document.getElementById('agree-checkbox');
+
+            signatureForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                // Validações
+                if (signaturePad.isEmpty()) {
+                    Swal.fire('Atenção', 'Por favor, desenhe sua assinatura no campo indicado.', 'warning');
+                    return;
+                }
+                if (!agreeCheckbox.checked) {
+                    Swal.fire('Atenção', 'Você deve ler e concordar com os termos do contrato.', 'warning');
+                    return;
+                }
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Enviando...';
+
+                // Pega a assinatura como uma imagem Base64 (PNG)
+                const signatureImageBase64 = signaturePad.toDataURL('image/png');
+
+                // Prepara o JSON para enviar ao backend
+                const payload = {
+                    contract_id: contractId,
+                    signature_image: signatureImageBase64
+                };
+
+                try {
+                    // Envia para o NOVO endpoint que criamos no backend
+                    const response = await fetch(`${API_BASE_URL}/contratos/uploadAssinaturaEletronica`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json' // Importante: Estamos enviando JSON
+                        },
+                        body: JSON.stringify(payload) // Envia os dados como string JSON
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Limpa o storage local e esconde o formulário
+                        localStorage.removeItem('jwt_temporary');
+                        localStorage.removeItem('contract_id');
+                        localStorage.removeItem('contract_path');
+                        signatureForm.classList.add('hidden');
+                        downloadLink.classList.add('hidden');
+
+                        // Mensagem de sucesso
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Tudo Certo!',
+                            text: 'Seu contrato foi assinado com sucesso! A secretaria fará a análise e, assim que for validado, seu acesso ao portal será liberado.',
+                            confirmButtonText: 'Ok'
+                        });
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: result.message || 'Ocorreu um erro ao enviar sua assinatura.',
+                        });
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Assinar e Finalizar';
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro de Conexão',
+                        text: 'Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.',
+                    });
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Assinar e Finalizar';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

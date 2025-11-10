@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Boletim - Sistema SEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Estilos da tabela mantidos, pois são específicos e funcionais */
+        .boletim-table-wrapper {
+            overflow-x: auto;
+            max-height: 75vh;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+
+        .boletim-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .boletim-table thead th {
+            background-color: #f9fafb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4b5563;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .boletim-table tbody td {
+            padding: 0.5rem 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .boletim-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background-color: #ffffff;
+            z-index: 11;
+        }
+
+        .sticky-col.disciplina {
+            min-width: 180px;
+        }
+
+        /* Estilos gerais */
+        .text-center {
+            text-align: center;
+        }
+
+        .current-year-select {
+            padding: 0.625rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center max-w-7xl px-4">
+            <a href="home.html" class="text-white text-2xl font-bold">EDU SEF - Portal do Aluno</a>
+            <div class="flex items-center space-x-4">
+                <a href="aluno_dashboard.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Meu
+                    Painel</a>
+                <a href="aluno_mensalidades_view.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Financeiro</a>
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-7xl py-12 px-4 space-y-8">
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
+            <div>
+                <h1 id="aluno-name" class="text-4xl font-extrabold text-gray-800"></h1>
+                <p id="aluno-details" class="text-lg text-gray-600 mt-1"></p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <label for="boletim-year-select" class="font-semibold text-gray-600">Ano Letivo:</label>
+                <select id="boletim-year-select" class="current-year-select"></select>
+            </div>
+        </div>
+
+        <div id="boletim-content" class="hidden bg-white rounded-xl shadow-md p-6">
+            <div id="loading-message" class="text-center text-gray-500 my-8">Carregando boletim...</div>
+            <div id="error-message" class="hidden my-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+
+            <div class="boletim-table-wrapper">
+                <table class="boletim-table">
+                    <thead>
+                        <tr>
+                            <th class="sticky-col disciplina">Disciplina</th>
+                            <th class="text-center">1º Bim. (Nota)</th>
+                            <th class="text-center">1º Bim. (Faltas)</th>
+                            <th class="text-center">2º Bim. (Nota)</th>
+                            <th class="text-center">2º Bim. (Faltas)</th>
+                            <th class="text-center">3º Bim. (Nota)</th>
+                            <th class="text-center">3º Bim. (Faltas)</th>
+                            <th class="text-center">4º Bim. (Nota)</th>
+                            <th class="text-center">4º Bim. (Faltas)</th>
+                            <th class="text-center">Média Final</th>
+                            <th class="text-center">Freq. Final (%)</th>
+                            <th class="text-center">Recuperação</th>
+                            <th class="text-center">Resultado Final</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boletim-table-body">
+                    </tbody>
+                </table>
+            </div>
+            <p id="no-boletim-data" class="text-center text-gray-500 p-4 hidden">Nenhum dado de boletim encontrado para
+                este aluno no ano <span id="no-data-year"></span>.</p>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const API_LOGIN_URL = 'login.html';
+
+        let currentAlunoId = null;
+        let currentAlunoName = '';
+        let currentAlunoRA = '';
+        let currentAlunoTurma = '';
+        let currentYear = new Date().getFullYear();
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        const getUrlParameter = (name) => {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        const formatGrade = (grade) => grade !== null ? parseFloat(grade).toFixed(1).replace('.', ',') : '-';
+        const formatFaltas = (faltas) => faltas !== null ? parseInt(faltas) : '-';
+        const formatFrequencia = (freq) => freq !== null ? parseFloat(freq).toFixed(1).replace('.', ',') : '-';
+
+        async function fetchBoletimAluno() {
+            document.getElementById('loading-message').classList.remove('hidden');
+            document.getElementById('boletim-content').classList.add('hidden');
+            document.getElementById('loading-message').classList.remove('hidden');
+            document.getElementById('error-message').classList.add('hidden');
+            document.getElementById('no-boletim-data').classList.add('hidden');
+
+            // A linha que causava o erro foi removida daqui.
+
+            document.getElementById('no-data-year').textContent = currentYear;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/boletim/aluno?id_aluno=${currentAlunoId}&ano_letivo=${currentYear}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.message || 'Falha ao carregar o boletim.');
+                }
+                const result = await response.json();
+
+                if (result.success) {
+                    renderBoletim(result.data);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar boletim do aluno:", error);
+                document.getElementById('error-message').textContent = `Erro: ${error.message}. Não foi possível carregar o boletim.`;
+                document.getElementById('error-message').classList.remove('hidden');
+            } finally {
+                document.getElementById('loading-message').classList.add('hidden');
+                document.getElementById('boletim-content').classList.remove('hidden');
+            }
+        }
+
+        function renderBoletim(boletimEntries) {
+            const tbody = document.getElementById('boletim-table-body');
+            tbody.innerHTML = '';
+
+            if (boletimEntries.length === 0) {
+                document.getElementById('no-boletim-data').classList.remove('hidden');
+                return;
+            }
+
+            boletimEntries.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="sticky-col disciplina font-medium">${entry.nome_disciplina}</td>
+                    <td class="text-center">${formatGrade(entry.nota_1b)}</td>
+                    <td class="text-center">${formatFaltas(entry.faltas_1b)}</td>
+                    <td class="text-center">${formatGrade(entry.nota_2b)}</td>
+                    <td class="text-center">${formatFaltas(entry.faltas_2b)}</td>
+                    <td class="text-center">${formatGrade(entry.nota_3b)}</td>
+                    <td class="text-center">${formatFaltas(entry.faltas_3b)}</td>
+                    <td class="text-center">${formatGrade(entry.nota_4b)}</td>
+                    <td class="text-center">${formatFaltas(entry.faltas_4b)}</td>
+                    <td class="text-center font-bold">${formatGrade(entry.media_final)}</td>
+                    <td class="text-center">${formatFrequencia(entry.frequencia_final)}%</td>
+                    <td class="text-center">${formatGrade(entry.recuperacao_final)}</td>
+                    <td class="text-center">${entry.resultado_final || '-'}</td>
+                    <td>${entry.observacoes || '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', async () => {
+             showLoader();
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+
+            if (!token || role !== 'aluno') { // Apenas alunos podem ver esta página
+                logout();
+                return;
+            }
+
+            currentAlunoId = getUrlParameter('idAluno');
+            currentAlunoName = getUrlParameter('nomeAluno');
+            currentAlunoRA = getUrlParameter('raAluno');
+            currentAlunoTurma = getUrlParameter('turmaAluno');
+            currentYear = parseInt(getUrlParameter('anoLetivo')) || new Date().getFullYear();
+
+
+            if (!currentAlunoId || !currentAlunoName || !currentAlunoRA) {
+                document.getElementById('error-message').textContent = 'Dados do aluno insuficientes na URL.';
+                document.getElementById('error-message').classList.remove('hidden');
+                document.getElementById('loading-message').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('aluno-name').textContent = `Boletim de ${currentAlunoName}`;
+            document.getElementById('aluno-details').textContent = `RA: ${currentAlunoRA} | Turma: ${currentAlunoTurma}`;
+
+            // Preenche o seletor de ano
+            const yearSelect = document.getElementById('boletim-year-select');
+            const currentYearOption = new Date().getFullYear();
+            for (let i = currentYearOption - 2; i <= currentYearOption + 2; i++) { // Anos de 2 antes a 2 depois
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === currentYear) {
+                    option.selected = true;
+                }
+                yearSelect.appendChild(option);
+            }
+
+            yearSelect.addEventListener('change', (e) => {
+                currentYear = parseInt(e.target.value);
+                fetchBoletimAluno(); // Recarrega o boletim para o ano selecionado
+            });
+
+
+            await fetchBoletimAluno();
+        });
+    </script>
+</body>
+
+</html>

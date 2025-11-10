@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Mensalidades - Sistema SEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Estilos do Modal e Animação de Sucesso (mantidos) */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            text-align: center;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .success-animation {
+            display: none;
+        }
+
+        .success-animation.visible {
+            display: block;
+        }
+
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #4caf50;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 20px auto;
+            box-shadow: inset 0px 0px 0px #4caf50;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale {
+
+            0%,
+            100% {
+                transform: none;
+            }
+
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 50px #4caf50;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center max-w-7xl px-4">
+            <a href="home.html" class="text-white text-2xl font-bold">EDU SEF - Portal do Aluno</a>
+            <div class="flex items-center space-x-4">
+                <a href="aluno_dashboard.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Meu
+                    Painel</a>
+                
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-7xl py-12 px-4 space-y-8">
+        <div class="text-left">
+            <h1 id="welcome-message-mensalidades" class="text-4xl font-extrabold text-gray-800">Minhas Mensalidades</h1>
+            <p id="aluno-info-mensalidades" class="text-lg text-gray-600 mt-1"></p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Resumo Financeiro</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="card-atrasadas"
+                    class="bg-gray-50 rounded-lg p-6 flex flex-col justify-center items-center text-center border-l-4 border-red-500">
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Em Atraso</p>
+                    <p id="valor-atrasadas" class="text-3xl font-bold text-red-600 mt-2">R$ 0,00</p>
+                    <p id="qtde-atrasadas" class="text-xs text-gray-500 mt-1">0 mensalidades</p>
+                </div>
+                <div id="card-proxima"
+                    class="bg-gray-50 rounded-lg p-6 flex flex-col justify-center items-center text-center border-l-4 border-indigo-500">
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Próximo Vencimento</p>
+                    <p id="valor-proxima" class="text-3xl font-bold text-indigo-600 mt-2">R$ 0,00</p>
+                    <p id="data-proxima" class="text-xs text-gray-500 mt-1">--/--/----</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="financeiro-section" class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Histórico de Mensalidades</h2>
+            <div id="loading-message" class="text-center text-gray-500 my-8">Carregando mensalidades...</div>
+            <div id="error-message" class="hidden my-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Vencimento</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Valor a Pagar</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-mensalidades" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="pix-modal" class="modal hidden">
+        <div class="modal-content">
+            <span onclick="closePixModal()" class="close-button">&times;</span>
+            <div id="pix-content">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Pague com Pix</h2>
+                <p id="pix-valor" class="text-lg font-semibold text-indigo-600"></p>
+                <p id="pix-expiracao" class="text-sm text-gray-600 mb-4"></p>
+                <img id="pix-qrcode" src="" alt="Pix QR Code" class="mx-auto my-4 border rounded-lg max-w-xs">
+                <p class="text-gray-600 mb-2">Ou use o Pix Copia e Cola:</p>
+                <div class="flex items-center border rounded-lg p-2 bg-gray-100">
+                    <input type="text" id="pix-copia-cola" readonly
+                        class="flex-grow bg-transparent outline-none text-sm text-gray-700">
+                    <button onclick="copyPixCode()"
+                        class="ml-2 px-3 py-1 bg-indigo-500 text-white text-xs font-semibold rounded-md hover:bg-indigo-600">Copiar</button>
+                </div>
+            </div>
+            <div id="pix-loading" class="hidden">
+                <p class="text-lg font-semibold text-gray-700">Aguarde...</p>
+            </div>
+            <div id="pix-success" class="success-animation">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+                <p class="text-xl font-bold text-green-600">Pagamento Confirmado!</p>
+                <p class="text-gray-600">Esta janela fechará em instantes.</p>
+            </div>
+            <div id="pix-error" class="hidden">
+                <p class="text-lg font-semibold text-red-600">Oops!</p>
+                <p id="pix-error-message" class="text-gray-700 mt-2"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost/Sistema/api';
+        const PIX_WEBHOOK_URL = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/4c35783f-aaee-4537-8bc5-70b019247ab3'; // MANTENHA OU ATUALIZE SUA URL DO WEBHOOK PIX
+        const POLLING_INTERVAL = 5000;
+        const PIX_EXPIRATION_MINUTES = 30;
+
+        let currentAlunoData = null;
+        let pollingManager = {};
+
+        function logout() {
+            Object.values(pollingManager).forEach(clearInterval); // Limpa todos os polls ativos
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+        const formatCurrency = (v) => parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const formatDate = (d) => d ? new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '--/--/----';
+        const formatTime = (d) => d ? new Date(d).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        const copyPixCode = () => { navigator.clipboard.writeText(document.getElementById('pix-copia-cola').value); alert('Código Pix copiado!'); };
+
+        const pixModal = document.getElementById('pix-modal');
+        function showModalSection(sectionId) {
+            ['pix-content', 'pix-loading', 'pix-success', 'pix-error'].forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+            pixModal.classList.remove('hidden');
+        }
+        function closePixModal() { pixModal.classList.add('hidden'); }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) { logout(); return; }
+
+            try {
+                const decodedToken = JSON.parse(atob(token.split('.')[1]));
+                const alunoRA = decodedToken?.data?.username;
+                if (!alunoRA) throw new Error("Token inválido ou incompleto para aluno.");
+
+                // Obter dados do aluno para exibir nome e RA/Turma
+                const alunoRes = await fetch(`${API_BASE_URL}/alunos?ra=${alunoRA}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!alunoRes.ok) {
+                    const errorBody = await alunoRes.json();
+                    throw new Error(errorBody.message || "Falha ao carregar dados do aluno para mensalidades.");
+                }
+                const alunoResult = await alunoRes.json();
+                if (alunoResult.success && alunoResult.data.length > 0) {
+                    currentAlunoData = alunoResult.data[0];
+                    document.getElementById('aluno-info-mensalidades').textContent = `Aluno: ${currentAlunoData.nome_aluno} | RA: ${currentAlunoData.ra} | Turma: ${currentAlunoData.nome_turma || 'Não atribuída'}`;
+
+                    // Configurar o link do boletim na navbar
+                    const navbarBoletimLink = document.getElementById('navbar-boletim-link-mensalidades');
+                    if (navbarBoletimLink) {
+                        const currentYear = new Date().getFullYear();
+                        navbarBoletimLink.href = `boletim_aluno_view.html?idAluno=${currentAlunoData.id_aluno}&nomeAluno=${encodeURIComponent(currentAlunoData.nome_aluno)}&raAluno=${currentAlunoData.ra}&turmaAluno=${encodeURIComponent(currentAlunoData.nome_turma || 'N/A')}&anoLetivo=${currentYear}`;
+                    }
+
+                } else {
+                    throw new Error(alunoResult.message || "Dados do aluno não encontrados para mensalidades.");
+                }
+
+
+                // Carregar mensalidades
+                const mensalidadesRes = await fetch(`${API_BASE_URL}/aluno/mensalidades`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!mensalidadesRes.ok) {
+                    const errorBody = await mensalidadesRes.json();
+                    throw new Error(errorBody.message || "Falha ao carregar mensalidades.");
+                }
+                const mensalidadesResult = await mensalidadesRes.json();
+
+                if (mensalidadesResult.success) {
+                    renderMensalidades(mensalidadesResult.data);
+                } else {
+                    throw new Error(mensalidadesResult.message);
+                }
+
+                document.getElementById('loading-message').classList.add('hidden');
+                document.getElementById('financeiro-section').classList.remove('hidden');
+            } catch (error) {
+                console.error("Erro no carregamento da página de mensalidades:", error);
+                document.getElementById('loading-message').textContent = 'Erro ao carregar dados financeiros. Tente novamente.';
+                document.getElementById('error-message').textContent = `Detalhes: ${error.message}`;
+                document.getElementById('error-message').classList.remove('hidden');
+            }
+        });
+
+
+        function renderMensalidades(mensalidades) {
+            const tabelaBody = document.getElementById('tabela-mensalidades');
+            tabelaBody.innerHTML = '';
+            let totalAtrasado = 0, qtdeAtrasadas = 0, proximaMensalidade = null;
+
+            mensalidades.forEach(m => {
+                const statusLower = m.status?.toLowerCase();
+                let acaoBotao = '-', statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Pago</span>`;
+
+                if (statusLower !== 'approved' && statusLower !== 'pago') {
+                    const hoje = new Date();
+                    const dataVencimento = new Date(m.data_vencimento + 'T03:00:00Z');
+
+                    if (dataVencimento < hoje) {
+                        totalAtrasado += parseFloat(m.valor_total_devido || m.valor_mensalidade);
+                        qtdeAtrasadas++;
+                    }
+
+                    if ((!proximaMensalidade || dataVencimento < new Date(proximaMensalidade.data_vencimento + 'T03:00:00Z')) && dataVencimento >= hoje.setHours(0, 0, 0, 0)) {
+                        proximaMensalidade = m;
+                    }
+
+                    const isPixPending = statusLower === 'pending';
+                    const isExpired = m.pix_expiration_time && new Date(m.pix_expiration_time) < hoje;
+
+                    // LÓGICA CORRETA PARA OS STATUS
+                    if (statusLower === 'open') {
+                        if (dataVencimento < hoje) {
+                            statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Atrasado</span>`;
+                        } else {
+                            statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Em Aberto</span>`;
+                        }
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)})' class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 shadow-sm">Pagar com PIX</button>`;
+
+                    } else if (isPixPending && isExpired) {
+                        statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pix Expirado</span>`;
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)})' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
+
+                    } else if (isPixPending && !isExpired) {
+                        statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Aguardando Pagamento</span>`;
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)})' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
+                        startPolling(m.id_mensalidade);
+                    }
+                }
+
+                tabelaBody.innerHTML += `<tr id="row-${m.id_mensalidade}" class="align-middle"><td class="px-6 py-4">${formatDate(m.data_vencimento)}</td><td class="px-6 py-4 font-medium">${formatCurrency(m.valor_total_devido || m.valor_mensalidade)}</td><td class="px-6 py-4 status-cell">${statusBadge}</td><td class="px-6 py-4 text-center action-cell">${acaoBotao}</td></tr>`;
+            });
+
+            document.getElementById('valor-atrasadas').textContent = formatCurrency(totalAtrasado);
+            document.getElementById('qtde-atrasadas').textContent = `${qtdeAtrasadas} mensalidade(s)`;
+            if (proximaMensalidade) {
+                document.getElementById('valor-proxima').textContent = formatCurrency(proximaMensalidade.valor_total_devido || proximaMensalidade.valor_mensalidade);
+                document.getElementById('data-proxima').textContent = `Vence em: ${formatDate(proximaMensalidade.data_vencimento)}`;
+            } else {
+                document.getElementById('card-proxima').innerHTML = `<p class="text-sm font-medium text-gray-500 uppercase">Situação</p><p class="text-2xl font-bold text-green-600 mt-2">Tudo em dia!</p><p class="text-xs text-gray-500 mt-1">Nenhuma pendência encontrada.</p>`;
+            }
+        }
+
+        async function handlePayment(mensalidade) {
+            const statusLower = mensalidade.status?.toLowerCase();
+            const isPixPending = statusLower === 'pending';
+            const isExpired = mensalidade.pix_expiration_time && new Date(mensalidade.pix_expiration_time) < new Date();
+            showModalSection('pix-loading');
+
+            if (isPixPending && !isExpired) {
+                try {
+                    const res = await fetch(`${API_BASE_URL}/mensalidades/${mensalidade.id_mensalidade}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                    const result = await res.json();
+                    if (!result.success) throw new Error(result.message);
+                    displayPix(result.data, mensalidade);
+                } catch (error) { showModalSection('pix-error'); document.getElementById('pix-error-message').textContent = error.message; }
+            } else {
+                try {
+                    const token = localStorage.getItem('jwt_token');
+                    await fetch(`${API_BASE_URL}/aluno/mensalidades/${mensalidade.id_mensalidade}/status`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'pending' }) });
+                    const nomeCompleto = currentAlunoData.nome_aluno.split(' ');
+                    const payload = [{ id_mensalidade: String(mensalidade.id_mensalidade), first_name: nomeCompleto[0], last_name: nomeCompleto.slice(1).join(' ') || nomeCompleto[0], email: currentAlunoData.email_responsavel, number: String(currentAlunoData.celular_responsavel).replace(/\D/g, ''), cpf: String(currentAlunoData.cpf_responsavel).replace(/\D/g, ''), valor_mensalidade: String(mensalidade.valor_total_devido || mensalidade.valor_mensalidade) }];
+
+                    const pixResponse = await fetch(PIX_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!pixResponse.ok) throw new Error("Falha ao gerar o código PIX.");
+
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    const res = await fetch(`${API_BASE_URL}/mensalidades/${mensalidade.id_mensalidade}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const result = await res.json();
+                    if (!result.success) throw new Error("Não foi possível buscar os dados do PIX recém-gerado.");
+
+                    displayPix(result.data, mensalidade);
+                    startPolling(mensalidade.id_mensalidade);
+
+                    const row = document.getElementById(`row-${mensalidade.id_mensalidade}`);
+                    if (row) {
+                        row.querySelector('.status-cell').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Aguardando Pagamento</span>`;
+                        const actionCell = row.querySelector('.action-cell');
+                        mensalidade.status = 'pending';
+                        actionCell.innerHTML = `<button onclick='handlePayment(${JSON.stringify(mensalidade)})' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
+                    }
+                } catch (error) { showModalSection('pix-error'); document.getElementById('pix-error-message').textContent = error.message; }
+            }
+        }
+
+        function displayPix(pixData, mensalidade) {
+            showModalSection('pix-content');
+            const valor = mensalidade.valor_total_devido || mensalidade.valor_mensalidade;
+            const expiracao = pixData.pix_expiration_time;
+            document.getElementById('pix-valor').textContent = `Valor a Pagar: ${formatCurrency(valor)}`;
+            document.getElementById('pix-expiracao').textContent = expiracao ? `Válido até as ${formatTime(expiracao)}.` : 'Não foi possível determinar a validade do PIX.';
+            document.getElementById('pix-qrcode').src = `data:image/png;base64,${pixData.qrCodeBase64 || pixData.pix_qr_code_base64}`;
+            document.getElementById('pix-copia-cola').value = pixData.copiaECola || pixData.pix_copia_e_cola;
+        }
+
+        function startPolling(mensalidadeId) {
+            if (pollingManager[mensalidadeId]) { clearInterval(pollingManager[mensalidadeId]); }
+            const pollingStartTime = Date.now();
+            pollingManager[mensalidadeId] = setInterval(async () => {
+                if (Date.now() - pollingStartTime > PIX_EXPIRATION_MINUTES * 60 * 1000) {
+                    clearInterval(pollingManager[mensalidadeId]);
+                    delete pollingManager[mensalidadeId];
+                    const row = document.getElementById(`row-${mensalidadeId}`);
+                    if (row) {
+                        row.querySelector('.status-cell').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pix Expirado</span>`;
+                        row.querySelector('.action-cell').innerHTML = `<button onclick='handlePayment(${JSON.stringify({ id_mensalidade: mensalidadeId, valor_mensalidade: row.cells[1].textContent.replace('R$&nbsp;', '').replace('.', '').replace(',', '.') })})' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
+                    }
+                    return;
+                }
+                try {
+                    const res = await fetch(`${API_BASE_URL}/mensalidades/${mensalidadeId}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                    const result = await res.json();
+                    if (result.success && (result.data.status?.toLowerCase() === 'approved' || result.data.status?.toLowerCase() === 'pago')) {
+                        clearInterval(pollingManager[mensalidadeId]);
+                        delete pollingManager[mensalidadeId];
+                        const row = document.getElementById(`row-${mensalidadeId}`);
+                        if (row) {
+                            row.querySelector('.status-cell').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Pago</span>`;
+                            row.querySelector('.action-cell').innerHTML = '-';
+                        }
+                        if (!pixModal.classList.contains('hidden')) {
+                            showModalSection('pix-success');
+                            setTimeout(closePixModal, 3000);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erro durante polling:", error);
+                    clearInterval(pollingManager[mensalidadeId]);
+                    delete pollingManager[mensalidadeId];
+                }
+            }, POLLING_INTERVAL);
+        }
+    </script>
+</body>
+
+</html>

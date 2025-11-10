@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conteúdo Programático - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-success {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 0.75rem;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .nav-link {
+            color: #D1D5DB;
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            color: #FFFFFF;
+        }
+
+        .nav-link.active {
+            background-color: #111827;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+            <a href="professor_dashboard.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema
+                Educacional
+                Financeiro</a>
+            <div class="flex items-center space-x-4">
+                <a href="crud_alunos.html" class="nav-link admin-only-nav">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link admin-only-nav">Turmas</a>
+                <a href="crud_professores.html" class="nav-link admin-only-nav">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link admin-only-nav">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link active">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link admin-only-nav">Mensalidades</a>
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link admin-only-nav">Gerenciar
+                    Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Acompanhamento de Conteúdo Programático</h1>
+        <div id="message-area" class="message hidden"></div>
+
+        <div id="view-selecao-turma" class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div class="form-group max-w-md mx-auto">
+                <label for="select-turma">Selecione uma Turma para começar</label>
+                <select id="select-turma">
+                    <option value="">Carregando turmas...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="view-lista-conteudo" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="titulo-lista-conteudo" class="text-2xl font-semibold text-gray-700"></h2>
+                <button id="btn-add-conteudo" class="btn btn-primary">Adicionar Novo Conteúdo</button>
+            </div>
+            <div id="conteudos-container" class="space-y-4">
+            </div>
+        </div>
+
+        <div id="view-detalhes-progresso" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="titulo-detalhes" class="text-2xl font-semibold text-gray-700"></h2>
+                <button id="btn-voltar-lista" class="btn btn-secondary">← Voltar para a Lista</button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="mb-6">
+                    <canvas id="grafico-progresso"></canvas>
+                </div>
+                <div class="flex justify-between items-center border-t pt-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Histórico de Lançamentos</h3>
+                    <button id="btn-lancar-progresso" class="btn btn-success">Lançar Progresso da Aula</button>
+                </div>
+                <div class="overflow-x-auto mt-4">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data da Aula
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Páginas
+                                    Concluídas</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Professor
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Observações
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-historico" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="modal-add-conteudo" class="modal hidden">
+        <div class="modal-content">
+            <span id="close-modal-add-conteudo" class="close-button">&times;</span>
+            <h2 id="modal-conteudo-titulo" class="text-2xl font-semibold text-gray-700 mb-4">Novo Conteúdo Programático
+            </h2>
+            <form id="form-add-conteudo" class="space-y-4">
+                <input type="hidden" id="add-id_conteudo">
+                <div class="form-group">
+                    <label for="add-titulo">Título</label>
+                    <input type="text" id="add-titulo" placeholder="Ex: Capítulos 1-3: Revolução Francesa" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="add-bimestre">Bimestre</label>
+                        <select id="add-bimestre" required>
+                            <option value="">Selecione...</option>
+                            <option value="1">1º Bimestre</option>
+                            <option value="2">2º Bimestre</option>
+                            <option value="3">3º Bimestre</option>
+                            <option value="4">4º Bimestre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-disciplina">Disciplina</label>
+                        <select id="add-disciplina" required></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="add-descricao">Descrição</label>
+                    <textarea id="add-descricao" rows="3"
+                        placeholder="Detalhes sobre o conteúdo a ser abordado..."></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="add-data-inicio">Data Início Prevista</label>
+                        <input type="date" id="add-data-inicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-data-fim">Data Fim Prevista</label>
+                        <input type="date" id="add-data-fim" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-pag-inicio">Página Inicial (Meta)</label>
+                        <input type="number" id="add-pag-inicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-pag-fim">Página Final (Meta)</label>
+                        <input type="number" id="add-pag-fim" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary">Salvar Conteúdo</button>
+                    <button type="button" id="btn-cancelar-add-conteudo" class="btn btn-secondary">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div id="modal-add-progresso" class="modal hidden">
+        <div class="modal-content !max-w-md">
+            <span id="close-modal-add-progresso" class="close-button">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Lançar Progresso da Aula</h2>
+            <form id="form-add-progresso" class="space-y-4">
+                <input type="hidden" id="progresso-id-conteudo">
+                <div class="form-group">
+                    <label for="prog-data-aula">Data da Aula</label>
+                    <input type="date" id="prog-data-aula" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="prog-pag-inicio">Página Concluída (Início)</label>
+                        <input type="number" id="prog-pag-inicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prog-pag-fim">Página Concluída (Fim)</label>
+                        <input type="number" id="prog-pag-fim" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="prog-observacoes">Observações</label>
+                    <textarea id="prog-observacoes" rows="3"
+                        placeholder="Alguma observação sobre a aula ou o progresso..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-success">Salvar Progresso</button>
+                    <button type="button" id="btn-cancelar-add-progresso" class="btn btn-secondary">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-container">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="js/app_conteudo.js"></script>
+</body>
+
+</html>

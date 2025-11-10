@@ -1,0 +1,31 @@
+CREATE TABLE `assinaturas_eletronicas` (
+  `id_assinatura` INT AUTO_INCREMENT PRIMARY KEY,
+  `id_contrato` INT NOT NULL,
+  `id_aluno` INT NOT NULL,
+  `assinatura_base64` LONGTEXT NOT NULL COMMENT 'Imagem PNG da assinatura em Base64',
+  `hash_documento_sha256` VARCHAR(64) NOT NULL COMMENT 'Hash SHA256 do PDF original assinado',
+  `ip_assinatura` VARCHAR(45) NULL,
+  `data_assinatura` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`id_contrato`) REFERENCES `contratos`(`id_contrato`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+ALTER TABLE `usuarios`
+ADD COLUMN `reset_token` VARCHAR(255) NULL DEFAULT NULL AFTER `status`,
+ADD COLUMN `reset_token_expires` DATETIME NULL DEFAULT NULL AFTER `reset_token`;
+
+
+
+
+
+ALTER TABLE alunos
+CHANGE COLUMN ra ra_sef VARCHAR(50) NULL DEFAULT NULL;
+
+ALTER TABLE alunos
+ADD COLUMN ra VARCHAR(50) NULL DEFAULT NULL AFTER ra_sef;
+
+ALTER TABLE alunos
+ADD UNIQUE KEY `uk_ra_sef` (`ra_sef`);
+
+ALTER TABLE alunos
+ADD UNIQUE KEY `uk_ra` (`ra`);

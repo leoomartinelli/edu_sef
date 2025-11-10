@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Senha - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .password-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="password-container">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Alterar Senha</h1>
+        <div id="message-area" class="message hidden"></div>
+        <form id="password-form" class="space-y-4">
+            <div class="form-group">
+                <label for="current_password">Senha Atual</label>
+                <input type="password" id="current_password" required class="rounded-md">
+            </div>
+            <div class="form-group">
+                <label for="new_password">Nova Senha</label>
+                <input type="password" id="new_password" required class="rounded-md">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirmar Nova Senha</label>
+                <input type="password" id="confirm_password" required class="rounded-md">
+            </div>
+            <button type="submit" class="btn btn-primary w-full">Salvar</button>
+        </form>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_URL = '/api/auth/change-password';
+        const form = document.getElementById('password-form');
+        const messageArea = document.getElementById('message-area');
+
+        function displayMessage(message, type) {
+            messageArea.textContent = message;
+            messageArea.className = `message ${type}`;
+            messageArea.classList.remove('hidden');
+            setTimeout(() => {
+                messageArea.classList.add('hidden');
+            }, 5000);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            showLoader();
+            e.preventDefault();
+            const currentPassword = document.getElementById('current_password').value;
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            if (newPassword !== confirmPassword) {
+                displayMessage('A nova senha e a confirmação não coincidem.', 'error');
+                hideLoader();
+                return;
+            }
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    displayMessage(data.message, 'success');
+                    form.reset();
+                } else {
+                    displayMessage(data.message || 'Erro ao atualizar a senha.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                displayMessage('Erro de conexão ou servidor.', 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+    </script>
+</body>
+</html>

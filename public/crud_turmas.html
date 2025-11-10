@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Turmas</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-edit {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+
+        .btn-edit:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-info {
+            /* Novo estilo para o botão de consultar alunos */
+            background-color: #3b82f6;
+            /* Azul */
+            color: #ffffff;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            margin-right: 0.5rem;
+        }
+
+        .btn-info:hover {
+            background-color: #2563eb;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 700;
+            color: #4b5563;
+        }
+
+        tr:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1000;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            /* Adjust width as needed */
+            max-width: 600px;
+            /* Max width for larger screens */
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal.visible {
+            display: flex;
+        }
+
+        /* Specific modal for student list */
+        #alunosByTurmaModal .modal-content {
+            max-width: 900px;
+            /* Larger width for student list */
+        }
+
+        /* Estilo padrão para os links da navbar */
+        .nav-link {
+            color: #D1D5DB;
+            /* cinza claro */
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            /* cinza mais escuro */
+            color: #FFFFFF;
+        }
+
+        /* Estilo para o link da PÁGINA ATUAL */
+        .nav-link.active {
+            background-color: #111827;
+            /* cinza bem escuro */
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional Financeiro</a>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link active">Turmas</a>
+                <a href="crud_professores.html" class="nav-link">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="gerenciar_contratos.html" class="nav-link">Contratos</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+
+                
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Gerenciamento de Turmas</h1>
+
+        <div id="message-area" class="message hidden"></div>
+
+        <!-- Formulário de Adição de Turma -->
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Adicionar Nova Turma</h2>
+            <form id="add-turma-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label for="add_nome_turma">Nome da Turma <span class="text-red-500">*</span></label>
+                    <input type="text" id="add_nome_turma" name="nome_turma" required class="rounded-md">
+                </div>
+                <div class="form-group">
+                    <label for="add_periodo">Período</label>
+                    <select id="add_periodo" name="periodo" class="rounded-md">
+                        <option value="">Selecione</option>
+                        <option value="Manhã">Manhã</option>
+                        <option value="Tarde">Tarde</option>
+                        <option value="Noite">Noite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="add_ano_letivo">Ano Letivo</label>
+                    <input type="number" id="add_ano_letivo" name="ano_letivo" class="rounded-md"
+                        placeholder="Ex: 2024">
+                </div>
+                <!-- REMOVIDO: Campo de Descrição -->
+                <!-- <div class="form-group md:col-span-2">
+                    <label for="add_descricao">Descrição</label>
+                    <textarea id="add_descricao" name="descricao" rows="3" class="rounded-md"></textarea>
+                </div> -->
+
+                <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary">Adicionar Turma</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearAddForm()">Limpar Formulário</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lista de Turmas -->
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Turmas Cadastradas</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome da Turma</th>
+                            <th>Período</th>
+                            <th>Ano Letivo</th>
+                            <th>Qtd. Alunos</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="turmas-table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Dados das turmas serão carregados aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Turma -->
+    <div id="editTurmaModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeEditModal()">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4" id="edit-form-title">Editar Turma</h2>
+            <form id="edit-turma-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="edit_turma_id">
+
+                <div class="form-group">
+                    <label for="edit_nome_turma">Nome da Turma <span class="text-red-500">*</span></label>
+                    <input type="text" id="edit_nome_turma" name="nome_turma" required class="rounded-md">
+                </div>
+                <div class="form-group">
+                    <label for="edit_periodo">Período</label>
+                    <select id="edit_periodo" name="periodo" class="rounded-md">
+                        <option value="">Selecione</option>
+                        <option value="Manhã">Manhã</option>
+                        <option value="Tarde">Tarde</option>
+                        <option value="Noite">Noite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_ano_letivo">Ano Letivo</label>
+                    <input type="number" id="edit_ano_letivo" name="ano_letivo" class="rounded-md"
+                        placeholder="Ex: 2024">
+                </div>
+                <!-- REMOVIDO: Campo de Descrição do Modal de Edição -->
+                <!-- <div class="form-group md:col-span-2">
+                    <label for="edit_descricao">Descrição</label>
+                    <textarea id="edit_descricao" name="descricao" rows="3" class="rounded-md"></textarea>
+                </div> -->
+
+                <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para exibir Alunos por Turma -->
+    <div id="alunosByTurmaModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAlunosByTurmaModal()">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Alunos da Turma: <span id="alunos-turma-nome"></span>
+            </h2>
+            <div id="alunos-by-turma-message-area" class="message hidden"></div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>RA</th>
+                            <th>Idade</th>
+                            <th>Período</th>
+                            <th>Responsável</th>
+                            <th>Telefone Resp.</th>
+                            <th>Email Resp.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alunos-by-turma-table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Alunos serão carregados aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Configuração da URL base da sua API
+        const API_BASE_URL_ALUNOS = '/api/alunos';
+        const API_BASE_URL_TURMAS = '/api/turmas';
+        // URLs das páginas HTML, relativas à pasta 'public'
+        const API_LOGIN_URL = 'login.html';
+        const ALUNO_DASHBOARD_URL = 'aluno_dashboard.html';
+        const CRUD_ALUNOS_URL = 'crud_alunos.html';
+        const CRUD_TURMAS_URL = 'crud_turmas.html';
+
+        // Elementos do formulário de ADIÇÃO de Turma
+        const addTurmaForm = document.getElementById('add-turma-form');
+
+        // Elementos do MODAL de EDIÇÃO de Turma
+        const editTurmaModal = document.getElementById('editTurmaModal');
+        const editTurmaForm = document.getElementById('edit-turma-form');
+        const editTurmaIdInput = document.getElementById('edit_turma_id');
+        const editFormTitle = document.getElementById('edit-form-title');
+
+        // Elementos do MODAL de ALUNOS POR TURMA
+        const alunosByTurmaModal = document.getElementById('alunosByTurmaModal');
+        const alunosTurmaNomeSpan = document.getElementById('alunos-turma-nome');
+        const alunosByTurmaTableBody = document.getElementById('alunos-by-turma-table-body');
+        const alunosByTurmaMessageArea = document.getElementById('alunos-by-turma-message-area');
+
+
+        const turmasTableBody = document.getElementById('turmas-table-body');
+        const messageArea = document.getElementById('message-area'); // Para mensagens gerais da página
+
+        // Exibe mensagens de sucesso ou erro
+        function displayMessage(message, type, targetArea = messageArea) {
+            targetArea.textContent = message;
+            targetArea.className = `message ${type}`;
+            targetArea.classList.remove('hidden');
+            setTimeout(() => {
+                targetArea.classList.add('hidden');
+            }, 5000); // Esconde a mensagem após 5 segundos
+        }
+
+        // Limpa o formulário de ADIÇÃO de Turma
+        function clearAddForm() {
+            addTurmaForm.reset();
+            messageArea.classList.add('hidden'); // Esconde a mensagem ao limpar o formulário
+        }
+
+        // Abre o modal de edição de Turma
+        function openEditModal() {
+            editTurmaModal.classList.remove('hidden');
+            editTurmaModal.classList.add('visible');
+        }
+
+        // Fecha o modal de edição de Turma
+        function closeEditModal() {
+            editTurmaModal.classList.remove('visible');
+            editTurmaModal.classList.add('hidden');
+            editTurmaForm.reset(); // Limpa o formulário do modal ao fechar
+            editTurmaIdInput.value = ''; // Limpa o ID
+        }
+
+        // Abre o modal de Alunos por Turma
+        function openAlunosByTurmaModal() {
+            alunosByTurmaModal.classList.remove('hidden');
+            alunosByTurmaModal.classList.add('visible');
+        }
+
+        // Fecha o modal de Alunos por Turma
+        function closeAlunosByTurmaModal() {
+            alunosByTurmaModal.classList.remove('visible');
+            alunosByTurmaModal.classList.add('hidden');
+            alunosByTurmaTableBody.innerHTML = ''; // Limpa a tabela de alunos
+            alunosTurmaNomeSpan.textContent = ''; // Limpa o nome da turma
+            alunosByTurmaMessageArea.classList.add('hidden'); // Esconde a mensagem
+        }
+
+
+        // Carrega todas as turmas e preenche a tabela
+        async function fetchTurmas() {
+            showLoader();
+            try {
+                const response = await fetch(API_BASE_URL_TURMAS, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    }
+                });
+                // Se a resposta for 401 ou 403, redireciona para o login
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = API_LOGIN_URL;
+                    return; // Interrompe a execução
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    turmasTableBody.innerHTML = ''; // Limpa a tabela antes de preencher
+                    data.data.forEach(turma => {
+                        const row = `
+                            <tr>
+                                <td>${turma.id_turma}</td>
+                                <td>${turma.nome_turma}</td>
+                                <td>${turma.periodo || ''}</td>
+                                <td>${turma.ano_letivo || ''}</td>
+                                <td>${turma.quantidade_alunos}</td> <!-- Exibe a quantidade de alunos -->
+                                <td class="whitespace-nowrap">
+                                    <button class="btn btn-info text-sm" onclick="consultarAlunos(${turma.id_turma}, '${turma.nome_turma}')">Consultar Alunos</button>
+                                    <button class="btn btn-edit text-sm mr-2" onclick="editTurma(${turma.id_turma})">Editar</button>
+                                    <button class="btn btn-delete text-sm" onclick="deleteTurma(${turma.id_turma})">Excluir</button>
+                                </td>
+                            </tr>
+                        `;
+                        turmasTableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                } else {
+                    displayMessage(`Erro ao carregar turmas: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar turmas:', error);
+                displayMessage('Erro de conexão ao buscar turmas.', 'error');
+            } finally {
+                hideLoader(); // ESCONDE O LOADER
+            }
+        }
+
+        // Preenche o formulário do MODAL para edição de Turma
+        async function editTurma(id) {
+            showLoader();
+            try {
+                const response = await fetch(`${API_BASE_URL_TURMAS}/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    }
+                });
+                // Se a resposta for 401 ou 403, redireciona para o login
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = API_LOGIN_URL;
+                    return; // Interrompe a execução
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const turma = data.data;
+                    editTurmaIdInput.value = turma.id_turma;
+                    document.getElementById('edit_nome_turma').value = turma.nome_turma;
+                    document.getElementById('edit_periodo').value = turma.periodo || '';
+                    document.getElementById('edit_ano_letivo').value = turma.ano_letivo || '';
+                    // REMOVIDO: document.getElementById('edit_descricao').value = turma.descricao || '';
+
+                    editFormTitle.textContent = `Editar Turma (ID: ${turma.id_turma})`;
+                    openEditModal(); // Abre o modal
+                } else {
+                    displayMessage(`Erro ao carregar turma para edição: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar turma para edição:', error);
+                displayMessage('Erro de conexão ao buscar turma para edição.', 'error');
+            } finally {
+                hideLoader(); // ESCONDE O LOADER
+            }
+        }
+
+        // Envia o formulário de ADIÇÃO de Turma
+        addTurmaForm.addEventListener('submit', async (event) => {
+            showLoader();
+            event.preventDefault();
+
+            const formData = new FormData(addTurmaForm);
+            const turmaData = {};
+            for (let [key, value] of formData.entries()) {
+                turmaData[key] = value === '' ? null : value; // Envia strings vazias como null
+            }
+
+            turmaData.ano_letivo = turmaData.ano_letivo ? parseInt(turmaData.ano_letivo) : null;
+            turmaData.descricao = null; // Garante que a descrição seja nula ao adicionar, já que o campo foi removido
+
+            try {
+                const response = await fetch(API_BASE_URL_TURMAS, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    },
+                    body: JSON.stringify(turmaData)
+                });
+                // Se a resposta for 401 ou 403, redireciona para o login
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = API_LOGIN_URL;
+                    return; // Interrompe a execução
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayMessage(data.message, 'success');
+                    clearAddForm();
+                    fetchTurmas(); // Recarrega a lista de turmas
+                } else {
+                    displayMessage(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar turma:', error);
+                displayMessage('Erro de conexão ao adicionar turma.', 'error');
+            } finally {
+                hideLoader(); // ESCONDE O LOADER
+            }
+        });
+
+        // Envia o formulário do MODAL (EDIÇÃO de Turma)
+        editTurmaForm.addEventListener('submit', async (event) => {
+            showLoader();
+            event.preventDefault();
+
+            const id = editTurmaIdInput.value;
+            const method = 'PUT';
+            const url = `${API_BASE_URL_TURMAS}/${id}`;
+
+            const formData = new FormData(editTurmaForm);
+            const turmaData = {};
+            for (let [key, value] of formData.entries()) {
+                turmaData[key] = value === '' ? null : value; // Envia strings vazias como null
+            }
+
+            turmaData.ano_letivo = turmaData.ano_letivo ? parseInt(turmaData.ano_letivo) : null;
+            turmaData.descricao = null; // Garante que a descrição seja nula ao editar, já que o campo foi removido
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    },
+                    body: JSON.stringify(turmaData)
+                });
+                // Se a resposta for 401 ou 403, redireciona para o login
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = API_LOGIN_URL;
+                    return; // Interrompe a execução
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayMessage(data.message, 'success');
+                    closeEditModal(); // Fecha o modal após salvar
+                    fetchTurmas(); // Recarrega a lista de turmas
+                } else {
+                    displayMessage(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao salvar turma:', error);
+                displayMessage('Erro de conexão ao salvar turma.', 'error');
+            } finally {
+                hideLoader(); // ESCONDE O LOADER
+            }
+        });
+
+        // Deleta uma turma
+        async function deleteTurma(id) {
+            showLoader();
+            if (!confirm('Tem certeza que deseja excluir esta turma? Isso pode afetar alunos associados.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL_TURMAS}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    }
+                });
+                // Se a resposta for 401 ou 403, redireciona para o login
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = API_LOGIN_URL;
+                    return; // Interrompe a execução
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayMessage(data.message, 'success');
+                    fetchTurmas(); // Recarrega a lista de turmas
+                } else {
+                    displayMessage(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao deletar turma:', error);
+                displayMessage('Erro de conexão ao deletar turma.', 'error');
+            } finally {
+                hideLoader(); // ESCONDE O LOADER
+            }
+        }
+
+        // Função para consultar e exibir alunos de uma turma
+        async function consultarAlunos(idTurma, nomeTurma) {
+            showLoader();
+            alunosTurmaNomeSpan.textContent = nomeTurma; // Define o nome da turma no título do modal
+            alunosByTurmaTableBody.innerHTML = ''; // Limpa a tabela de alunos antes de carregar
+            alunosByTurmaMessageArea.classList.add('hidden'); // Esconde mensagens anteriores
+
+            try {
+                const response = await fetch(`${API_BASE_URL_TURMAS}/${idTurma}/alunos`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    }
+                });
+                // Se a resposta for 401 ou 403, redireciona para o login
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = API_LOGIN_URL;
+                    return; // Interrompe a execução
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.data.length > 0) {
+                        data.data.forEach(aluno => {
+                            const row = `
+                                <tr>
+                                    <td>${aluno.id_aluno}</td>
+                                    <td>${aluno.nome_aluno}</td>
+                                    <td>${aluno.ra}</td>
+                                    <td>${aluno.idade || ''}</td>
+                                    <td>${aluno.periodo || ''}</td>
+                                    <td>${aluno.responsavel || ''}</td>
+                                    <td>${aluno.telefone_responsavel || ''}</td>
+                                    <td>${aluno.email_responsavel || ''}</td>
+                                </tr>
+                            `;
+                            alunosByTurmaTableBody.insertAdjacentHTML('beforeend', row);
+                        });
+                    } else {
+                        displayMessage('Nenhum aluno encontrado para esta turma.', 'info', alunosByTurmaMessageArea);
+                    }
+                    openAlunosByTurmaModal(); // Abre o modal após carregar os dados
+                } else {
+                    displayMessage(`Erro ao consultar alunos da turma: ${data.message}`, 'error', alunosByTurmaMessageArea);
+                }
+            } catch (error) {
+                console.error('Erro ao consultar alunos por turma:', error);
+                displayMessage('Erro de conexão ao consultar alunos da turma.', 'error', alunosByTurmaMessageArea);
+            } finally {
+                hideLoader(); // ESCONDE O LOADER
+            }
+        }
+
+        // Função de Logout
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_role');
+            window.location.href = API_LOGIN_URL;
+        }
+
+        // Verificação de autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+
+            if (!token || (role !== 'professor' && role !== 'admin')) {
+                // Se não há token ou o papel não é professor/admin, redireciona para login
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+
+            // Se autenticado, carrega os dados
+            fetchTurmas();
+        });
+    </script>
+</body>
+
+</html>

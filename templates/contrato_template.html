@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Contrato de Prestação de Serviços Educacionais</title>
+    <style>
+        @page {
+            /* Aumentamos a margem do topo para dar mais espaço ao novo cabeçalho */
+            margin: 4.5cm 2cm 2cm 2.5cm;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        .contrato-titulo {
+            font-size: 14pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .clausula-titulo {
+            font-size: 11pt;
+            font-weight: bold;
+            text-align: left;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .parte {
+            margin-bottom: 10px;
+        }
+
+        .paragrafo {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            text-indent: 40px;
+            /* Indentação do parágrafo */
+        }
+
+        .lista-alfa {
+            margin-left: 60px;
+            /* Alinhamento da lista a, b, c */
+            text-indent: -20px;
+            margin-bottom: 5px;
+        }
+
+        .lista-material {
+            margin-left: 60px;
+            margin-bottom: 0;
+            margin-top: 0;
+            padding: 0;
+        }
+
+        .info-financeira-tabela {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-collapse: collapse;
+        }
+
+        .info-financeira-tabela td {
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .assinatura-bloco {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+
+        .assinatura-linha {
+            width: 350px;
+            border-bottom: 1px solid #000;
+            margin: 0 auto 5px auto;
+        }
+
+        .assinatura-texto {
+            margin-bottom: 25px;
+        }
+
+        /* --- CÓDIGO DO CABEÇALHO --- */
+        header {
+            position: fixed;
+            /* Ajustamos a posição para o novo tamanho */
+            top: -4.5cm;
+            left: 0px;
+            right: 0px;
+            /* Aumentamos a altura do container do cabeçalho */
+            height: 150px;
+            text-align: center;
+        }
+
+        header img {
+            /* Aumentamos BASTANTE o tamanho da imagem */
+            height: 340px;
+        }
+
+
+
+        /* --- FIM DO ESTILO DO CABEÇALHO --- */
+        /* --- FIM DO CÓDIGO --- */
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="{{LOGO_SRC}}" alt="Logo Colégio Crescer">
+    </header>
+
+    <main>
+        <div class="contrato-titulo">CONTRATO DE PRESTAÇÃO DE SERVIÇOS EDUCACIONAIS</div>
+        <div class="clausula-titulo">CLÁUSULA I – DAS PARTES</div>
+        <div class="parte">
+            <strong>CONTRATADA:</strong> P J S DE CASTRO TRAVELHO COLÉGIO – COLÉGIO CRESCER, pessoa jurídica de direito
+            privado, devidamente inscrita no CNPJ sob n° 01.626.645/0001-05, com sede na Av. Rui Barbosa, nº 1868,
+            Santana, nesta Cidade, CEP. 12.212-000.
+        </div>
+        <div class="parte">
+            <strong>CONTRATANTE:</strong> <strong>{{CONTRATANTE_NOME}}</strong>, portador do Documento de Identidade RG:
+            <strong>{{CONTRATANTE_RG}}</strong> SSP/SP, inscrito no CPF: <strong>{{CONTRATANTE_CPF}}</strong>, residente
+            e domiciliado no endereço: <strong>{{CONTRATANTE_ENDERECO}}</strong>.
+        </div>
+       
+        <div class="parte">
+            <strong>ALUNO:</strong> <strong>{{ALUNO_NOME}}</strong>, portador do Documento de Identidade RG:
+            <strong>{{ALUNO_RG}}</strong>, inscrito no CPF: <strong>{{ALUNO_CPF}}</strong>, residente e domiciliado no
+            endereço: <strong>{{ALUNO_ENDERECO}}</strong>.
+        </div>
+
+        <div class="clausula-titulo">CLÁUSULA II – DO OBJETIVO CONTRATUAL</div>
+        <p class="paragrafo">§1º - O COLÉGIO CRESCER se propõe a ministrar, NO ANO LETIVO DE
+            <strong>{{ANO_LETIVO}}</strong>, EDUCAÇÃO INFANTIL ( I, II E III ) , ENSINO FUNDAMENTAL,
+            (<strong>{{ALUNO_TURMA}}</strong>) ao aluno, através de aulas e demais atividades escolares, em plena
+            conformidade com: a) Regimento Escolar; b) Proposta Pedagógica.</p>
+        <p class="paragrafo">§2º - Os instrumentos mencionados no parágrafo anterior estão disponíveis em ambiente
+            virtual ou arquivo físico e os gastos de impressão não estão inclusos neste instrumento;</p>
+        <p class="paragrafo">§3º - Sem prejuízo de legislação correlata aplicável, este instrumento será regido pelas
+            seguintes leis:</p>
+        <div class="lista-alfa">a) Lei nº 8072/1990 – Estatuto da Criança e do Adolescente (ECA);</div>
+        <div class="lista-alfa">b) Lei nº 8078/1990 – Código de Defesa do Consumidor (CDC);</div>
+        <div class="lista-alfa">c) Lei nº 9394/1996 – Lei de Diretrizes e Bases da Educação Nacional (LDB);</div>
+        <div class="lista-alfa">d) Lei nº 10.406/2002 – Código Civil Brasileiro (CC)</div>
+        <div class="lista-alfa">e) Lei nº 13.709/2018 – Lei Geral de Proteção de Dados (LGPD);</div>
+
+        <div class="clausula-titulo">CLÁUSULA III – DA PROPOSTA PEDAGÓGICA</div>
+        <p class="paragrafo">§1º - O COLÉGIO CRESCER tem sua proposta pedagógica baseada nas normas e diretrizes
+            previstas na Lei nº 9394/1996 (Lei de Diretrizes e Bases da Educação Nacional) e se orienta pelos seguintes
+            fundamentos:</p>
+        <div class="lista-alfa">a) Garantia ao aluno de acesso aos conhecimentos fundamentais adequados a sua faixa
+            etária;</div>
+        <div class="lista-alfa">b) Promoção da autoestima e autonomia intelectual do aluno;</div>
+        <div class="lista-alfa">c) Desenvolvimento do companheirismo e atitudes morais para a vida em sociedade;</div>
+        <div class="lista-alfa">d) Promoção do desenvolvimento de postura crítica, participativa e dialógica.</div>
+        <p class="paragrafo">§2º - Os CONTRATANTES declaram ter pleno conhecimento da proposta pedagógica do COLÉGIO
+            CRESCER, aceitando tais diretrizes educacionais, tudo em conformidade com os documentos mencionados no §1º
+            da Cláusula II deste instrumento contratual.</p>
+
+        <div class="clausula-titulo">CLÁUSULA IV – DA PRESTAÇÃO DOS SERVIÇOS EDUCACIONAIS</div>
+        <p class="paragrafo">§1º - Os serviços serão prestados em conformidade com a Proposta Pedagógica e dentro do
+            Calendário Escolar apresentado aos CONTRATANTES e referir-se-ão somente ao ANO LETIVO DE
+            <strong>{{ANO_LETIVO}}</strong>;</p>
+        <p class="paragrafo">§2º - As aulas serão ministradas na sede do COLÉGIO CRESCER, de forma presencial ou não
+            presencial, conforme dispuser a lei e sempre tendo em vista a natureza do conteúdo e da técnica pedagógica;
+        </p>
+        <p class="paragrafo">§3º - A locomoção do ALUNO para as atividades fora do recinto escolar não serão custeadas
+            pelo COLÉGIO CRESCER, cumprindo aos CONTRATANTES tal custeio;</p>
+        <p class="paragrafo">§4º - O COLÉGIO CRESCER possui capacidade física, técnica e operacional para implantação de
+            Ambiente Virtual de Aprendizagem (AVA) e/ou Ambiente Virtual de Ensino e Aprendizagem (AVEA) necessários
+            para as atividades educacionais previstas neste instrumento, sendo certo que a utilização de tal meio está
+            condicionada a:</p>
+        <div class="lista-alfa">a) AUTORIZAÇÃO LEGAL – em casos de regulamentação do novo formato para difusão da
+            atividade educacional ou nos casos extraordinários impostos por lei;</div>
+        <div class="lista-alfa">b) IMPLANTAÇÃO – desde que legalmente autorizado e visando implantação de Ambiente
+            Virtual de Aprendizagem (AVA) e/ou Ambiente Virtual de Ensino e Aprendizagem (AVEA).</div>
+        <p class="paragrafo">§5º - Em caso de autorização legal e regularmente implantados e observados os regramentos
+            técnicos e operacionais aplicáveis, as aulas virtuais poderão ser:</p>
+        <div class="lista-alfa">a) EM CARÁTER INDIVIDUAL – quando a escolha por assistir as aulas for efetivada mediante
+            o regramento específico, observadas as regras acerca de assiduidade e observância do currículo escolar, com
+            provas e testes pessoais visando aferir a captação do conhecimento;</div>
+        <div class="lista-alfa">b) EM CARÁTER COLETIVO – quando as aulas virtuais decorrerem de imposição legal e em
+            caráter geral, tais como pandemias, catástrofes, paralisações, dentre outras situações que permitam o uso de
+            tal meio educacional.</div>
+        <p class="paragrafo">§6º - A relação do COLÉGIO CRESCER com o ALUNO no ambiente escolar será pautada pela
+            legislação aplicável mencionada no §1º da Cláusula II deste instrumento, bem como pelo REGIMENTO INTERNO
+            ESCOLAR;</p>
+        <p class="paragrafo">§7º - O ALUNO está obrigado, de forma irrestrita, a observar o REGIMENTO INTERNO ESCOLAR,
+            cumprindo aos CONTRATANTES a ciência ao ALUNO acerca das regras e objetivos de tal documento que, desde já,
+            declaram ter acessado virtualmente;</p>
+        <p class="paragrafo">§8º - O COLÉGIO CRESCER deixa expressamente informado que NÃO FORNECERÁ ao ALUNO:</p>
+        <div class="lista-material">a) Material Didático-Escolar</div>
+        <div class="lista-material">b) Material Escolar Pessoal;</div>
+        <div class="lista-material">c) Alimentação;</div>
+        <div class="lista-material">d) Transporte Escolar;</div>
+        <div class="lista-material">e) Material de Uso Pessoal</div>
+        <div class="lista-material">f) Uniforme</div>
+        <p class="paragrafo">§9º - O COLÉGIO CRESCER disponibilizará serviço de socorro (ambulância) terceirizado para
+            as situações que forem necessárias à preservação da saúde e higidez do ALUNO, informando imediatamente a
+            ocorrência aos CONTRATANTES, que se obrigam, desde já, a preencher formulário específico com dados de
+            contato, convênio médico, bem como dados específicos sobre a saúde do ALUNO;</p>
+        <p class="paragrafo">§10º - Ao COLÉGIO CRESCER é assegurado o Planejamento e a Prestação dos Serviços de Ensino,
+            em especial:</p>
+        <div class="lista-alfa">a) A marcação de datas para provas de aproveitamento;</div>
+        <div class="lista-alfa">b) Fixação de distribuição de carga horária;</div>
+        <div class="lista-alfa">c) Designação de professores;</div>
+        <div class="lista-alfa">d) Orientação didático-pedagógica e educacional;</div>
+        <div class="lista-alfa">e) Outras providências que as atividades docentes exigirem, obedecendo ao seu exclusivo
+            critério, sem ingerência dos CONTRATANTES;</div>
+        <div class="lista-alfa">f) Elaboração e oferta, sem custos aos CONTRATANTES, de atividades extracurriculares,
+            conforme disponibilidade financeira e de recursos humanos.</div>
+        <p class="paragrafo">§11º - Quanto ao material didático-educacional, o COLÉGIO CRESCER efetuará os pedidos,
+            desde que, uma vez avisado os valores no ato da matrícula, os CONTRATANTES efetuem os pagamentos/depósitos
+            em até 10 (dez) dias corridos contados da data do vencimento estipulado, sendo justo e convencionado que o
+            COLÉGIO CRESCER não se obrigará a fornecer tal material em mesmas condições de preço e entrega em caso de
+            não repasse dos valores em prazo hábil e também não será ressarcido o valor que foi repassado para a compra
+            do material didático-educacional anual pelo o responsável que desistir ou cancelar a matrícula durante o ano
+            letivo.</p>
+        <p class="paragrafo">Fica também firmado que, o não pagamento do material adquirido, poderá ensejar a cobrança
+            pelos meios legais, incluindo protesto em cartório e inscrição em órgãos de proteção ao crédito
+            (SPC/SERASA), conforme disposto nos artigos 289,394 e 395 do Código Civil.</p>
+        <p class="paragrafo">O Colégio Crescer se compromete a fornecer previamente informações detalhadas sobre os
+            valores e a composição do material didático, nos termos do Código de Defesa do Consumidor e da Lei nº
+            9.870/1999.</p>
+        <p class="paragrafo">§12º - Nos termos do que dispõe a Constituição Federal e o Estatuto da Criança e do
+            Adolescente, ficam os CONTRATANTES informados de sua responsabilidade legal no fornecimento dos materiais
+            necessários para educação do ALUNO matriculado, em especial pelo prejuízo em relação aos demais alunos e na
+            sua formação educacional;</p>
+        <p class="paragrafo">§13º – O responsável pelo aluno compromete-se a pagar pontualmente as parcelas referentes
+            ao material didático, nos termos ajustados em contrato, ciente de que o atraso acarretará incidência de
+            juros de mora de 2% (dois por cento) ao mês, calculados pro rata die, além de correção monetária, conforme
+            legislação vigente.</p>
+        <p class="paragrafo">Declara ainda ter ciência de que, uma vez efetuado o pedido do material didático, não será
+            possível sua devolução, troca ou restituição de valores já pagos, sendo certo que, após a entrega, a guarda,
+            conservação e uso do material passam a ser de inteira e exclusiva responsabilidade do aluno e de seus
+            responsáveis legais.</p>
+
+        <table class="info-financeira-tabela">
+            <tr>
+                <td>VALOR DO MATERIAL DIDÁTICO: R$ <strong>{{VALOR_MATERIAL_DIDATICO}}</strong></td>
+                <td>VALOR DE CADA PARCELA: R$ <strong>{{VALOR_PARCELA_MATERIAL}}</strong></td>
+            </tr>
+        </table>
+
+        <p class="paragrafo">§14º - As atividades extracurriculares serão planejadas única e exclusivamente pelo COLÉGIO
+            CRESCER que, ofertará, em complemento ao currículo obrigatório escolar, outras atividades complementares,
+            sempre observada a disponibilidade financeira e recursos humanos para tais atividades.</p>
+
+        <div class="clausula-titulo">CLÁUSULA V – DA MATRÍCULA</div>
+        <p class="paragrafo">§1º - A MATRÍCULA é ato formal de vinculação do ALUNO ao COLÉGIO CRESCER, conferindo-lhe
+            tal condição e somente ocorrerá com a entrega dos seguintes documentos ao COLÉGIO CRESCER, a saber:</p>
+        <div class="lista-alfa">a) REQUERIMENTO DE MATRÍCULA (assinado pelos contratantes);</div>
+        <div class="lista-alfa">b) FICHA INFORMATIVA (assinada pelos contratantes);</div>
+        <div class="lista-alfa">c) TERMO DE CONHECIMENTO DAS NORMAS; (assinado pelos contratantes);</div>
+        <div class="lista-alfa">d) RG E CPF DO ALUNO E DOS PAIS (cópias em PDF);</div>
+        <div class="lista-alfa">e) CARTEIRA DE VACINAÇÃO DO ALUNO(A);</div>
+        <div class="lista-alfa">f) 01 FOTOS 3X4</div>
+        <div class="lista-alfa">g) COMPROVANTE DE RESIDÊNCIA;</div>
+        <div class="lista-alfa">h) PAGAMENTO DA 1ª PARCELA DA ANUIDADE; (cópia do comprovante)</div>
+        <p class="paragrafo">§2º - Após Certificação do Pagamento da Parcela da Anuidade pela Tesouraria, o REQUERIMENTO
+            DE MATRÍCULA será encaminhado junto com os demais documentos à Diretoria do COLÉGIO CRESCER para EXAME,
+            DEFERIMENTO ou INDEFERIMENTO da matrícula pretendida;</p>
+        <p class="paragrafo">§3º - Em caso de REMATRÍCULA, será adotado o mesmo procedimento inicial previsto no
+            parágrafo anterior, sendo que a existência de débitos anteriores não quitados ou não renegociados serão
+            considerados como situação que impedem a rematrícula, ressalvada e garantida a análise do Departamento
+            Jurídico e da Diretoria do COLÉGIO CRESCER;</p>
+        <p class="paragrafo">§4º - Com a MATRÍCULA efetivada e assinado o CONTRATO DE PRESTAÇÃO DE SERVIÇOS
+            EDUCACIONAIS, iniciar-se-ão as os direitos e obrigações nele avençados, nos termos da Lei;</p>
+        <p class="paragrafo">§5º - Em caso de não aprovação da matrícula ou rematrícula pela Tesouraria ou Departamento
+            Jurídico do COLÉGIO CRESCER, os valores referente à PRIMEIRA PARCELA DA ANUIDADE será imediatamente
+            devolvida aos CONTRATANTES;</p>
+
+        <div class="clausula-titulo">CLÁUSULA VI – DA ANUIDADE E PAGAMENTO</div>
+        <p class="paragrafo">§1º - Constitui-se como objeto deste instrumento contratual a prestação de serviços
+            educacionais pelo COLÉGIO CRESCER, cumprindo aos CONTRATANTES o pagamento de ANUIDADE nas condições e regras
+            adiante descritas;</p>
+        <p class="paragrafo">§2º - Como contraprestação pela prestação dos serviços educacionais oferecidos e a serem
+            prestados, referentes ao ANO LETIVO DE <strong>{{ANO_LETIVO}}</strong>, conforme previsto na CLÁUSULA II
+            deste instrumento, os CONTRATANTES pagarão ao COLÉGIO CRESCER o valor apresentado antecipadamente, ora
+            denominado ANUIDADE, que será pago conforme a regra adiante descrita:</p>
+
+        <table class="info-financeira-tabela">
+            <tr>
+                <td>VALOR TOTAL DA ANUIDADE: R$ <strong>{{VALOR_ANUIDADE}}</strong></td>
+                <td>VALOR DA MATRÍCULA: R$ <strong>{{VALOR_MATRICULA}}</strong></td>
+            </tr>
+            <tr>
+                <td colspan="2">VALOR DE CADA PARCELA (12x): R$ <strong>{{VALOR_PARCELA}}</strong></td>
+            </tr>
+        </table>
+
+        <p class="paragrafo">§3º - A 1ª (primeira parcela) da anuidade terá data de vencimento fixada para o dia
+            <strong>{{VENCIMENTO_PRIMEIRA_PARCELA}}</strong> de janeiro de <strong>{{ANO_LETIVO}}</strong> e as demais,
+            sucessivamente, nas correspondentes datas, até o dia <strong>{{VENCIMENTO_ULTIMA_PARCELA}}</strong> de
+            dezembro de <strong>{{ANO_LETIVO}}</strong>;</p>
+        <p class="paragrafo">§4º - DESCONTO POR ANTECIPAÇÃO- O pagamento de qualquer das parcelas da ANUIDADE até o 5º
+            (quinto) dia útil de cada mês garantirá um abatimento de <strong>5</strong>%
+            (<strong>Cinco por cento</strong>);</p>
+        <p class="paragrafo">§5º - Em caso de desistência em relação à prestação dos serviços educacionais, haverá multa
+            e o ressarcimento de parte dos valores pago no ato da matrícula, observado o seguinte:</p>
+        <div class="lista-alfa">a) Desistência antes do início do ano letivo de <strong>{{ANO_LETIVO}}</strong> – serão
+            ressarcidos parte dos valores pagos referentes à anuidade, porém, com retenção de 5% (cinco por cento) do
+            valor total da anuidade a título de serviços administrativos, impressão de documentos, análise jurídica e
+            pesquisas gerais;</div>
+        <div class="lista-alfa">b) Desistência após o início do ano letivo de <strong>{{ANO_LETIVO}}</strong>, a
+            desistência contratual será permitida, aplicando-se multa contratual equivalente a 10% (dez por cento) do
+            valor das parcelas contratuais vencidas e/ou vincendas e sem prejuízo do ressarcimento dos gastos
+            mencionados no item anterior.</div>
+        <p class="paragrafo">§6º - Ressalvados os casos de DESCONTO POR ANTECIPAÇÃO E QUITAÇÃO DA ANUIDADE DE FORMA
+            ANTECIPADA, fica justo e convencionado que o vencimento das parcelas da anuidade dar-se-á no dia 10 (dez) de
+            cada mês, observado o seguinte:</p>
+        <div class="lista-alfa">a) O PAGAMENTO será através de Boleto Bancário, Transferência Bancária, Débito ou PIX e,
+            em casos excepcionais, poderá ser feito na Secretaria do Colégio.</div>
+        <div class="lista-alfa">b) A emissão de 2ª (segunda) via sofrerá cobrança pela impressão;</div>
+        <div class="lista-alfa">c) O ATRASO no pagamento das parcelas da anuidade na data estipulada importará em
+            impontualidade e não aproveitará a quaisquer benefícios ou desconto;</div>
+        <div class="lista-alfa">d) O atraso no pagamento importará em MULTA contratual de 2% (dois por cento), juros de
+            mora de 2% (dois por cento) ao mês (pro rata die) e da correção monetária mensal pelo IGPM/FGV;</div>
+        <div class="lista-alfa">e) Em caso de COBRANÇA JUDICIAL dos débitos decorrentes deste instrumento, fica justo e
+            contratado que todas as custas processuais e honorários advocatícios serão computados como débitos líquidos
+            e exigíveis;</div>
+        <div class="lista-alfa">f) Fica justo e convencionado que a cobrança judicial ou extrajudicial dos débitos
+            apurados terá HONORÁRIOS ADVOCATÍCIOS fixados em 20% (vinte por cento) de seu montante;</div>
+        <div class="lista-alfa">g) Os CONTRATANTES estão plenamente cientes de que o não pagamento das parcelas mensais
+            referentes à anuidade acarretará a inclusão de seus nomes no SPC/Serasa ou entidade que se assemelhe e não
+            coibirá o protesto deste instrumento contratual no cartório competente, desde que atrasado o débito por mais
+            de 15 (quinze) dias e notificado (s) os Contratantes por qualquer meio idôneo, inclusive via whatsapp;</div>
+        <div class="lista-alfa">h) Declaram os CONTRATANTES, que o presente instrumento contratual AUTORIZA O PROTESTO
+            das parcelas da anuidade eventualmente em atraso e seus devidos acréscimos legais e contratuais.</div>
+
+        <div class="clausula-titulo">CLÁUSULA VII – DAS DISPOSIÇÕES TRANSITÓRIAS</div>
+        <p class="paragrafo">§1º - Os valores previstos na CLÁUSULA VI incluem, exclusivamente, a prestação dos serviços
+            educacionais contratados e delineados pela programação anual escolar, distribuição de classe, classificação
+            de alunos e carga horária constante do Plano Escolar;</p>
+        <p class="paragrafo">§2º - Não estão incluídos neste contrato os serviços especiais de reforço, dependência,
+            transporte escolar, os opcionais e de uso facultativo para o ALUNO, bem como as segundas chamadas de prova
+            ou exame, a segunda via de documentos, o uniforme, a alimentação, o material didático e o material de uso
+            individual do aluno;</p>
+        <p class="paragrafo">§3º - O não comparecimento do ALUNO aos atos escolares ora contratados não exime os
+            CONTRATANTES do pagamento das parcelas do valor da anuidade, tendo em vista a efetiva disponibilidade dos
+            serviços ofertados pelo COLÉGIO CRESCER aos CONTRATANTES;</p>
+        <p class="paragrafo">§4º- Considerando que o presente contrato é firmado antecipadamente, com previsão da
+            prestação dos serviços para o ano letivo de <strong>{{ANO_LETIVO}}</strong>, de acordo com o Calendário
+            Escolar da Escola, fica assegurada a possibilidade de alteração de valores de modo a preservar o equilíbrio
+            contratual, caso qualquer mudança legislativa ou normativa altere a equação econômico-financeira do presente
+            instrumento e possa acarretar para o COLÉGIO CRESCER o desequilíbrio de suas contas e respectivo risco na
+            própria conclusão dos serviços;</p>
+        <p class="paragrafo">§5º - Considerando a previsão de receitas pelas matrículas efetivadas e o número de alunos
+            matriculados, fica justo e acordado que, em nenhuma hipótese, será possível a redução do valor da anuidade
+            ou parcelas da anuidade neste instrumento, sendo certo que qualquer revisão decorrente de fator externo
+            decorrerá se for o caso, de expressa determinação legal ou em decorrência de decisão judicial;</p>
+        <p class="paragrafo">§6º - Caso os CONTRATANTES não concordem expressamente em aderir à alteração proposta a
+            tempo e modo, o presente contrato perderá sua eficácia e será rescindido de pleno direito pelas partes, por
+            conta da inexequibilidade de seu objeto;</p>
+        <p class="paragrafo">§7º - O presente contrato tem duração até o final do período letivo mencionado e contratado
+            e poderá ser rescindido nas seguintes hipóteses:</p>
+        <div class="lista-alfa">a) A PEDIDO responsável, solicitando o desligamento;</div>
+        <div class="lista-alfa">b) Por DESLIGAMENTO, nos termos do item IV do Artigo 82º do Regimento Escolar;</div>
+        <p class="paragrafo">§8º - Em todos os casos ficam os CONTRATANTES obrigados a pagar o valor da parcela da
+            anuidade do mês em que ocorrer o evento (calculados pro rata die), além de outros débitos eventualmente
+            existentes, nos termos deste instrumento;</p>
+
+        <div class="clausula-titulo">CLÁUSULA VIII – DAS DISPOSIÇÕES FINAIS</div>
+        <p class="paragrafo">§1º - Ao firmar o presente contrato os CONTRATANTES declaram que tem conhecimento prévio do
+            Regimento Escolar e das instruções específicas que lhe foram apresentadas e que passam a fazer parte
+            integrante do presente contrato, submetendo-se às suas disposições, bem como das demais obrigações
+            decorrentes da legislação aplicável à área de ensino;</p>
+        <p class="paragrafo">§2º - Independentemente do acima declarado, o Regimento Escolar e demais instruções estarão
+            à disposição do Contratante para consulta na sede do COLÉGIO CRESCER;</p>
+        <p class="paragrafo">§3º - Obrigam-se os CONTRATANTES a fazer com que o ALUNO cumpra o Calendário Escolar e
+            horário estabelecidos pelo COLÉGIO CRESCER, assumindo total responsabilidade pelos problemas advindos da não
+            observância destes;</p>
+        <p class="paragrafo">§4º - Os CONTRATANTES estão cientes da obrigatoriedade do uso completo do uniforme escolar
+            por parte do ALUNO, bem como da aquisição de todo o material escolar individual exigido, assumindo
+            inteiramente a responsabilidade por qualquer fato que venha a prejudicar o ALUNO pelo descumprimento desta
+            obrigação;</p>
+        <p class="paragrafo">§5º - O presente instrumento contratual não inclui, em nenhuma hipótese, material escolar e
+            pessoal individual, material didático, uniforme e alimentação, sendo responsabilidade plena dos CONTRATANTES
+            tal aquisição, sem prejuízo das demais regras contratuais previstas neste instrumento;</p>
+        <p class="paragrafo">§6º - O COLÉGIO CRESCER, livre de quaisquer ônus ou retribuições, poderá utilizar das
+            imagens do ALUNO para fins exclusivos de divulgação da escola e suas atividades educacionais, podendo
+            reproduzi-la ou divulgá-la junto a internet, jornais e outros meios de comunicação públicos ou privados,
+            sempre observados a moral, os costumes e a ordem pública;</p>
+        <p class="paragrafo">O uso da imagem estará sujeito às normas da Lei de Proteção de Dados Pessoais (LGPD - Lei
+            número 13.709.2018), garantindo o direito à proteção dos dados do aluno, com a devida autorização dos
+            responsáveis legais.</p>
+        <p class="paragrafo">§7º O COLÉGIO CRESCER, informa que o ambiente escolar é monitorado por CÂMERAS DE
+            SEGURANÇA, visando a PROTEÇÃO E INTEGRIDADE DOS ALUNOS, COLABORADORES E VISITANTES.</p>
+        <p class="paragrafo">As imagens captadas são armazenadas em ambiente seguro e utilizadas exclusivamente para
+            fins de segurança do COLÉGIO, podendo ser acessadas apenas por pessoas autorizadas e, quando necessário,
+            fornecidas às autoridades competentes.</p>
+        <p class="paragrafo">O tratamento das imagens seguirá as disposições da Lei Geral de Proteção de Dados Pessoais
+            (LGPD - Lei nº 13.709/2018), garantindo os direitos à privacidade e proteção de dados dos envolvidos.</p>
+        <p class="paragrafo">Os responsáveis legais do aluno, reconhecem e concordam com o MONITORAMENTO DAS CÂMERAS DE
+            SEGURANÇA.</p>
+        <p class="paragrafo">§8º - Os CONTRATANTES autorizam o repasse dos seus dados cadastrais ao INEP – Instituto
+            Nacional de Estudos e Pesquisas Educacionais, quando este solicitar suas informações, para fins
+            estatísticos;</p>
+        <p class="paragrafo">§9º - As partes atribuem ao presente contrato plena eficácia e força executiva
+            extrajudicial, em especial para efeitos de protesto, nos termos da lei;</p>
+        <p class="paragrafo">§10º - O COLÉGIO CRESCER obriga-se ao dever de proteção, confidencialidade, sigilo de toda
+            informação, dados pessoais e base de dados a que tiver acesso, nos termos da LGPD, suas alterações e
+            regulamentações posteriores, durante o cumprimento do objeto descrito no instrumento contratual;</p>
+        <p class="paragrafo">Para dirimir questões oriundas deste instrumento, fica eleito o Foro da Comarca de São José
+            dos Campos, em cuja jurisdição as partes tem domicílio, arcando a parte vencida em demanda judicial com as
+            custas processuais a que der causa e com os honorários advocatícios arbitrados ao patrono da parte
+            vencedora.</p>
+
+        <div class="assinatura-bloco">
+            <p>E, por estarem às partes de acordo com todos os termos e condições do presente contrato, assinam este
+                instrumento em duas vias de igual teor e forma, na presença das testemunhas abaixo, para que se produzam
+                todos os efeitos legais.</p>
+            <br>
+            <p><strong>{{DATA_ASSINATURA}}</strong></p>
+            <br><br>
+            <div class="assinatura-linha"></div>
+            <div class="assinatura-texto">
+                <strong>COLÉGIO CRESCER</strong><br>
+                P J S DE CASTRO TRAVELHO COLÉGIO<br>
+                CNPJ sob n° 01.626.645/0001-05
+            </div>
+            <div class="assinatura-linha"></div>
+            <div class="assinatura-texto">
+                <strong>CONTRATANTES: 1.</strong> <strong>{{CONTRATANTE_ASSINATURA_1}}</strong>
+            </div>
+                        
+            
+            
+            
+        </div>
+    </main>
+</body>
+
+</html>

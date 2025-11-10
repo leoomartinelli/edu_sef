@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Mensalidades - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 1200px; margin: 2rem auto; padding: 1rem;
+            background-color: #ffffff; border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn.active {
+            background-color: #4f46e5; color: white; border-color: #4f46e5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Relatório de Mensalidades</h1>
+        <div id="message-area" class="hidden"></div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-shrink-0">
+                    <div class="flex border border-gray-300 rounded-lg p-1">
+                        <button id="tab-pendentes" class="tab-btn w-full md:w-auto px-6 py-2 text-sm font-semibold rounded-md transition-colors duration-200">A Receber</button>
+                        <button id="tab-pagas" class="tab-btn w-full md:w-auto px-6 py-2 text-sm font-semibold rounded-md transition-colors duration-200">Pagas</button>
+                    </div>
+                </div>
+                <div class="flex-grow">
+                    <input type="text" id="search-input" placeholder="Buscar por nome do aluno ou responsável..." class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+            <h2 id="table-title" class="text-2xl font-semibold text-gray-700 mb-4"></h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aluno</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Responsável Financeiro</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor Devido</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vencimento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mensalidades-table-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+                 <div id="total-sum" class="text-right font-bold text-lg mt-4 mr-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api/mensalidades';
+        const API_LOGIN_URL = 'login.html';
+
+        // Estado da página
+        let currentStatusFilter = 'open'; // 'open' para pendentes, 'approved' para pagas
+
+        // Elementos do DOM
+        const tableBody = document.getElementById('mensalidades-table-body');
+        const searchInput = document.getElementById('search-input');
+        const tabPendentes = document.getElementById('tab-pendentes');
+        const tabPagas = document.getElementById('tab-pagas');
+        const tableTitle = document.getElementById('table-title');
+        const totalSumEl = document.getElementById('total-sum');
+
+        const formatarMoeda = (valor) => parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const formatarData = (data) => new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+
+        async function fetchMensalidades() {
+            showLoader();
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">Carregando...</td></tr>`;
+            totalSumEl.textContent = '';
+            
+            const searchTerm = searchInput.value.trim();
+            const params = new URLSearchParams({
+                status: currentStatusFilter
+            });
+            if (searchTerm) {
+                params.append('search', searchTerm);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+
+                if (!response.ok) throw new Error('Falha ao carregar dados.');
+                
+                const result = await response.json();
+                tableBody.innerHTML = '';
+                
+                let totalValor = 0;
+
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(m => {
+                        const valorFinal = m.valor_total_devido || m.valor_mensalidade;
+                        totalValor += parseFloat(valorFinal);
+                        
+                        const row = `
+                            <tr>
+                                <td class="px-4 py-4 font-medium text-gray-900">${m.nome_aluno}</td>
+                                <td class="px-4 py-4 text-gray-600">${m.responsavel || 'N/A'}</td>
+                                <td class="px-4 py-4 font-semibold text-gray-800">${formatarMoeda(valorFinal)}</td>
+                                <td class="px-4 py-4 text-gray-600">${formatarData(m.data_vencimento)}</td>
+                                <td class="px-4 py-4">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        ${m.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                        ${m.status === 'approved' ? 'Pago' : 'Pendente'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                     totalSumEl.textContent = `Total: ${formatarMoeda(totalValor)}`;
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">Nenhuma mensalidade encontrada.</td></tr>`;
+                }
+
+            } catch (error) {
+                console.error("Erro:", error);
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Erro ao carregar os dados.</td></tr>`;
+            } finally {
+                hideLoader();
+            }
+        }
+        
+        function updateTabs() {
+            if (currentStatusFilter === 'open') {
+                tabPendentes.classList.add('active');
+                tabPagas.classList.remove('active');
+                tableTitle.textContent = 'Mensalidades a Receber';
+            } else {
+                tabPagas.classList.add('active');
+                tabPendentes.classList.remove('active');
+                tableTitle.textContent = 'Mensalidades Pagas';
+            }
+            fetchMensalidades();
+        }
+
+        tabPendentes.addEventListener('click', () => {
+            currentStatusFilter = 'open';
+            updateTabs();
+        });
+
+        tabPagas.addEventListener('click', () => {
+            currentStatusFilter = 'approved';
+            updateTabs();
+        });
+
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                fetchMensalidades();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+            updateTabs(); // Carrega a aba inicial "A Receber"
+        });
+    </script>
+</body>
+</html>

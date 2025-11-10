@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Contratos - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-validate {
+            background-color: #22c55e;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-validate:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table-container table {
+            min-width: 100%;
+        }
+
+        .table-container th,
+        .table-container td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .status-pendente {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .status-assinado {
+            color: #eab308;
+            font-weight: 600;
+        }
+
+        /* Amarelo para "Aguardando Validação" */
+        .status-validado {
+            color: #22c55e;
+            font-weight: 700;
+        }
+
+        /* Verde para "Validado" */
+        .link-padrao {
+            color: #3b82f6;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .nav-link {
+            color: #D1D5DB;
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            color: #FFFFFF;
+        }
+
+        .nav-link.active {
+            background-color: #111827;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
+                Financeiro</a>
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link">Turmas</a>
+                <a href="crud_professores.html" class="nav-link">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link ">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="gerenciar_contratos.html" class="nav-link active">Contratos</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Gerenciamento de Contratos</h1>
+
+        <div class="flex justify-center gap-6 mb-8 text-center">
+            <div class="bg-red-100 text-red-800 p-4 rounded-lg shadow">
+                <div class="text-3xl font-bold" id="count-pendente">...</div>
+                <div class="text-sm font-semibold">Contratos Pendentes</div>
+            </div>
+            <div class="bg-green-100 text-green-800 p-4 rounded-lg shadow">
+                <div class="text-3xl font-bold" id="count-validado">...</div>
+                <div class="text-sm font-semibold">Contratos Validados</div>
+            </div>
+        </div>
+        <div id="message-area" class="message hidden"></div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Buscar Contratos</h2>
+            <div class="search-group flex items-end gap-4">
+                <div class="form-group flex-grow">
+                    <label for="search_nome_aluno">Buscar por Nome do Aluno</label>
+                    <input type="text" id="search_nome_aluno" placeholder="Digite o nome do aluno">
+                </div>
+                <button class="btn btn-primary" onclick="fetchContratos()">Filtrar</button>
+                <button class="btn btn-secondary" onclick="clearSearch()">Limpar Filtro</button>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Contratos dos Alunos</h2>
+            <div id="loading-message" class="text-center text-gray-500 my-8">Carregando dados...</div>
+
+            <div class="table-container hidden" id="table-container">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left">ID Contrato</th>
+                            <th class="px-4 py-2 text-left">Aluno</th>
+                            <th class="px-4 py-2 text-left">Status da Assinatura</th>
+                            <th class="px-4 py-2 text-left">PDF Original</th>
+                            <th class="px-4 py-2 text-left">Documento Assinado</th>
+                            <th class="px-4 py-2 text-left">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contratos-table-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const API_LOGIN_URL = 'login.html';
+
+        function showLoader() { document.getElementById('global-loader').style.display = 'flex'; }
+        function hideLoader() { document.getElementById('global-loader').style.display = 'none'; }
+
+        function displayMessage(message, type) {
+            const area = document.getElementById('message-area');
+            area.textContent = message;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
+            setTimeout(() => area.classList.add('hidden'), 5000);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        async function fetchContratos() {
+            showLoader();
+            const token = localStorage.getItem('jwt_token');
+            const tbody = document.getElementById('contratos-table-body');
+            const loadingMessage = document.getElementById('loading-message');
+            const tableContainer = document.getElementById('table-container');
+
+            loadingMessage.classList.remove('hidden');
+            tableContainer.classList.add('hidden');
+            tbody.innerHTML = '';
+
+            const searchName = document.getElementById('search_nome_aluno').value.trim();
+            let url = `${API_BASE_URL}/contratos`;
+            if (searchName) {
+                url += `?nome=${encodeURIComponent(searchName)}`;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Falha ao carregar contratos.');
+                }
+
+                const result = await response.json();
+
+                if (result.counts) {
+                    document.getElementById('count-pendente').textContent = result.counts.pending || '0';
+                    document.getElementById('count-validado').textContent = result.counts.validated || '0';
+                }
+
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(contrato => {
+
+                        // --- LÓGICA DE STATUS (Igual) ---
+                        const temAssinaturaEletronica = contrato.id_assinatura != null;
+                        const temPdfAssinado = contrato.caminho_pdf_assinado != null;
+                        const estaValidado = contrato.assinado_validado == 1;
+
+                        let statusClass = 'status-pendente';
+                        let statusText = 'Pendente de Assinatura';
+
+                        if (estaValidado) {
+                            statusClass = 'status-validado';
+                            statusText = 'Validado';
+                        } else if (temAssinaturaEletronica || temPdfAssinado) {
+                            statusClass = 'status-assinado'; // Amarelo
+                            statusText = 'Aguardando Validação';
+                        }
+
+                        // --- LÓGICA DO LINK DE DOCUMENTO ASSINADO (ALTERADO) ---
+                        // --- LÓGICA DO LINK DE DOCUMENTO ASSINADO (CORRIGIDO) ---
+                        let docAssinadoHtml = 'N/A';
+
+                        // Se existe um PDF assinado (que é o nosso PDF mesclado), mostre o link para ele.
+                        if (temPdfAssinado) {
+                            docAssinadoHtml = `<button class="link-padrao" onclick="downloadPdf(${contrato.id_contrato}, 'assinado')">Ver PDF Assinado</button>`;
+                        }
+                        // Se não tem o PDF, mas tem o registro da assinatura (contrato antigo),
+                        // apenas informamos que os dados existem, mas não há PDF.
+                        else if (temAssinaturaEletronica) {
+                            docAssinadoHtml = '<span class="text-gray-500">Dados de Assinatura (sem PDF)</span>';
+                        }
+
+                        // --- LÓGICA DOS BOTÕES DE AÇÃO (Igual) ---
+                        let actionButtons = '';
+                        if (!estaValidado && (temAssinaturaEletronica || temPdfAssinado)) {
+                            actionButtons = `<button class="btn btn-validate" onclick="validarContrato(${contrato.id_contrato})">Validar</button>`;
+                        } else if (estaValidado) {
+                            actionButtons = '<span class="text-green-600 font-semibold p-2">Validado</span>';
+                        }
+                        actionButtons += `<button class="btn btn-delete text-sm ml-2" onclick="deleteContrato(${contrato.id_contrato})">Excluir</button>`;
+
+                        // --- MONTAGEM DA LINHA (ROW) ---
+                        const row = `
+                            <tr>
+                                <td class="px-4 py-2">${contrato.id_contrato}</td>
+                                <td class="px-4 py-2 font-medium">${contrato.nome_aluno}</td>
+                                <td class="px-4 py-2"><span class="${statusClass}">${statusText}</span></td>
+                                <td class="px-4 py-2">
+                                    <button class="link-padrao" onclick="downloadPdf(${contrato.id_contrato}, 'original')">Ver PDF Original</button>
+                                </td>
+                                <td class="px-4 py-2">
+                                    ${docAssinadoHtml}
+                                </td>
+                                <td class="px-4 py-2 whitespace-nowrap">
+                                    ${actionButtons}
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum contrato encontrado.</td></tr>';
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error');
+            } finally {
+                hideLoader();
+                loadingMessage.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('search_nome_aluno').value = '';
+            fetchContratos();
+        }
+
+        async function downloadPdf(contratoId, fileType) {
+            // (Função igual à original, sem alterações)
+            showLoader();
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                alert('Sua sessão expirou. Por favor, faça o login novamente.');
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/contratos/${contratoId}/download?file_type=${fileType}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Falha ao baixar o arquivo.');
+                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            } catch (error) {
+                displayMessage(error.message, 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function validarContrato(id) {
+            // (Função igual à original, sem alterações)
+            if (!confirm('Tem certeza que deseja validar este contrato? Esta ação é irreversível.')) {
+                return;
+            }
+            showLoader();
+            const token = localStorage.getItem('jwt_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/contratos/${id}/validar`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success');
+                    fetchContratos();
+                } else {
+                    displayMessage(result.message, 'error');
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao validar contrato.', 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function deleteContrato(id) {
+            // (Função igual à original, sem alterações)
+            if (!confirm('Tem certeza que deseja excluir este contrato? Esta ação é irreversível e apagará os arquivos PDF permanentemente.')) {
+                return;
+            }
+            showLoader();
+            const token = localStorage.getItem('jwt_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/contratos/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success');
+                    fetchContratos();
+                } else {
+                    displayMessage(result.message, 'error');
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao excluir o contrato.', 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // ==================================================
+        // === NOVA FUNÇÃO PARA BAIXAR O CERTIFICADO PDF ===
+        // ==================================================
+        /**
+         * Busca o certificado de assinatura em PDF e abre em nova aba
+         */
+        async function downloadCertificado(contratoId) {
+            showLoader();
+            const token = localStorage.getItem('jwt_token');
+            try {
+                // Chama a nova rota da API que vamos criar
+                const response = await fetch(`${API_BASE_URL}/contratos/${contratoId}/certificado-assinatura`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Falha ao gerar o certificado.');
+                }
+
+                // Pega o PDF retornado como um "blob"
+                const blob = await response.blob();
+
+                // Cria uma URL temporária para o blob e abre em nova aba
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+
+            } catch (error) {
+                displayMessage(error.message, 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // REMOVIDO: Funções do Modal (closeModal, window.onclick)
+
+        // Inicialização da página
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+            if (!token || (role !== 'admin' && role !== 'superadmin')) {
+                alert('Acesso negado. Apenas administradores podem acessar esta página.');
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+            fetchContratos();
+        });
+    </script>
+</body>
+
+</html>

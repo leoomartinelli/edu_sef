@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Usuários - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            text-align: center;
+        }
+
+        .btn.text-sm {
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-edit {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+
+        .btn-edit:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-reset {
+            background-color: #f59e0b;
+            color: #ffffff;
+        }
+
+        .btn-reset:hover {
+            background-color: #d97706;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Estilo padrão para os links da navbar */
+        .nav-link {
+            color: #D1D5DB;
+            /* cinza claro */
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            /* cinza mais escuro */
+            color: #FFFFFF;
+        }
+
+        /* Estilo para o link da PÁGINA ATUAL */
+        .nav-link.active {
+            background-color: #111827;
+            /* cinza bem escuro */
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional Financeiro</a>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link">Turmas</a>
+                <a href="crud_professores.html" class="nav-link">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link">Disciplinas</a> 
+                <a href="conteudo_programatico.html" class="nav-link ">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="gerenciar_contratos.html" class="nav-link">Contratos</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+
+                
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link active">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Gerenciamento de Usuários</h1>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Filtrar Usuários</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+
+                <div class="form-group">
+                    <label for="search_nome">Buscar por Nome do Aluno</label>
+                    <input type="text" id="search_nome" placeholder="Digite o nome do aluno">
+                </div>
+
+                <div class="form-group">
+                    <label for="search_ra">Buscar por RA do Aluno</label>
+                    <input type="text" id="search_ra" placeholder="Digite o RA do aluno">
+                </div>
+
+                <div class="form-group">
+                    <label for="filter_role">Filtrar por Cargo</label>
+                    <select id="filter_role">
+                        <option value="">Todos os Cargos</option>
+                        <option value="admin">Administrador</option>
+                        <option value="professor">Professor</option>
+                        <option value="aluno">Aluno (Acesso Liberado)</option>
+                        <option value="aluno_pendente">Aluno (Pendente)</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="btn btn-primary w-full" onclick="fetchUsers()">Filtrar</button>
+                    <button class="btn btn-secondary w-full" onclick="clearFilter()">Limpar</button>
+                </div>
+            </div>
+        </div>
+
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2 text-left">ID</th>
+                <th class="px-4 py-2 text-left">Nome / Username</th>
+                <th class="px-4 py-2 text-left">Cargo (Role)</th>
+                <th class="px-4 py-2 text-left">Ações</th>
+            </tr>
+        </thead>
+        <div id="message-area" class="hidden"></div>
+        <div class="flex justify-between items-center mb-4">
+            <button class="btn btn-primary" onclick="openAddModal()">Cadastrar Novo Usuário</button>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Usuários do Sistema</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left">ID</th>
+                            <th class="px-4 py-2 text-left">Username</th>
+                            <th class="px-4 py-2 text-left">Cargo (Role)</th>
+                            <th class="px-4 py-2 text-left">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title" class="text-2xl font-semibold text-gray-700 mb-4"></h2>
+            <div id="modal-message-area" class="hidden"></div>
+            <form id="user-form">
+                <input type="hidden" id="id_usuario">
+                <div class="form-group mb-4">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group mb-4" id="password-group">
+                    <label for="password">Senha (obrigatória ao criar)</label>
+                    <input type="password" id="password" name="password">
+                </div>
+                <div class="form-group mb-4">
+                    <label for="role">Cargo (Role)</label>
+                    <select id="role" name="role" required>
+                        <option value="">Selecione um cargo</option>
+                        <option value="admin">Administrador</option>
+                        <option value="professor">Professor</option>
+                        <option value="aluno">Aluno</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL_USUARIOS = '/api/usuarios';
+        const API_LOGIN_URL = 'login.html';
+
+        const userModal = document.getElementById('userModal');
+        const userForm = document.getElementById('user-form');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessageArea = document.getElementById('modal-message-area');
+        const messageArea = document.getElementById('message-area');
+        const usersTableBody = document.getElementById('users-table-body');
+        const passwordGroup = document.getElementById('password-group');
+        const passwordInput = document.getElementById('password');
+
+        function displayMessage(message, type, area = messageArea) {
+            area.textContent = message;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
+            setTimeout(() => {
+                area.classList.add('hidden');
+                area.textContent = '';
+            }, 5000);
+        }
+
+        function openAddModal() {
+            userForm.reset();
+            document.getElementById('id_usuario').value = '';
+            modalTitle.textContent = 'Cadastrar Novo Usuário';
+            passwordInput.required = true;
+            passwordGroup.style.display = 'block';
+            modalMessageArea.classList.add('hidden');
+            userModal.style.display = 'flex';
+        }
+
+        async function openEditModal(id) {
+            userForm.reset();
+            modalTitle.textContent = 'Carregando dados...';
+            passwordInput.required = false;
+            passwordGroup.style.display = 'none';
+            modalMessageArea.classList.add('hidden');
+            userModal.style.display = 'flex';
+
+            try {
+                const response = await fetch(`${API_BASE_URL_USUARIOS}/${id}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    modalTitle.textContent = 'Editar Usuário';
+                    const user = result.data;
+                    document.getElementById('id_usuario').value = user.id_usuario;
+                    document.getElementById('username').value = user.username;
+                    document.getElementById('role').value = user.role;
+                } else {
+                    displayMessage(result.message || 'Falha ao carregar dados do usuário.', 'error', modalMessageArea);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao carregar usuário.', 'error', modalMessageArea);
+            }
+        }
+
+        function closeModal() {
+            userModal.style.display = 'none';
+        }
+
+        userForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoader();
+
+            const id = document.getElementById('id_usuario').value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_BASE_URL_USUARIOS}/${id}` : API_BASE_URL_USUARIOS;
+
+            const formData = new FormData(userForm);
+            const userData = {};
+            formData.forEach((value, key) => {
+                if (key === 'password' && !value && id) return;
+                userData[key] = value;
+            });
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success');
+                    closeModal();
+                    fetchUsers();
+                } else {
+                    displayMessage(result.message || 'Ocorreu um erro.', 'error', modalMessageArea);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao salvar usuário.', 'error', modalMessageArea);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        async function fetchUsers() {
+            showLoader();
+            usersTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-4">Carregando...</td></tr>';
+
+            // Captura os valores de todos os filtros
+            const searchNome = document.getElementById('search_nome').value;
+            const searchRa = document.getElementById('search_ra').value;
+            const filterRole = document.getElementById('filter_role').value;
+
+            const params = new URLSearchParams();
+            if (searchNome) params.append('nome', searchNome);
+            if (searchRa) params.append('ra', searchRa);
+            if (filterRole) params.append('role', filterRole);
+
+            let url = API_BASE_URL_USUARIOS;
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!response.ok) throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                const result = await response.json();
+
+                usersTableBody.innerHTML = '';
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(user => {
+                        // Se o usuário for um aluno e tiver nome, exibe o nome. Senão, exibe o username.
+                        const displayName = user.nome_aluno || user.username;
+
+                        const row = `
+                    <tr>
+                        <td class="px-4 py-2">${user.id_usuario}</td>
+                        <td class="px-4 py-2 font-medium">${displayName}</td>
+                        <td class="px-4 py-2">${user.role}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            <button class="btn btn-edit text-sm" onclick="openEditModal(${user.id_usuario})">Editar</button>
+                            <button class="btn btn-reset text-sm ml-2" onclick="resetPassword(${user.id_usuario})">Resetar Senha</button>
+                            <button class="btn btn-delete text-sm ml-2" onclick="deleteUser(${user.id_usuario})">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+                        usersTableBody.innerHTML += row;
+                    });
+                } else {
+                    usersTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-4">Nenhum usuário encontrado.</td></tr>';
+                }
+            } catch (error) {
+                displayMessage(`Falha ao carregar usuários: ${error.message}`, 'error');
+                usersTableBody.innerHTML = `<tr><td colspan="4" class="text-center p-4 text-red-600">Erro ao carregar dados.</td></tr>`;
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // Adicione esta nova função ao seu script
+        function clearFilter() {
+            document.getElementById('search_nome').value = ''; // Limpa o campo de nome
+            document.getElementById('search_ra').value = '';   // Limpa o campo de RA
+            document.getElementById('filter_role').value = ''; // Limpa o campo de cargo
+            fetchUsers(); // Busca todos os usuários novamente
+        }
+        window.deleteUser = async (id) => {
+            if (!confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) return;
+            showLoader();
+            try {
+                const response = await fetch(`${API_BASE_URL_USUARIOS}/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                displayMessage(result.message, result.success ? 'success' : 'error');
+                if (result.success) fetchUsers();
+            } catch (error) {
+                displayMessage('Erro de conexão ao excluir usuário.', 'error');
+            } finally {
+                hideLoader();
+            }
+        };
+
+        window.resetPassword = async (id) => {
+            const newPassword = prompt("Digite a NOVA senha para este usuário:");
+            if (!newPassword || newPassword.trim() === '') {
+                alert("Operação cancelada. Nenhuma senha foi fornecida.");
+                return;
+            }
+            showLoader();
+            try {
+                const response = await fetch(`${API_BASE_URL_USUARIOS}/${id}/reset-password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                    },
+                    body: JSON.stringify({ new_password: newPassword })
+                });
+                const result = await response.json();
+                displayMessage(result.message, result.success ? 'success' : 'error');
+            } catch (error) {
+                displayMessage('Erro de conexão ao resetar senha.', 'error');
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        // --- INICIALIZAÇÃO E VERIFICAÇÃO DE SEGURANÇA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+
+            // Verificação de segurança crucial: Apenas admins podem ver esta página.
+            if (!token || role !== 'admin') {
+                alert('Acesso negado. Apenas administradores podem acessar esta página.');
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+
+            // Se a verificação passar, carrega os dados da página
+            fetchUsers();
+        });
+    </script>
+</body>
+
+
+</html>

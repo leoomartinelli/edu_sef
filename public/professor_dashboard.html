@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Professor - Sistema SEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center max-w-7xl px-4">
+            <a href="#" class="text-white text-2xl font-bold">EDU SEF - Portal do Professor</a>
+            <div class="flex items-center space-x-4">
+                <a href="trocar_senha.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Trocar
+                    Senha</a>
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-7xl py-12 px-4">
+        <div class="text-center mb-12">
+            <h1 id="welcome-message" class="text-4xl font-extrabold text-gray-800 mb-2">Carregando...</h1>
+            <p id="professor-info" class="text-lg text-gray-600"></p>
+        </div>
+
+        <section id="turmas-section">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Minhas Turmas</h2>
+            <div id="turmas-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            </div>
+        </section>
+
+        <section id="mural-avisos-section" class="mt-16">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Mural de Avisos</h2>
+            <div id="avisos-container" class="space-y-4">
+            </div>
+        </section>
+
+        <div class="mt-8">
+            <button id="btn-novo-aviso"
+                class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">
+                + Criar Novo Aviso
+            </button>
+        </div>
+
+        <section id="ferramentas-section" class="mt-16">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Ferramentas Adicionais</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <a href="https://app.souionica.com.br/login" target="_blank" rel="noopener noreferrer"
+                    class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                    <div class="w-14 h-14 mb-4 text-indigo-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800 mb-2">Portal Iônica</h2>
+                    <p class="text-sm text-gray-500">Acesse o ambiente de aprendizado e materiais de estudo.</p>
+                </a>
+
+                <a href="https://meet.google.com/landing?authuser=0" target="_blank" rel="noopener noreferrer"
+                    class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2">
+                    <div class="w-14 h-14 mb-4 text-indigo-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 4.5h-9A2.25 2.25 0 0 0 2.25 6.75v9A2.25 2.25 0 0 0 4.5 18.75Z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800 mb-2">Reunião (Google Meet)</h2>
+                    <p class="text-sm text-gray-500">Inicie ou participe de uma videochamada com alunos e pais.</p>
+                </a>
+            </div>
+        </section>
+
+        <div id="error-message" class="hidden mt-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+    </main>
+
+    <div id="modal-novo-aviso"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-2xl">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Criar Novo Aviso</h2>
+            <form id="form-novo-aviso">
+                <div class="mb-4">
+                    <label for="aviso-titulo" class="block text-sm font-medium text-gray-700">Título</label>
+                    <input type="text" id="aviso-titulo" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label for="aviso-mensagem" class="block text-sm font-medium text-gray-700">Mensagem</label>
+                    <textarea id="aviso-mensagem" rows="5"
+                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="aviso-turma" class="block text-sm font-medium text-gray-700">Enviar para a Turma <span
+                            class="text-red-500">*</span></label>
+                    <select id="aviso-turma" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Professores devem selecionar uma turma para enviar o aviso.
+                    </p>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="btn-cancelar-aviso"
+                        class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
+                    <button type="submit"
+                        class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700">Publicar
+                        Aviso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="text-center py-8 text-gray-500 text-sm">
+        <p>&copy; 2024-2025 Sistema SEF. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const API_LOGIN_URL = 'login.html';
+        let turmasDoProfessor = []; // NOVO: Variável global para armazenar turmas
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        const formatCpf = (cpf) => {
+            if (!cpf) return '';
+            const cleaned = String(cpf).replace(/\D/g, '');
+            return cleaned.length === 11 ? cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : cleaned;
+        };
+
+        // NOVO: Função para carregar avisos
+        async function carregarAvisos() {
+            const container = document.getElementById('avisos-container');
+            const token = localStorage.getItem('jwt_token');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/avisos`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const result = await response.json();
+
+                if (result.success) {
+                    container.innerHTML = '';
+                    if (result.data.length > 0) {
+                        result.data.forEach(aviso => {
+                            const dataFormatada = new Date(aviso.data_criacao).toLocaleString('pt-BR');
+                            let targetInfo = aviso.nome_turma
+                                ? `<span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">${aviso.nome_turma}</span>`
+                                : `<span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Aviso Geral</span>`;
+
+                            container.innerHTML += `
+                                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-xl font-bold text-gray-800">${aviso.titulo}</h3>
+                                        ${targetInfo}
+                                    </div>
+                                    <p class="text-gray-600 mb-4">${aviso.mensagem}</p>
+                                    <div class="text-xs text-gray-500 text-right">
+                                        Publicado por: <strong>${aviso.nome_criador}</strong> em ${dataFormatada}
+                                    </div>
+                                </div>`;
+                        });
+                    } else {
+                        container.innerHTML = '<p class="text-center text-gray-500 p-4 bg-gray-50 rounded-lg">Nenhum aviso para exibir no momento.</p>';
+                    }
+                } else {
+                    container.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">Erro ao carregar avisos: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar avisos:", error);
+                container.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">Erro de conexão ao carregar avisos.</p>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            window.showLoader();
+
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+            const errorMessage = document.getElementById('error-message');
+
+            if (!token || (role !== 'professor' && role !== 'admin')) {
+                logout();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/professor/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Falha ao carregar dados do professor.");
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const professor = result.data.professor;
+                    turmasDoProfessor = result.data.turmas; // Armazena as turmas
+
+                    document.getElementById('welcome-message').textContent = `Bem-vindo(a), Prof. ${professor.nome_professor}!`;
+                    document.getElementById('professor-info').textContent = `CPF: ${formatCpf(professor.cpf)} | Email: ${professor.email || 'N/A'}`;
+
+                    renderTurmasCards(turmasDoProfessor);
+                    await carregarAvisos(); // Carrega os avisos após os dados principais
+                } else {
+                    throw new Error(result.message || "Não foi possível obter os dados.");
+                }
+
+            } catch (error) {
+                console.error("Erro no carregamento do dashboard:", error);
+                errorMessage.textContent = `Ocorreu um erro: ${error.message}`;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                window.hideLoader();
+            }
+        });
+
+        function renderTurmasCards(turmas) {
+            const gridContainer = document.getElementById('turmas-grid');
+            gridContainer.innerHTML = '';
+
+            if (turmas && turmas.length > 0) {
+                turmas.forEach(turma => {
+                    // Trocamos o <a> por um <div> para conter múltiplos links
+                    gridContainer.innerHTML += `
+                        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col text-center transition-all duration-300 ease-in-out">
+                            
+                            <div class="w-14 h-14 mb-4 text-indigo-500 mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                            </div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">${turma.nome_turma}</h2>
+                            <p class="text-sm text-gray-500 mb-4 flex-grow">Acesse as ferramentas da turma.</p>
+                            
+                            <div class="space-y-2 mt-auto">
+                                <a href="gerenciar_boletim.html?idTurma=${turma.id_turma}&nomeTurma=${encodeURIComponent(turma.nome_turma)}"
+                                   class="block w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+                                   Gerenciar Boletim
+                                </a>
+                                <a href="conteudo_programatico.html?idTurma=${turma.id_turma}&nomeTurma=${encodeURIComponent(turma.nome_turma)}"
+                                   class="block w-full text-indigo-700 bg-indigo-100 hover:bg-indigo-200 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+                                   Conteúdo Programático
+                                </a>
+                            </div>
+                        </div>`;
+                });
+            } else {
+                gridContainer.innerHTML = `
+                    <div class="bg-gray-100 border-2 border-dashed rounded-xl p-6 flex flex-col items-center text-center col-span-1 sm:col-span-2 lg:col-span-4">
+                        <div class="w-14 h-14 mb-4 text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg></div>
+                        <h2 class="text-lg font-bold text-gray-700 mb-2">Nenhuma Turma Encontrada</h2>
+                        <p class="text-sm text-gray-500">Você ainda não foi associado a nenhuma turma. Entre em contato com a administração.</p>
+                    </div>`;
+            }
+        }
+
+        // --- NOVO: Lógica para o modal de criar avisos ---
+        const btnNovoAviso = document.getElementById('btn-novo-aviso');
+        const modalAviso = document.getElementById('modal-novo-aviso');
+        const btnCancelarAviso = document.getElementById('btn-cancelar-aviso');
+        const formAviso = document.getElementById('form-novo-aviso');
+        const selectTurma = document.getElementById('aviso-turma');
+
+        function popularTurmasAviso() {
+            selectTurma.innerHTML = '<option value="">-- Selecione uma turma --</option>';
+            if (turmasDoProfessor && turmasDoProfessor.length > 0) {
+                turmasDoProfessor.forEach(turma => {
+                    selectTurma.innerHTML += `<option value="${turma.id_turma}">${turma.nome_turma}</option>`;
+                });
+            }
+        }
+
+        btnNovoAviso.addEventListener('click', () => {
+            popularTurmasAviso(); // Usa as turmas já carregadas
+            modalAviso.classList.remove('hidden');
+        });
+
+        btnCancelarAviso.addEventListener('click', () => modalAviso.classList.add('hidden'));
+
+        formAviso.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = formAviso.querySelector('button[type="submit"]');
+            const originalButtonContent = submitButton.innerHTML;
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Publicando...</span>`;
+
+            const token = localStorage.getItem('jwt_token');
+            const avisoData = {
+                titulo: document.getElementById('aviso-titulo').value,
+                mensagem: document.getElementById('aviso-mensagem').value,
+                id_turma: document.getElementById('aviso-turma').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/avisos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(avisoData)
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Aviso publicado com sucesso!');
+                    modalAviso.classList.add('hidden');
+                    formAviso.reset();
+                    await carregarAvisos(); // Recarrega o mural
+                } else {
+                    alert(`Erro: ${result.message}`);
+                }
+            } catch (error) {
+                alert('Erro de conexão ao criar aviso.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+            }
+        });
+    </script>
+</body>
+
+</html>

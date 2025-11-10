@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Login</h1>
+
+        <div id="login-message-area" class="message hidden"></div>
+
+        <form id="login-form" class="space-y-4">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" name="username" required class="rounded-md">
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required class="rounded-md pr-10">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer toggle-password">
+                        <svg class="h-6 w-6 text-gray-400 eye-open" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg class="h-6 w-6 text-gray-400 eye-closed hidden" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 .847 0 1.673.124 2.463.355m-8.088 11.53A9.952 9.952 0 012.458 12c.338-.944.755-1.832 1.255-2.659m11.536 8.088a9.952 9.952 0 01-2.659-1.255m8.088-11.536a9.952 9.952 0 01-1.255 2.659M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full">Entrar</button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a href="#" id="forgot-password-link" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                Esqueceu a senha?
+            </a>
+        </div>
+    </div>
+    <div id="forgot-password-modal"
+        class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="login-container">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Recuperar Senha</h2>
+            <div id="forgot-message-area" class="message hidden"></div>
+            <form id="forgot-password-form" class="space-y-4">
+                <p class="text-sm text-gray-600">Digite seu e-mail e enviaremos um código de verificação.</p>
+                <div class="form-group">
+                    <label for="email_forgot">E-mail</label>
+                    <input type="email" id="email_forgot" name="email_forgot" required class="rounded-md">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Enviar Código</button>
+                <button type="button" id="cancel-forgot"
+                    class="btn bg-gray-200 text-gray-700 w-full mt-2">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="reset-password-modal"
+        class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="login-container">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Redefinir Senha</h2>
+            <div id="reset-message-area" class="message hidden"></div>
+            <form id="reset-password-form" class="space-y-4">
+                <p class="text-sm text-gray-600">Verifique seu e-mail e insira o código recebido.</p>
+                <div class="form-group">
+                    <label for="reset_token">Código de Verificação</label>
+                    <input type="text" id="reset_token" name="reset_token" required class="rounded-md">
+                </div>
+                <div class="form-group">
+                    <label for="new_password">Nova Senha</label>
+                    <input type="password" id="new_password" name="new_password" required class="rounded-md">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Redefinir Senha</button>
+                <button type="button" id="cancel-reset"
+                    class="btn bg-gray-200 text-gray-700 w-full mt-2">Cancelar</button>
+            </form>
+        </div>
+    </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // <-- ALTERADO: Defina a URL base da sua API aqui -->
+        const API_BASE_URL = '/..'; // Ajuste conforme sua estrutura
+        const loginForm = document.getElementById('login-form');
+        const loginMessageArea = document.getElementById('login-message-area');
+
+        const togglePasswordButton = document.querySelector('.toggle-password');
+
+        if (togglePasswordButton) {
+            togglePasswordButton.addEventListener('click', function () {
+                // Seleciona o input de senha que está antes do ícone
+                const passwordInput = document.getElementById('password');
+                const eyeOpen = this.querySelector('.eye-open');
+                const eyeClosed = this.querySelector('.eye-closed');
+
+                // Alterna o tipo do input e a visibilidade dos ícones
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeOpen.classList.add('hidden');
+                    eyeClosed.classList.remove('hidden');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeOpen.classList.remove('hidden');
+                    eyeClosed.classList.add('hidden');
+                }
+            });
+        }
+
+
+        window.showLoader = function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+        }
+
+        window.hideLoader = function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            localStorage.clear();
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('status') === 'senha_alterada') {
+                displayMessage('Senha alterada com sucesso! Por favor, faça o login novamente.', 'success');
+            }
+        });
+
+        function displayMessage(message, type, targetArea = loginMessageArea) {
+            targetArea.textContent = message;
+            targetArea.className = `message ${type}`;
+            targetArea.classList.remove('hidden');
+            setTimeout(() => {
+                targetArea.classList.add('hidden');
+            }, 5000);
+        }
+
+        // --- LÓGICA DE LOGIN ORIGINAL ---
+        loginForm.addEventListener('submit', async (event) => {
+            showLoader();
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+
+            try {
+                // <-- ALTERADO: URL da API de login -->
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // <-- LÓGICA DA NOVA FUNCIONALIDADE -->
+                    if (data.action === 'change_password') {
+                        // Se precisa trocar a senha, salva o token temporário e redireciona
+                        localStorage.setItem('jwt_temporary', data.jwt_temporary);
+                        alert(data.message); // Alerta o usuário
+                        window.location.href = 'alterar-senha.html';
+
+                    } else if (data.contract_pending) {
+                        // Fluxo de contrato pendente continua igual
+                        displayMessage(data.message, 'success');
+                        localStorage.setItem('jwt_temporary', data.jwt_temporary);
+                        localStorage.setItem('contract_id', data.contract_id);
+                        localStorage.setItem('contract_path', data.contract_path);
+                        setTimeout(() => { window.location.href = 'assinar_contrato.html'; }, 1500);
+
+                    } else if (data.jwt) {
+                        // Se o login for normal, salva o token permanente e redireciona
+                        displayMessage(data.message, 'success');
+                        localStorage.setItem('jwt_token', data.jwt);
+                        localStorage.setItem('user_role', data.user_role);
+
+                        setTimeout(() => {
+                            if (data.user_role === 'super_admin') {
+                                window.location.href = 'superadmin.html';
+                            } else if (data.user_role === 'professor') {
+                                window.location.href = 'professor_dashboard.html';
+                            } else if (data.user_role === 'admin') {
+                                window.location.href = 'home.html';
+                            } else if (data.user_role === 'aluno') {
+                                window.location.href = 'aluno_dashboard.html';
+                            } else {
+                                window.location.href = 'login.html';
+                            }
+                        }, 1500);
+                    }
+
+                } else {
+                    displayMessage(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erro de login:', error);
+                displayMessage('Erro de conexão ou servidor. Tente novamente.', 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // --- INÍCIO DO CÓDIGO DE ESQUECI A SENHA ---
+
+        // Seletores dos Modais e Formulários
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const forgotPasswordModal = document.getElementById('forgot-password-modal');
+        const resetPasswordModal = document.getElementById('reset-password-modal');
+
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const resetPasswordForm = document.getElementById('reset-password-form');
+
+        const cancelForgotBtn = document.getElementById('cancel-forgot');
+        const cancelResetBtn = document.getElementById('cancel-reset');
+
+        const forgotMessageArea = document.getElementById('forgot-message-area');
+        const resetMessageArea = document.getElementById('reset-message-area');
+
+        // Abrir Modal 1 (Pedir e-mail)
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotPasswordModal.classList.remove('hidden');
+            });
+        }
+
+        // Fechar Modais
+        if (cancelForgotBtn) {
+            cancelForgotBtn.addEventListener('click', () => forgotPasswordModal.classList.add('hidden'));
+        }
+        if (cancelResetBtn) {
+            cancelResetBtn.addEventListener('click', () => resetPasswordModal.classList.add('hidden'));
+        }
+
+        // Evento 1: Enviar o e-mail para a API (que chama o n8n)
+        if (forgotPasswordForm) {
+            forgotPasswordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                showLoader();
+                const email = document.getElementById('email_forgot').value;
+
+                try {
+                    // URL da API de esqueci a senha
+                    const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+
+                    const data = await response.json();
+
+                    // Usamos a função displayMessage que você já tem, mas no modal correto
+                    displayMessage(data.message, data.success ? 'success' : 'error', forgotMessageArea);
+
+                    if (data.success) {
+                        // Se sucesso, esconde o modal 1 e mostra o modal 2
+                        setTimeout(() => {
+                            forgotPasswordModal.classList.add('hidden');
+                            resetPasswordModal.classList.remove('hidden');
+                        }, 2000); // Dá um tempo para o usuário ler a msg
+                    }
+                } catch (error) {
+                    console.error('Erro ao solicitar recuperação:', error);
+                    displayMessage('Erro de conexão. Tente novamente.', 'error', forgotMessageArea);
+                } finally {
+                    hideLoader();
+                }
+            });
+        }
+
+        // Evento 2: Enviar o código e a nova senha
+        if (resetPasswordForm) {
+            resetPasswordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                showLoader();
+
+                const token = document.getElementById('reset_token').value;
+                const new_password = document.getElementById('new_password').value;
+
+                try {
+                    // URL da API de resetar a senha
+                    const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token, new_password })
+                    });
+
+                    const data = await response.json();
+                    displayMessage(data.message, data.success ? 'success' : 'error', resetMessageArea);
+
+                    if (data.success) {
+                        // Se sucesso, esconde o modal e limpa o formulário de login
+                        setTimeout(() => {
+                            resetPasswordModal.classList.add('hidden');
+                            loginForm.reset();
+                            displayMessage('Senha redefinida! Faça o login.', 'success', loginMessageArea);
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('Erro ao redefinir senha:', error);
+                    displayMessage('Erro de conexão. Tente novamente.', 'error', resetMessageArea);
+                } finally {
+                    hideLoader();
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

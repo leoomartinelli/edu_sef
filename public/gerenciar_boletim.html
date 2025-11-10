@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Boletim - Sistema SEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        /* Estilos do body e fontes são herdados do Tailwind e CSS externo.
+           O .container antigo foi removido em favor das classes do Tailwind. */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-info {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-info:hover {
+            background-color: #2563eb;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .boletim-table-wrapper {
+            overflow-x: auto;
+            max-height: 70vh;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+
+        .boletim-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .boletim-table thead th {
+            background-color: #f9fafb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4b5563;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .boletim-table tbody td {
+            padding: 0.5rem 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .boletim-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .boletim-table input[type="number"] {
+            width: 60px;
+            text-align: center;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+        }
+
+        .boletim-table input[type="text"] {
+            width: 100px;
+            text-align: center;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+        }
+
+        .boletim-table textarea {
+            width: 200px;
+            min-height: 40px;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+        }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background-color: #ffffff;
+            z-index: 11;
+        }
+
+        .sticky-col.disciplina {
+            min-width: 150px;
+        }
+
+        .sticky-col.aluno {
+            min-width: 200px;
+        }
+
+        .current-year-select {
+            padding: 0.625rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        #pdf-content {
+            display: none;
+            padding: 8mm;
+            font-family: 'Inter', sans-serif;
+            font-size: 18pt;
+            color: #1f2937;
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 25px;
+        }
+
+        .pdf-header .logo {
+            width: 400px;
+            height: auto;
+        }
+
+        .pdf-header .school-info {
+            text-align: right;
+        }
+
+        .pdf-header .school-name {
+            font-size: 36pt;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .pdf-header .school-details {
+            font-size: 16pt;
+            color: #4b5563;
+        }
+
+        .pdf-section {
+            margin-bottom: 50px;
+        }
+
+        .pdf-section-title {
+            font-size: 22pt;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .pdf-info-box {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f9fafb;
+            padding: 25px 35px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .pdf-info-box p {
+            font-size: 18pt;
+            margin: 0;
+        }
+
+        .pdf-info-box strong {
+            color: #1f2937;
+        }
+
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .pdf-table th,
+        .pdf-table td {
+            border: 1px solid #d1d5db;
+            padding: 18px;
+            text-align: center;
+            font-size: 16pt;
+        }
+
+        .pdf-table th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .pdf-table .disciplina-col {
+            text-align: left;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .pdf-table .nota {
+            background-color: #e5e7eb;
+        }
+
+        .pdf-table .media-final,
+        .pdf-table .recuperacao {
+            font-weight: 600;
+        }
+
+        .pdf-table .resultado-final {
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .pdf-signatures {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 110px;
+        }
+
+        .pdf-signatures .sig-item {
+            width: 350px;
+        }
+
+        .pdf-signatures .sig-line {
+            border-top: 1px solid #000;
+            margin-bottom: 5px;
+        }
+
+        .pdf-signatures p {
+            font-size: 14pt;
+            color: #374151;
+        }
+
+        .pdf-rodape-contato {
+            text-align: center;
+            font-size: 12pt;
+            color: #6b7280;
+            margin-top: 60px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center max-w-7xl px-4">
+            <a href="professor_dashboard.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
+                Financeiro</a>
+            <div>
+                <a href="professor_dashboard.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Meu
+                    Painel</a>
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-7xl py-12 px-4 space-y-8">
+        <div class="text-left">
+            <h1 class="text-4xl font-extrabold text-gray-800">Gerenciar Boletim</h1>
+            <p class="text-lg text-gray-600 mt-1">Turma: <span id="turma-name" class="font-semibold"></span></p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-700">Filtrar Alunos</h2>
+                <div>
+                    <label for="current-year-select" class="font-semibold text-gray-600 mr-2">Ano Letivo:</label>
+                    <select id="current-year-select" class="current-year-select"></select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div class="form-group">
+                    <label for="search_nome_aluno">Nome do Aluno</label>
+                    <input type="text" id="search_nome_aluno" placeholder="Digite o nome do aluno">
+                </div>
+                <div class="form-group">
+                    <label for="search_ra_aluno">RA do Aluno</label>
+                    <input type="text" id="search_ra_aluno" placeholder="Digite o RA">
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary w-full" onclick="filterBoletimTable()">Buscar</button>
+                    <button class="btn btn-secondary w-full" onclick="clearSearch()">Limpar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="boletim-content" class="hidden bg-white rounded-xl shadow-md p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <p class="text-gray-600">Preencha as notas e faltas. As alterações são salvas por linha ou todas de uma
+                    vez.</p>
+                <div class="flex gap-3 flex-shrink-0">
+                    <button id="generate-pdf-button" class="btn btn-info">Gerar PDF do Aluno</button>
+                    <button id="save-all-button" class="btn btn-primary">Salvar Alterações Visíveis</button>
+                </div>
+            </div>
+            <div id="message-area" class="message hidden w-full"></div>
+            <div id="loading-message" class="text-center text-gray-500 my-8">Carregando dados...</div>
+
+            <div class="boletim-table-wrapper">
+                <table class="boletim-table">
+                    <thead>
+                        <tr>
+                            <th class="sticky-col aluno">Aluno (RA)</th>
+                            <th class="sticky-col disciplina">Disciplina</th>
+                            <th>Nota 1ºB</th>
+                            <th>Faltas 1ºB</th>
+                            <th>Nota 2ºB</th>
+                            <th>Faltas 2ºB</th>
+                            <th>Nota 3ºB</th>
+                            <th>Faltas 3ºB</th>
+                            <th>Nota 4ºB</th>
+                            <th>Faltas 4ºB</th>
+                            <th>Média Final</th>
+                            <th>Freq. Final (%)</th>
+                            <th>Recuperação</th>
+                            <th>Resultado Final</th>
+                            <th>Observações</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boletim-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="error-message" class="hidden mt-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+
+    </main>
+
+    <div id="pdf-content">
+        <div class="pdf-header">
+            <img class="logo" src="../api/assets/logo_rodape3.PNG" alt="Logo Colégio Crescer">
+            <div class="school-info">
+                <h1 class="school-name">COLÉGIO CRESCER</h1>
+                <p class="school-details">EDUCAÇÃO INFANTIL E ENSINO FUNDAMENTAL</p>
+                <p class="school-details">BOLETIM INFORMATIVO</p>
+            </div>
+        </div>
+        <div class="pdf-section">
+            <div class="pdf-info-box">
+                <p><strong>ALUNO(A):</strong> <span id="pdf-aluno-nome"></span></p>
+                <p><strong>TURMA:</strong> <span id="pdf-turma-nome"></span></p>
+                <p><strong>PROFESSORA:</strong> <span id="pdf-professor-nome"></span></p>
+                <p><strong>ANO LETIVO:</strong> <span id="pdf-ano-letivo"></span></p>
+            </div>
+        </div>
+        <div class="pdf-section">
+            <table class="pdf-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="disciplina-col">DISCIPLINA</th>
+                        <th colspan="2">1º Bimestre</th>
+                        <th colspan="2">2º Bimestre</th>
+                        <th colspan="2">3º Bimestre</th>
+                        <th colspan="2">4º Bimestre</th>
+                        <th rowspan="2">M.F.</th>
+                        <th rowspan="2">T.F. (%)</th>
+                        <th rowspan="2">Rec.</th>
+                        <th rowspan="2">Resultado</th>
+                    </tr>
+                    <tr>
+                        <th class="nota">Nota</th>
+                        <th>Faltas</th>
+                        <th class="nota">Nota</th>
+                        <th>Faltas</th>
+                        <th class="nota">Nota</th>
+                        <th>Faltas</th>
+                        <th class="nota">Nota</th>
+                        <th>Faltas</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-grades-table-body"></tbody>
+            </table>
+        </div>
+        <div class="pdf-section">
+            <div class="pdf-signatures">
+                <div class="sig-item">
+                    <div class="sig-line"></div>
+                    <p>Prof. Responsável</p>
+                </div>
+                <div class="sig-item">
+                    <div class="sig-line"></div>
+                    <p>Coordenação</p>
+                </div>
+                <div class="sig-item">
+                    <div class="sig-line"></div>
+                    <p>Direção</p>
+                </div>
+            </div>
+        </div>
+        <div class="pdf-section" style="margin-top: 50px;">
+            <p><strong>Observações:</strong></p>
+            <div style="border: 1px solid #d1d5db; min-height: 80px; padding: 10px; border-radius: 4px;"
+                id="pdf-observacoes"></div>
+        </div>
+        <div class="pdf-rodape-contato">
+            <p>"É PRECISO SONHAR E ACREDITAR EM UM FUTURO MELHOR!"</p>
+            <p>Av. Rui Barbosa, 1868 - Santana - São José dos Campos | Telefone: (0**12) 3302-7141 | (0**12) 99748-7141
+            </p>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    
+
+    <script>
+        const API_BASE_URL = '/api';
+        const API_LOGIN_URL = 'login.html';
+
+        let currentTurmaId = null;
+        let currentTurmaName = '';
+        let currentYear = new Date().getFullYear();
+        let currentProfessorName = '';
+
+        let allAlunos = [];
+        let filteredAlunos = [];
+        let disciplinas = [];
+        let boletimData = {};
+
+        const TOTAL_AULAS_ANO = 80;
+
+        function showLoader() {
+            const loader = document.createElement('div');
+            loader.id = 'global-loader';
+            loader.className = 'loader-overlay';
+            loader.innerHTML = '<div class="spinner"></div>';
+            document.body.appendChild(loader);
+            loader.style.display = 'flex';
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'none';
+                document.body.removeChild(loader);
+            }
+        }
+
+        function displayMessage(message, type, area = document.getElementById('message-area')) {
+            area.innerHTML = message;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
+            setTimeout(() => area.classList.add('hidden'), 5000);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        const getUrlParameter = (name) => {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        const isValidGrade = (value) => {
+            if (value === null || value === '') return true;
+            const num = parseFloat(value);
+            return !isNaN(num) && num >= 0 && num <= 10;
+        };
+
+        const isValidFaltas = (value) => {
+            if (value === null || value === '') return true;
+            const num = parseInt(value);
+            return !isNaN(num) && num >= 0;
+        };
+
+        function formatGrade(grade) {
+            if (grade === null || isNaN(grade) || grade === '') {
+                return '';
+            }
+            const num = parseFloat(grade);
+            if (num === 10) {
+                return '10';
+            } else {
+                return num.toFixed(1);
+            }
+        }
+
+        function calculateMediaFinal(n1, n2, n3, n4) {
+            const notas = [n1, n2, n3, n4].filter(n => typeof n === 'number' && !isNaN(n));
+            if (notas.length === 0) return null;
+
+            const sum = notas.reduce((acc, curr) => acc + curr, 0);
+            const media = sum / 4;
+            return formatGrade(media);
+        }
+
+        function calculateFrequenciaFinal(f1, f2, f3, f4) {
+            const faltas = [f1, f2, f3, f4].filter(f => typeof f === 'number' && !isNaN(f));
+            if (faltas.length === 0) {
+                return TOTAL_AULAS_ANO > 0 ? 100 : null;
+            }
+
+            const totalFaltas = faltas.reduce((acc, curr) => acc + curr, 0);
+
+            if (TOTAL_AULAS_ANO <= 0) {
+                console.warn("TOTAL_AULAS_ANO não definido ou zero. Não é possível calcular frequência.");
+                return null;
+            }
+
+            const frequencia = ((TOTAL_AULAS_ANO - totalFaltas) / TOTAL_AULAS_ANO) * 100;
+            return Math.max(0, frequencia).toFixed(2);
+        }
+
+        function applyCalculationsToRow(alunoId, disciplinaId) {
+            const row = document.getElementById(`boletim-row-${alunoId}-${disciplinaId}`);
+            if (!row) return;
+
+            const nota1 = parseFloat(row.querySelector('[data-field="nota_1b"]').value) || null;
+            const falta1 = parseInt(row.querySelector('[data-field="faltas_1b"]').value) || null;
+            const nota2 = parseFloat(row.querySelector('[data-field="nota_2b"]').value) || null;
+            const falta2 = parseInt(row.querySelector('[data-field="faltas_2b"]').value) || null;
+            const nota3 = parseFloat(row.querySelector('[data-field="nota_3b"]').value) || null;
+            const falta3 = parseInt(row.querySelector('[data-field="faltas_3b"]').value) || null;
+            const nota4 = parseFloat(row.querySelector('[data-field="nota_4b"]').value) || null;
+            const falta4 = parseInt(row.querySelector('[data-field="faltas_4b"]').value) || null;
+
+            const mediaFinal = calculateMediaFinal(nota1, nota2, nota3, nota4);
+            const mediaFinalInput = row.querySelector('[data-field="media_final"]');
+            mediaFinalInput.value = mediaFinal !== null ? mediaFinal : '';
+            mediaFinalInput.readOnly = true;
+            mediaFinalInput.classList.add('bg-gray-100');
+
+            const frequenciaFinal = calculateFrequenciaFinal(falta1, falta2, falta3, falta4);
+            const frequenciaFinalInput = row.querySelector('[data-field="frequencia_final"]');
+            frequenciaFinalInput.value = frequenciaFinal !== null ? frequenciaFinal : '';
+            frequenciaFinalInput.readOnly = true;
+            frequenciaFinalInput.classList.add('bg-gray-100');
+        }
+
+        function collectRowData(alunoId, disciplinaId) {
+            const row = document.getElementById(`boletim-row-${alunoId}-${disciplinaId}`);
+            if (!row) return null;
+
+            const dataToSave = {
+                id_aluno: parseInt(alunoId),
+                id_turma: parseInt(currentTurmaId),
+                ano_letivo: currentYear,
+                id_disciplina: parseInt(disciplinaId)
+            };
+
+            let rowIsValid = true;
+            row.querySelectorAll('input, textarea').forEach(input => {
+                const field = input.dataset.field;
+                let value = input.value.trim();
+
+                if (input.type === 'number') {
+                    if (value === '') {
+                        dataToSave[field] = null;
+                    } else {
+                        const num = parseFloat(value);
+                        if (field.includes('nota') || field.includes('recuperacao_final') || field.includes('media_final')) {
+                            if (!isValidGrade(value)) {
+                                displayMessage(`Valor inválido para ${field} (${value}) do aluno ${alunoId} na disciplina ${disciplinaId}. Deve ser entre 0 e 10.`, 'error');
+                                rowIsValid = false;
+                            }
+                            dataToSave[field] = num;
+                        } else if (field === 'frequencia_final') {
+                            if (isNaN(num) || num < 0 || num > 100) {
+                                displayMessage(`Frequência final inválida (${value}) para o aluno ${alunoId} na disciplina ${disciplinaId}. Deve ser entre 0 e 100.`, 'error');
+                                rowIsValid = false;
+                            }
+                            dataToSave[field] = num;
+                        } else if (field.includes('faltas')) {
+                            if (!isValidFaltas(value)) {
+                                displayMessage(`Faltas inválidas (${value}) para o aluno ${alunoId} na disciplina ${disciplinaId}. Deve ser um número inteiro positivo.`, 'error');
+                                rowIsValid = false;
+                            }
+                            dataToSave[field] = parseInt(value);
+                        }
+                    }
+                } else {
+                    dataToSave[field] = value === '' ? null : value;
+                }
+            });
+
+            const aluno = allAlunos.find(a => a.id_aluno === alunoId);
+            if (aluno) {
+                dataToSave.nome_aluno = aluno.nome_aluno;
+                dataToSave.ra = aluno.ra;
+            }
+            const disciplina = disciplinas.find(d => d.id_disciplina === disciplinaId);
+            if (disciplina) {
+                dataToSave.nome_disciplina = disciplina.nome_disciplina;
+            }
+
+            return rowIsValid ? dataToSave : null;
+        }
+
+        async function fetchBoletimManagementData() {
+
+            document.getElementById('loading-message').classList.remove('hidden');
+            document.getElementById('boletim-content').classList.add('hidden');
+            document.getElementById('error-message').classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/boletim/turma/${currentTurmaId}/data`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.message || 'Falha ao carregar dados da turma e disciplinas.');
+                }
+                const result = await response.json();
+
+                if (result.success) {
+                    allAlunos = result.data.alunos;
+                    disciplinas = result.data.disciplinas;
+                    await fetchAllBoletinsForTurma();
+                    filterBoletimTable();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados de gerenciamento de boletim:", error);
+                document.getElementById('error-message').innerHTML = `Erro: ${error.message}. Verifique se a turma tem alunos e disciplinas associadas.`;
+                document.getElementById('error-message').classList.remove('hidden');
+            } finally {
+                document.getElementById('loading-message').classList.add('hidden');
+                document.getElementById('boletim-content').classList.remove('hidden');
+
+            }
+        }
+
+        async function fetchAllBoletinsForTurma() {
+            console.log("Iniciou C")
+
+            boletimData = {};
+            for (const aluno of allAlunos) {
+                const response = await fetch(`${API_BASE_URL}/boletim/aluno?id_aluno=${aluno.id_aluno}&ano_letivo=${currentYear}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    boletimData[aluno.id_aluno] = {};
+                    result.data.forEach(entry => {
+                        boletimData[aluno.id_aluno][entry.id_disciplina] = entry;
+                    });
+                } else {
+                    console.warn(`Falha ao buscar boletim para aluno ${aluno.nome_aluno} (ID: ${aluno.id_aluno}): ${result.message}`);
+                    hideLoader();
+                }
+            }
+        }
+
+        function filterBoletimTable() {
+            console.log("Iniciou B")
+
+            const searchName = document.getElementById('search_nome_aluno').value.toLowerCase().trim();
+            const searchRa = document.getElementById('search_ra_aluno').value.toLowerCase().trim();
+
+            if (searchName === '' && searchRa === '') {
+                filteredAlunos = allAlunos;
+            } else {
+                filteredAlunos = allAlunos.filter(aluno => {
+                    const matchesName = aluno.nome_aluno.toLowerCase().includes(searchName);
+                    const matchesRa = aluno.ra.toLowerCase().includes(searchRa);
+
+                    return (searchName === '' || matchesName) && (searchRa === '' || matchesRa);
+                });
+            }
+
+            renderBoletimTable();
+
+        }
+
+        function clearSearch() {
+            document.getElementById('search_nome_aluno').value = '';
+            document.getElementById('search_ra_aluno').value = '';
+            filterBoletimTable();
+        }
+
+        function renderBoletimTable() {
+            const tbody = document.getElementById('boletim-table-body');
+            tbody.innerHTML = '';
+
+            if (filteredAlunos.length === 0 || disciplinas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="16" class="text-center p-4">Nenhum aluno ou disciplina associada a esta turma para o ano ${currentYear}, ou nenhum aluno corresponde aos critérios de busca.</td></tr>`;
+                return;
+            }
+
+            filteredAlunos.forEach(aluno => {
+                disciplinas.forEach(disciplina => {
+                    const entry = boletimData[aluno.id_aluno]?.[disciplina.id_disciplina] || {};
+                    const row = document.createElement('tr');
+                    row.id = `boletim-row-${aluno.id_aluno}-${disciplina.id_disciplina}`;
+
+                    // Correção para garantir que valores 'null' ou 'undefined' se tornem strings vazias.
+                    const nota1bFormatted = entry.nota_1b != null ? formatGrade(entry.nota_1b) : '';
+                    const faltas1b = entry.faltas_1b != null ? entry.faltas_1b : '';
+                    const nota2bFormatted = entry.nota_2b != null ? formatGrade(entry.nota_2b) : '';
+                    const faltas2b = entry.faltas_2b != null ? entry.faltas_2b : '';
+                    const nota3bFormatted = entry.nota_3b != null ? formatGrade(entry.nota_3b) : '';
+                    const faltas3b = entry.faltas_3b != null ? entry.faltas_3b : '';
+                    const nota4bFormatted = entry.nota_4b != null ? formatGrade(entry.nota_4b) : '';
+                    const faltas4b = entry.faltas_4b != null ? entry.faltas_4b : '';
+                    const recuperacaoFinalFormatted = entry.recuperacao_final != null ? formatGrade(entry.recuperacao_final) : '';
+                    const mediaFinalFormatted = entry.media_final != null ? formatGrade(entry.media_final) : '';
+                    const frequenciaFinalFormatted = entry.frequencia_final != null ? entry.frequencia_final : '';
+
+
+                    row.innerHTML = `
+                <td class="sticky-col aluno">${aluno.nome_aluno} (${aluno.ra})</td>
+                <td class="sticky-col disciplina">${disciplina.nome_disciplina}</td>
+                <td><input type="number" step="0.1" min="0" max="10" data-field="nota_1b" value="${nota1bFormatted}" class="rounded bg-gray-100" title="Adicione a nota do 1º Bimestre aqui"></td>
+                <td><input type="number" min="0" data-field="faltas_1b" value="${faltas1b}" class="rounded bg-gray-100" title="Adicione as faltas do 1º Bimestre aqui"></td>
+                <td><input type="number" step="0.1" min="0" max="10" data-field="nota_2b" value="${nota2bFormatted}" class="rounded bg-gray-100" title="Adicione a nota do 2º Bimestre aqui"></td>
+                <td><input type="number" min="0" data-field="faltas_2b" value="${faltas2b}" class="rounded bg-gray-100" title="Adicione as faltas do 2º Bimestre aqui"></td>
+                <td><input type="number" step="0.1" min="0" max="10" data-field="nota_3b" value="${nota3bFormatted}" class="rounded bg-gray-100" title="Adicione a nota do 3º Bimestre aqui"></td>
+                <td><input type="number" min="0" data-field="faltas_3b" value="${faltas3b}" class="rounded bg-gray-100" title="Adicione as faltas do 3º Bimestre aqui"></td>
+                <td><input type="number" step="0.1" min="0" max="10" data-field="nota_4b" value="${nota4bFormatted}" class="rounded bg-gray-100" title="Adicione a nota do 4º Bimestre aqui"></td>
+                <td><input type="number" min="0" data-field="faltas_4b" value="${faltas4b}" class="rounded bg-gray-100" title="Adicione as faltas do 4º Bimestre aqui"></td>
+                <td><input type="number" step="0.1" min="0" max="10" data-field="media_final" value="${mediaFinalFormatted}" readonly class="rounded bg-gray-200" title="Média Final"></td>
+                <td><input type="number" step="0.01" min="0" max="100" data-field="frequencia_final" value="${frequenciaFinalFormatted}" readonly class="rounded bg-gray-200" title="Frequência Final"></td>
+                <td><input type="number" step="0.1" min="0" max="10" data-field="recuperacao_final" value="${recuperacaoFinalFormatted}" class="rounded bg-gray-100" title="Adicione a nota da Recuperação Final aqui"></td>
+                <td><input type="text" data-field="resultado_final" value="${entry.resultado_final || ''}" class="rounded bg-gray-100" title="Ex: Aprovado, Reprovado"></td>
+                <td><textarea data-field="observacoes" class="rounded bg-gray-100" title="Adicione observações sobre o aluno/disciplina aqui"></textarea></td>
+                <td>
+                    <button class="btn btn-primary save-single-btn text-sm" data-aluno-id="${aluno.id_aluno}" data-disciplina-id="${disciplina.id_disciplina}">Salvar</button>
+                </td>
+            `;
+                    tbody.appendChild(row);
+
+                    const inputsToWatch = [
+                        'nota_1b', 'faltas_1b', 'nota_2b', 'faltas_2b',
+                        'nota_3b', 'faltas_3b', 'nota_4b', 'faltas_4b',
+                        'recuperacao_final'
+                    ];
+                    inputsToWatch.forEach(field => {
+                        const inputElement = row.querySelector(`[data-field="${field}"]`);
+                        if (inputElement) {
+                            inputElement.addEventListener('blur', () => {
+                                if (field.includes('nota') || field.includes('recuperacao_final')) {
+                                    const parsedValue = parseFloat(inputElement.value);
+                                    if (!isNaN(parsedValue)) {
+                                        inputElement.value = formatGrade(parsedValue);
+                                    } else if (inputElement.value.trim() === '') {
+                                        inputElement.value = '';
+                                    }
+                                }
+                                applyCalculationsToRow(aluno.id_aluno, disciplina.id_disciplina);
+                            });
+                            inputElement.addEventListener('keydown', (event) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault();
+                                    if (field.includes('nota') || field.includes('recuperacao_final')) {
+                                        const parsedValue = parseFloat(inputElement.value);
+                                        if (!isNaN(parsedValue)) {
+                                            inputElement.value = formatGrade(parsedValue);
+                                        } else if (inputElement.value.trim() === '') {
+                                            inputElement.value = '';
+                                        }
+                                    }
+                                    applyCalculationsToRow(aluno.id_aluno, disciplina.id_disciplina);
+                                    inputElement.blur();
+                                }
+                            });
+                            inputElement.addEventListener('input', () => {
+                                applyCalculationsToRow(aluno.id_aluno, disciplina.id_disciplina);
+                            });
+                        }
+                    });
+                    applyCalculationsToRow(aluno.id_aluno, disciplina.id_disciplina);
+                });
+            });
+
+            document.querySelectorAll('.save-single-btn').forEach(button => {
+                button.addEventListener('click', (e) => saveSingleBoletimEntry(e.target));
+            });
+        }
+
+        document.getElementById('save-all-button').addEventListener('click', async () => {
+            displayMessage('Processando alterações do aluno exibido...', 'info');
+            const saveAllButton = document.getElementById('save-all-button');
+            saveAllButton.disabled = true;
+            saveAllButton.textContent = 'Salvando tudo...';
+
+            let allDataToValidateAndSave = [];
+            let validationErrors = [];
+
+            filteredAlunos.forEach(aluno => {
+                disciplinas.forEach(disciplina => {
+                    const rowData = collectRowData(aluno.id_aluno, disciplina.id_disciplina);
+                    if (rowData) {
+                        allDataToValidateAndSave.push(rowData);
+                    } else {
+                        validationErrors.push(`Erro de validação para aluno ${aluno.nome_aluno} (RA: ${aluno.ra}), disciplina ${disciplina.nome_disciplina}.`);
+                    }
+                });
+            });
+
+            if (validationErrors.length > 0) {
+                const errorMessage = validationErrors.join('<br>');
+                displayMessage(`Erros de validação encontrados:<br>${errorMessage}`, 'error');
+                saveAllButton.disabled = false;
+                saveAllButton.textContent = 'Salvar Alterações do Aluno Exibido';
+                return;
+            }
+
+            let successfulSaves = 0;
+            let failedSaves = 0;
+            let errorMessages = [];
+
+            for (const dataToSave of allDataToValidateAndSave) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/boletim/entry`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                        body: JSON.stringify(dataToSave)
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        successfulSaves++;
+                    } else {
+                        failedSaves++;
+                        errorMessages.push(`Falha ao salvar para aluno ${dataToSave.nome_aluno} (RA: ${dataToSave.ra}), disciplina ${dataToSave.nome_disciplina}: ${result.message}`);
+                    }
+                } catch (error) {
+                    failedSaves++;
+                    errorMessages.push(`Erro de conexão/servidor para aluno ${dataToSave.nome_aluno} (RA: ${dataToSave.ra}), disciplina ${dataToSave.nome_disciplina}: ${error.message}`);
+                    console.error('Fetch error:', error);
+                }
+            }
+
+            if (failedSaves === 0) {
+                displayMessage(`Todas as ${successfulSaves} alterações foram salvas com sucesso!`, 'success');
+            } else {
+                displayMessage(`Concluído com ${successfulSaves} sucessos e ${failedSaves} falhas. Detalhes: <br>${errorMessages.join('<br>')}`, 'error');
+            }
+
+            await fetchAllBoletinsForTurma();
+            filterBoletimTable();
+
+            saveAllButton.disabled = false;
+            saveAllButton.textContent = 'Salvar Alterações do Aluno Exibido';
+        });
+
+        async function saveSingleBoletimEntry(button) {
+            console.log("Iniciou A")
+            showLoader();
+            const alunoId = parseInt(button.dataset.alunoId);
+            const disciplinaId = parseInt(button.dataset.disciplinaId);
+
+            const dataToSave = collectRowData(alunoId, disciplinaId);
+
+            if (!dataToSave) {
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Salvando...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/boletim/entry`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                    body: JSON.stringify(dataToSave)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success');
+                    if (!boletimData[alunoId]) boletimData[alunoId] = {};
+                    boletimData[alunoId][disciplinaId] = dataToSave;
+                    filterBoletimTable();
+                } else {
+                    displayMessage(result.message, 'error');
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao salvar boletim. Verifique o console.', 'error');
+                console.error('Fetch error:', error);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Salvar';
+                hideLoader();
+            }
+        }
+
+        document.getElementById('current-year-select').addEventListener('change', async (event) => {
+            currentYear = parseInt(event.target.value);
+            await fetchBoletimManagementData();
+        });
+
+        document.getElementById('generate-pdf-button').addEventListener('click', async () => {
+            if (filteredAlunos.length !== 1) {
+                displayMessage('Selecione exatamente um aluno para gerar o PDF.', 'error');
+                return;
+            }
+
+            displayMessage('Gerando PDF...', 'info');
+            const generatePdfButton = document.getElementById('generate-pdf-button');
+            generatePdfButton.disabled = true;
+            generatePdfButton.textContent = 'Gerando...';
+
+            const alunoParaPdf = filteredAlunos[0];
+
+            document.getElementById('pdf-aluno-nome').textContent = alunoParaPdf.nome_aluno;
+            document.getElementById('pdf-turma-nome').textContent = currentTurmaName;
+            document.getElementById('pdf-professor-nome').textContent = currentProfessorName || '';
+            document.getElementById('pdf-ano-letivo').textContent = currentYear;
+
+            const pdfGradesTbody = document.getElementById('pdf-grades-table-body');
+            pdfGradesTbody.innerHTML = '';
+
+            let observacoesAluno = '';
+
+            disciplinas.forEach(disciplina => {
+                const entry = boletimData[alunoParaPdf.id_aluno]?.[disciplina.id_disciplina] || {};
+
+                const rowElement = document.getElementById(`boletim-row-${alunoParaPdf.id_aluno}-${disciplina.id_disciplina}`);
+                let currentNota1b = rowElement ? rowElement.querySelector('[data-field="nota_1b"]').value : (entry.nota_1b !== null ? formatGrade(entry.nota_1b) : '');
+                let currentFaltas1b = rowElement ? rowElement.querySelector('[data-field="faltas_1b"]').value : (entry.faltas_1b !== null ? entry.faltas_1b : '');
+                let currentNota2b = rowElement ? rowElement.querySelector('[data-field="nota_2b"]').value : (entry.nota_2b !== null ? formatGrade(entry.nota_2b) : '');
+                let currentFaltas2b = rowElement ? rowElement.querySelector('[data-field="faltas_2b"]').value : (entry.faltas_2b !== null ? entry.faltas_2b : '');
+                let currentNota3b = rowElement ? rowElement.querySelector('[data-field="nota_3b"]').value : (entry.nota_3b !== null ? formatGrade(entry.nota_3b) : '');
+                let currentFaltas3b = rowElement ? rowElement.querySelector('[data-field="faltas_3b"]').value : (entry.faltas_3b !== null ? entry.faltas_3b : '');
+                let currentNota4b = rowElement ? rowElement.querySelector('[data-field="nota_4b"]').value : (entry.nota_4b !== null ? formatGrade(entry.nota_4b) : '');
+                let currentFaltas4b = rowElement ? rowElement.querySelector('[data-field="faltas_4b"]').value : (entry.faltas_4b !== null ? entry.faltas_4b : '');
+                let currentMediaFinal = rowElement ? rowElement.querySelector('[data-field="media_final"]').value : (entry.media_final !== null ? formatGrade(entry.media_final) : '');
+                let currentFrequenciaFinal = rowElement ? rowElement.querySelector('[data-field="frequencia_final"]').value : (entry.frequencia_final !== null ? entry.frequencia_final : '');
+                let currentRecuperacaoFinal = rowElement ? rowElement.querySelector('[data-field="recuperacao_final"]').value : (entry.recuperacao_final !== null ? formatGrade(entry.recuperacao_final) : '');
+                let currentResultadoFinal = rowElement ? rowElement.querySelector('[data-field="resultado_final"]').value : (entry.resultado_final || '');
+                let currentObservacoes = rowElement ? rowElement.querySelector('[data-field="observacoes"]').value : (entry.observacoes || '');
+
+                if (currentObservacoes) {
+                    observacoesAluno += `[${disciplina.nome_disciplina}]: ${currentObservacoes} \n`;
+                }
+
+                const rowHtml = `
+                    <tr>
+                        <td class="disciplina-col">${disciplina.nome_disciplina}</td>
+                        <td class="nota">${currentNota1b}</td>
+                        <td>${currentFaltas1b}</td>
+                        <td class="nota">${currentNota2b}</td>
+                        <td>${currentFaltas2b}</td>
+                        <td class="nota">${currentNota3b}</td>
+                        <td>${currentFaltas3b}</td>
+                        <td class="nota">${currentNota4b}</td>
+                        <td>${currentFaltas4b}</td>
+                        <td class="media-final">${currentMediaFinal}</td>
+                        <td>${currentFrequenciaFinal}</td>
+                        <td class="recuperacao">${currentRecuperacaoFinal}</td>
+                        <td class="resultado-final">${currentResultadoFinal}</td>
+                    </tr>
+                `;
+                pdfGradesTbody.innerHTML += rowHtml;
+            });
+            document.getElementById('pdf-observacoes').textContent = observacoesAluno;
+
+
+            const input = document.getElementById('pdf-content');
+            try {
+                input.style.display = 'block';
+
+                const canvas = await html2canvas(input, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+
+                input.style.display = 'none';
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                pdf.save(`Boletim_${alunoParaPdf.nome_aluno.replace(/\s/g, '_')}_${currentYear}.pdf`);
+                displayMessage('PDF gerado com sucesso!', 'success');
+
+            } catch (error) {
+                console.error("Erro ao gerar PDF:", error);
+                displayMessage(`Erro ao gerar PDF: ${error.message}. Verifique o console para mais detalhes.`, 'error');
+            } finally {
+                generatePdfButton.disabled = false;
+                generatePdfButton.textContent = 'Gerar PDF do Boletim Exibido';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+            currentProfessorName = localStorage.getItem('user_name') || '';
+
+            if (!token || (role !== 'professor' && role !== 'admin')) {
+                logout();
+                return;
+            }
+
+            currentTurmaId = getUrlParameter('idTurma');
+            currentTurmaName = getUrlParameter('nomeTurma');
+
+            if (!currentTurmaId || !currentTurmaName) {
+                document.getElementById('error-message').textContent = 'ID da turma ou nome da turma não fornecidos na URL.';
+                document.getElementById('error-message').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('turma-name').textContent = currentTurmaName;
+
+            const yearSelect = document.getElementById('current-year-select');
+            const currentYearOption = new Date().getFullYear();
+            for (let i = currentYearOption - 2; i <= currentYearOption + 2; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === currentYear) {
+                    option.selected = true;
+                }
+                yearSelect.appendChild(option);
+            }
+
+            document.getElementById('search_nome_aluno').addEventListener('input', filterBoletimTable);
+            document.getElementById('search_ra_aluno').addEventListener('input', filterBoletimTable);
+
+            await fetchBoletimManagementData();
+        });
+    </script>
+</body>
+
+</html>

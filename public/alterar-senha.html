@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Senha - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Crie sua Nova Senha</h1>
+        <p class="text-center text-gray-500 mb-6">Por segurança, você precisa definir uma nova senha e cadastrar seu
+            email.</p>
+
+        <div id="message-area" class="message hidden"></div>
+
+        <form id="change-password-form" class="space-y-4">
+
+            <div class="form-group">
+                <label for="email">Seu Email</label>
+                <input type="email" id="email" required placeholder="seu.email@dominio.com">
+                <p class="text-xs text-gray-500 mt-1">Este email será usado para recuperar sua senha no futuro.</p>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <label for="new_password">Nova Senha</label>
+                <div class="relative">
+                    <input type="password" id="new_password" required class="pr-10">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer toggle-password">
+                        <svg class="h-6 w-6 text-gray-400 eye-open" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg class="h-6 w-6 text-gray-400 eye-closed hidden" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064 7 9.542 7 .847 0 1.673.124 2.463.355m-8.088 11.53A9.952 9.952 0 012.458 12c.338-.944.755-1.832 1.255-2.659m11.536 8.088a9.952 9.952 0 01-2.659-1.255m8.088-11.536a9.952 9.952 0 01-1.255 2.659M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirme a Nova Senha</label>
+                <div class="relative">
+                    <input type="password" id="confirm_password" required class="pr-10">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer toggle-password">
+                        <svg class="h-6 w-6 text-gray-400 eye-open" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg class="h-6 w-6 text-gray-400 eye-closed hidden" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064 7 9.542 7 .847 0 1.673.124 2.463.355m-8.088 11.53A9.952 9.952 0 012.458 12c.338-.944.755-1.832 1.255-2.659m11.536 8.088a9.952 9.952 0 01-2.659-1.255m8.088-11.536a9.952 9.952 0 01-1.255 2.659M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">Salvar Nova Senha</button>
+        </form>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '..';
+        const changePasswordForm = document.getElementById('change-password-form');
+        const messageArea = document.getElementById('message-area');
+
+        // Lógica de mostrar/esconder senha (igual ao seu arquivo)
+        const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+        function showPassword(button) { /* ... */ }
+        function hidePassword(button) { /* ... */ }
+        togglePasswordButtons.forEach(button => {
+            button.addEventListener('mousedown', () => showPassword(button));
+            button.addEventListener('mouseup', () => hidePassword(button));
+            button.addEventListener('mouseleave', () => hidePassword(button));
+            button.addEventListener('touchstart', (e) => { e.preventDefault(); showPassword(button); });
+            button.addEventListener('touchend', () => hidePassword(button));
+        });
+
+        function displayMessage(message, type) {
+            messageArea.textContent = message;
+            messageArea.className = `message ${type}`;
+            messageArea.classList.remove('hidden');
+        }
+
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoader();
+
+            // <-- ALTERADO: Capturar o email
+            const email = document.getElementById('email').value;
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const temporaryToken = localStorage.getItem('jwt_temporary');
+
+            if (!temporaryToken) {
+                displayMessage('Sessão inválida ou expirada. Por favor, faça o login novamente.', 'error');
+                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+                hideLoader();
+                return;
+            }
+
+            // <-- ALTERADO: Validar se o email foi preenchido
+            if (!email) {
+                displayMessage('Por favor, preencha seu email.', 'error');
+                hideLoader();
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                displayMessage('As senhas não coincidem.', 'error');
+                hideLoader();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/first-password-change`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${temporaryToken}`
+                    },
+                    // <-- ALTERADO: Enviar o email junto com a senha
+                    body: JSON.stringify({
+                        new_password: newPassword,
+                        email: email
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.removeItem('jwt_temporary');
+                    window.location.href = 'login.html?status=senha_alterada';
+                } else {
+                    // Mensagem de erro pode vir do backend (ex: "email já existe")
+                    displayMessage(data.message || 'Ocorreu um erro.', 'error');
+                }
+
+            } catch (error) {
+                displayMessage('Erro de conexão. Tente novamente.', 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // <-- Lógica de mostrar/esconder senha (só para encurtar a resposta) -->
+        togglePasswordButtons.forEach(button => {
+            function showPassword(button) {
+                const input = button.closest('.relative').querySelector('input');
+                const eyeOpen = button.querySelector('.eye-open');
+                const eyeClosed = button.querySelector('.eye-closed');
+                input.type = 'text';
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+            }
+            function hidePassword(button) {
+                const input = button.closest('.relative').querySelector('input');
+                const eyeOpen = button.querySelector('.eye-open');
+                const eyeClosed = button.querySelector('.eye-closed');
+                input.type = 'password';
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+            }
+            button.addEventListener('mousedown', () => showPassword(button));
+            button.addEventListener('mouseup', () => hidePassword(button));
+            button.addEventListener('mouseleave', () => hidePassword(button));
+            button.addEventListener('touchstart', (e) => { e.preventDefault(); showPassword(button); }, { passive: false });
+            button.addEventListener('touchend', (e) => { e.preventDefault(); hidePassword(button); }, { passive: false });
+        });
+    </script>
+</body>
+
+</html>

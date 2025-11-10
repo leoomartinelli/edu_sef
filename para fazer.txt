@@ -1,0 +1,43 @@
+os dados devem ser aceitados por arquivo .csv/planilha excel
+controle de gestão de "metas educacionais" de professor
+arrumar o pai que deve ser salvo no responsável e não junto com aluno
+
+
+-------
+Apagar entrada/saída FINANCEIRO
+Filtro por sala na mensalidade
+Na planilha 
+(MENSALIDADE) anuidade, matricula, dia de pagamento
+(MATERIAL) anuidade, parcelamento
+
+
+
+Inserir pro professor uma meta a ser batida em relação ao cronograma.
+Professor todo começo de aula insere que foi concluída X capítulo
+Geração de gráfico de avanço atrasado, seguindo o cronograma ou adiantado.
+
+
+
+
+21/10
+Arrumar o Pix da consulta✅
+Gestor conseguir ver quem esta evoluído e quem esta atrasado em relação ao conteúdo pragmático
+Esqueci a senha na tela de login
+Alteração da tabela do excel.⏳
+Transformar colunas do excel pro código
+
+
+Tela do super admin ✅
+-> Escolas -> Consultas pelas escolas✅
+-> Consulta SEF✅
+-> Consultar aluno por RA✅
+
+
+08/11
+Arrumar RA MENSALIDADE
+Adicionar Filtro Mensalidade por RA_SEF
+
+
+
+
+

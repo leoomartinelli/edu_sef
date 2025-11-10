@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Professores - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-edit {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+
+        .btn-edit:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-info {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-info:hover {
+            background-color: #2563eb;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .turmas-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .turmas-list-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Estilo padrão para os links da navbar */
+        .nav-link {
+            color: #D1D5DB;
+            /* cinza claro */
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            /* cinza mais escuro */
+            color: #FFFFFF;
+        }
+
+        /* Estilo para o link da PÁGINA ATUAL */
+        .nav-link.active {
+            background-color: #111827;
+            /* cinza bem escuro */
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional Financeiro</a>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link">Turmas</a>
+                <a href="crud_professores.html" class="nav-link active">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link ">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="gerenciar_contratos.html" class="nav-link">Contratos</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+
+                
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            Gerenciamento de Professores
+            <span id="total-professores-display"
+                class="text-lg font-normal bg-blue-100 text-blue-800 px-3 py-1 rounded-full align-middle ml-2"></span>
+        </h1>
+        <div id="message-area" class="message hidden"></div>
+        <div class="flex justify-end mb-4">
+            <button class="btn btn-primary" onclick="openAddProfessorModal()">Cadastrar Novo Professor</button>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Professores Cadastrados</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left">ID</th>
+                            <th class="px-4 py-2 text-left">Nome</th>
+                            <th class="px-4 py-2 text-left">CPF</th>
+                            <th class="px-4 py-2 text-left">Email</th>
+                            <th class="px-4 py-2 text-left">Telefone</th>
+                            <th class="px-4 py-2 text-left">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="professores-table-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="professorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeProfessorModal()">&times;</span>
+            <h2 id="professor-modal-title" class="text-2xl font-semibold text-gray-700 mb-4"></h2>
+            <div id="professor-modal-message-area" class="message hidden"></div>
+            <form id="professor-form" class="max-h-[70vh] overflow-y-auto p-2">
+                <input type="hidden" id="id_professor">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group"><label for="nome_professor">Nome Completo <span
+                                class="text-red-500">*</span></label><input type="text" id="nome_professor"
+                            name="nome_professor" required></div>
+                    <div class="form-group"><label for="cpf">CPF <span class="text-red-500">*</span></label><input
+                            type="text" id="cpf" name="cpf" maxlength="14" required></div>
+                    <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email">
+                    </div>
+                    <div class="form-group"><label for="telefone">Telefone</label><input type="text" id="telefone"
+                            name="telefone" maxlength="15"></div>
+                    <div class="form-group"><label for="data_contratacao">Data de Contratação</label><input type="date"
+                            id="data_contratacao" name="data_contratacao"></div>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProfessorModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="turmasProfessorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeTurmasProfessorModal()">&times;</span>
+            <h2 id="turmas-professor-modal-title" class="text-2xl font-semibold text-gray-700 mb-4">Gerenciar Turmas de:
+                <span id="professor-name-turmas"></span>
+            </h2>
+            <div id="turmas-professor-modal-message-area" class="message hidden"></div>
+            <input type="hidden" id="current_professor_id_for_turmas">
+
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold border-b pb-1 mb-2">Turmas Atualmente Associadas</h3>
+                <ul id="professor-turmas-list" class="divide-y divide-gray-200 mb-4">
+                </ul>
+                <p id="no-turmas-message" class="text-gray-500 text-center hidden">Nenhuma turma associada.</p>
+            </div>
+
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold border-b pb-1 mb-2">Adicionar Nova Turma</h3>
+                <form id="add-turma-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="add_id_turma">Turma</label>
+                        <select id="add_id_turma" name="id_turma" required>
+                            <option value="">Selecione uma turma</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="add_data_inicio_lecionar">Data de Início</label>
+                        <input type="date" id="add_data_inicio_lecionar" name="data_inicio_lecionar" required>
+                    </div>
+                    <div class="form-group col-span-2">
+                        <label for="add_data_fim_lecionar">Data de Fim (Opcional)</label>
+                        <input type="date" id="add_data_fim_lecionar" name="data_fim_lecionar">
+                    </div>
+                    <div class="col-span-2 flex justify-end">
+                        <button type="submit" class="btn btn-primary">Adicionar Turma</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+
+
+    <script>
+        const API_BASE_URL_PROFESSORES = '/api/professores';
+        const API_BASE_URL_TURMAS = '/api/turmas';
+        const API_LOGIN_URL = 'login.html';
+
+        const professorModal = document.getElementById('professorModal');
+        const professorForm = document.getElementById('professor-form');
+        const professorModalTitle = document.getElementById('professor-modal-title');
+        const professorModalMessageArea = document.getElementById('professor-modal-message-area');
+        const messageArea = document.getElementById('message-area');
+        const professoresTableBody = document.getElementById('professores-table-body');
+
+        const turmasProfessorModal = document.getElementById('turmasProfessorModal');
+        const professorNameTurmas = document.getElementById('professor-name-turmas');
+        const currentProfessorIdForTurmas = document.getElementById('current_professor_id_for_turmas');
+        const professorTurmasList = document.getElementById('professor-turmas-list');
+        const noTurmasMessage = document.getElementById('no-turmas-message');
+        const addTurmaForm = document.getElementById('add-turma-form');
+        const addIdTurmaSelect = document.getElementById('add_id_turma');
+
+        window.showLoader = function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+        }
+
+        window.hideLoader = function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'none';
+            }
+        }
+
+
+        const cleanNumber = (num) => num ? String(num).replace(/\D/g, '') : null;
+        const formatCpf = (cpf) => {
+            if (!cpf) return '';
+            const cleaned = cleanNumber(cpf);
+            if (cleaned.length === 11) {
+                return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            return cleaned;
+        };
+        const formatPhone = (phone) => {
+            if (!phone) return '';
+            const cleaned = cleanNumber(phone);
+            if (cleaned.length === 11) return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            if (cleaned.length === 10) return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+            return cleaned;
+        };
+
+        function displayMessage(message, type, area = messageArea) {
+            area.textContent = message;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
+            setTimeout(() => area.classList.add('hidden'), 5000);
+        }
+
+        function openAddProfessorModal() {
+            professorForm.reset();
+            document.getElementById('id_professor').value = '';
+            professorModalTitle.textContent = 'Cadastrar Novo Professor';
+            professorModalMessageArea.classList.add('hidden');
+            professorModal.style.display = 'flex';
+        }
+
+        async function openEditProfessorModal(id) {
+            showLoader();
+            professorForm.reset();
+            professorModalTitle.textContent = 'Carregando dados para edição...';
+            professorModalMessageArea.classList.add('hidden');
+            professorModal.style.display = 'flex';
+
+            try {
+                const response = await fetch(`${API_BASE_URL_PROFESSORES}/${id}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!response.ok) throw new Error('Falha ao carregar dados do professor.');
+                const result = await response.json();
+
+                if (result.success) {
+                    const professor = result.data;
+                    professorModalTitle.textContent = `Editar Professor (ID: ${professor.id_professor})`;
+                    for (const key in professor) {
+                        const field = document.getElementById(key);
+                        if (field) {
+                            if (key === 'cpf') {
+                                field.value = formatCpf(professor[key]);
+                            } else if (key === 'telefone') {
+                                field.value = formatPhone(professor[key]);
+                            } else {
+                                field.value = professor[key] || '';
+                            }
+                        }
+                    }
+                } else {
+                    displayMessage(result.message, 'error', professorModalMessageArea);
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error', professorModalMessageArea);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function closeProfessorModal() {
+            professorModal.style.display = 'none';
+        }
+
+        professorForm.addEventListener('submit', async (e) => {
+            showLoader();
+            e.preventDefault();
+            const id = document.getElementById('id_professor').value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_BASE_URL_PROFESSORES}/${id}` : API_BASE_URL_PROFESSORES;
+
+            const formData = new FormData(professorForm);
+            const professorData = {};
+            formData.forEach((value, key) => {
+                if (key === 'cpf' || key === 'telefone') {
+                    professorData[key] = cleanNumber(value);
+                } else {
+                    professorData[key] = value === '' ? null : value;
+                }
+            });
+            if (id) {
+                professorData.id_professor = id;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                    body: JSON.stringify(professorData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success');
+                    closeProfessorModal();
+                    fetchProfessores();
+                } else {
+                    displayMessage(result.message, 'error', professorModalMessageArea);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao salvar professor. Verifique o console para mais detalhes.', 'error', professorModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        async function fetchProfessores() {
+            showLoader();
+            professoresTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Carregando...</td></tr>';
+            try {
+                const response = await fetch(API_BASE_URL_PROFESSORES, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                if (!response.ok) throw new Error('Falha ao carregar professores.');
+                const result = await response.json();
+
+                // >>> INÍCIO DA MODIFICAÇÃO <<<
+                const totalDisplay = document.getElementById('total-professores-display');
+                if (totalDisplay && result.total !== undefined) {
+                    totalDisplay.textContent = `${result.total} cadastrados`;
+                }
+                // >>> FIM DA MODIFICAÇÃO <<<
+
+                professoresTableBody.innerHTML = '';
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(professor => {
+                        // ... (o restante do código que cria as linhas da tabela continua igual) ...
+                        const row = `
+                    <tr>
+                        <td class="px-4 py-2">${professor.id_professor}</td>
+                        <td class="px-4 py-2 font-medium">${professor.nome_professor}</td>
+                        <td class="px-4 py-2">${formatCpf(professor.cpf)}</td>
+                        <td class="px-4 py-2">${professor.email || 'N/A'}</td>
+                        <td class="px-4 py-2">${formatPhone(professor.telefone) || 'N/A'}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            <button class="btn btn-edit text-sm" onclick="openEditProfessorModal(${professor.id_professor})">Editar</button>
+                            <button class="btn btn-info text-sm ml-2" onclick="openTurmasProfessorModal(${professor.id_professor}, '${professor.nome_professor}')">Turmas</button>
+                            <button class="btn btn-delete text-sm ml-2" onclick="deleteProfessor(${professor.id_professor})">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+                        professoresTableBody.innerHTML += row;
+                    });
+                } else {
+                    professoresTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum professor encontrado.</td></tr>';
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error');
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        window.deleteProfessor = async (id) => {
+            showLoader();
+            if (!confirm('Tem certeza que deseja excluir este professor? Isso removerá também seu usuário de login e todas as suas associações com turmas.')) return;
+            try {
+                const response = await fetch(`${API_BASE_URL_PROFESSORES}/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                displayMessage(result.message, result.success ? 'success' : 'error');
+                if (result.success) fetchProfessores();
+            } catch (error) {
+                displayMessage('Erro de conexão ao excluir professor.', 'error');
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        // Funções para o Modal de Turmas do Professor
+        async function openTurmasProfessorModal(idProfessor, nomeProfessor) {
+            currentProfessorIdForTurmas.value = idProfessor;
+            professorNameTurmas.textContent = nomeProfessor;
+            professorTurmasList.innerHTML = '';
+            noTurmasMessage.classList.add('hidden');
+            turmasProfessorModal.style.display = 'flex';
+            await fetchProfessorTurmas(idProfessor);
+            await fetchAllTurmasForSelect();
+        }
+
+        function closeTurmasProfessorModal() {
+            turmasProfessorModal.style.display = 'none';
+        }
+
+        async function fetchProfessorTurmas(idProfessor) {
+            showLoader();
+            professorTurmasList.innerHTML = '<li><p class="text-center p-2 text-gray-500">Carregando turmas...</p></li>';
+            try {
+                const response = await fetch(`${API_BASE_URL_PROFESSORES}/${idProfessor}/turmas`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!response.ok) throw new Error('Falha ao carregar turmas do professor.');
+                const result = await response.json();
+
+                professorTurmasList.innerHTML = '';
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(turma => {
+                        const listItem = `
+                            <li class="turmas-list-item">
+                                <span>${turma.nome_turma} (Início: ${formatDate(turma.data_inicio_lecionar)}${turma.data_fim_lecionar ? ', Fim: ' + formatDate(turma.data_fim_lecionar) : ''})</span>
+                                <button class="btn btn-delete text-xs" onclick="removeTurmaFromProfessor(${idProfessor}, ${turma.id_turma}, '${turma.nome_turma}')">Remover</button>
+                            </li>
+                        `;
+                        professorTurmasList.innerHTML += listItem;
+                    });
+                } else {
+                    noTurmasMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error', professorModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function fetchAllTurmasForSelect() {
+            showLoader();
+            addIdTurmaSelect.innerHTML = '<option value="">Selecione uma turma</option>';
+            try {
+                const response = await fetch(API_BASE_URL_TURMAS, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!response.ok) throw new Error('Falha ao carregar turmas disponíveis.');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(turma => {
+                        addIdTurmaSelect.innerHTML += `<option value="${turma.id_turma}">${turma.nome_turma}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao buscar turmas para o select:", error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        addTurmaForm.addEventListener('submit', async (e) => {
+            showLoader();
+            e.preventDefault();
+            const idProfessor = currentProfessorIdForTurmas.value;
+            const turmaData = {
+                id_turma: addIdTurmaSelect.value,
+                data_inicio_lecionar: document.getElementById('add_data_inicio_lecionar').value,
+                data_fim_lecionar: document.getElementById('add_data_fim_lecionar').value || null
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL_PROFESSORES}/${idProfessor}/turmas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                    body: JSON.stringify(turmaData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success', professorModalMessageArea);
+                    addTurmaForm.reset();
+                    fetchProfessorTurmas(idProfessor);
+                } else {
+                    displayMessage(result.message, 'error', professorModalMessageArea);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao adicionar turma.', 'error', professorModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        window.removeTurmaFromProfessor = async (idProfessor, idTurma, nomeTurma) => {
+            showLoader();
+            if (!confirm(`Tem certeza que deseja remover a turma "${nomeTurma}" deste professor?`)) return;
+            try {
+                const response = await fetch(`${API_BASE_URL_PROFESSORES}/${idProfessor}/turmas/${idTurma}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                displayMessage(result.message, result.success ? 'success' : 'error', professorModalMessageArea);
+                if (result.success) {
+                    fetchProfessorTurmas(idProfessor);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao remover turma.', 'error', professorModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+            // Apenas 'admin' pode acessar este CRUD de professores
+            if (!token || role !== 'admin') {
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+            fetchProfessores();
+        });
+    </script>
+</body>
+
+</html>

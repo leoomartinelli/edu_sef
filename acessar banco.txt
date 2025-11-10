@@ -1,0 +1,6 @@
+SSH Hospedagem Hostinger
+ssh -p 65002 u728912775@149.62.37.231
+zmaLseU6_GD4*t#
+
+Senha GIT Hospedagem
+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

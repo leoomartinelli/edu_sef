@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Disciplinas - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <link rel="stylesheet" href="css/loader.css">
+
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-edit {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+
+        .btn-edit:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-info {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-info:hover {
+            background-color: #2563eb;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .turmas-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .turmas-list-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Estilo padrão para os links da navbar */
+        .nav-link {
+            color: #D1D5DB;
+            /* cinza claro */
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            /* cinza mais escuro */
+            color: #FFFFFF;
+        }
+
+        /* Estilo para o link da PÁGINA ATUAL */
+        .nav-link.active {
+            background-color: #111827;
+            /* cinza bem escuro */
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional Financeiro</a>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link">Turmas</a>
+                <a href="crud_professores.html" class="nav-link">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link active">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link ">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="gerenciar_contratos.html" class="nav-link">Contratos</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+
+                
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Gerenciamento de Disciplinas</h1>
+        <div id="message-area" class="message hidden"></div>
+        <div class="flex justify-end mb-4">
+            <button class="btn btn-primary" onclick="openAddDisciplinaModal()">Cadastrar Nova Disciplina</button>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Disciplinas Cadastradas</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left">ID</th>
+                            <th class="px-4 py-2 text-left">Nome da Disciplina</th>
+                            <th class="px-4 py-2 text-left">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disciplinas-table-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="disciplinaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeDisciplinaModal()">&times;</span>
+            <h2 id="disciplina-modal-title" class="text-2xl font-semibold text-gray-700 mb-4"></h2>
+            <div id="disciplina-modal-message-area" class="message hidden"></div>
+            <form id="disciplina-form" class="max-h-[70vh] overflow-y-auto p-2">
+                <input type="hidden" id="id_disciplina">
+                <div class="form-group mb-4">
+                    <label for="nome_disciplina">Nome da Disciplina <span class="text-red-500">*</span></label>
+                    <input type="text" id="nome_disciplina" name="nome_disciplina" required>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeDisciplinaModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="turmasDisciplinaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeTurmasDisciplinaModal()">&times;</span>
+            <h2 id="turmas-disciplina-modal-title" class="text-2xl font-semibold text-gray-700 mb-4">Gerenciar Turmas
+                de: <span id="disciplina-name-turmas"></span></h2>
+            <div id="turmas-disciplina-modal-message-area" class="message hidden"></div>
+            <input type="hidden" id="current_disciplina_id_for_turmas">
+
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold border-b pb-1 mb-2">Turmas Atualmente Associadas</h3>
+                <ul id="disciplina-turmas-list" class="divide-y divide-gray-200 mb-4">
+                </ul>
+                <p id="no-turmas-message-disciplina" class="text-gray-500 text-center hidden">Nenhuma turma associada a
+                    esta disciplina.</p>
+            </div>
+
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold border-b pb-1 mb-2">Adicionar Turma</h3>
+                <form id="add-turma-disciplina-form" class="grid grid-cols-1 gap-4">
+                    <div class="form-group">
+                        <label for="add_id_turma_disciplina">Turma</label>
+                        <select id="add_id_turma_disciplina" name="id_turma" required>
+                            <option value="">Selecione uma turma</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1 flex justify-end">
+                        <button type="submit" class="btn btn-primary">Adicionar Turma</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL_DISCIPLINAS = '/api/disciplinas';
+        const API_BASE_URL_TURMAS = '/api/turmas';
+        const API_LOGIN_URL = 'login.html';
+
+        const disciplinaModal = document.getElementById('disciplinaModal');
+        const disciplinaForm = document.getElementById('disciplina-form');
+        const disciplinaModalTitle = document.getElementById('disciplina-modal-title');
+        const disciplinaModalMessageArea = document.getElementById('disciplina-modal-message-area');
+        const messageArea = document.getElementById('message-area');
+        const disciplinasTableBody = document.getElementById('disciplinas-table-body');
+
+        const turmasDisciplinaModal = document.getElementById('turmasDisciplinaModal');
+        const disciplinaNameTurmas = document.getElementById('disciplina-name-turmas');
+        const currentDisciplinaIdForTurmas = document.getElementById('current_disciplina_id_for_turmas');
+        const disciplinaTurmasList = document.getElementById('disciplina-turmas-list');
+        const noTurmasMessageDisciplina = document.getElementById('no-turmas-message-disciplina');
+        const addTurmaDisciplinaForm = document.getElementById('add-turma-disciplina-form');
+        const addIdTurmaDisciplinaSelect = document.getElementById('add_id_turma_disciplina');
+
+        window.showLoader = function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+        }
+
+        window.hideLoader = function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = 'none';
+            }
+        }
+
+        function displayMessage(message, type, area = messageArea) {
+            area.textContent = message;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
+            setTimeout(() => area.classList.add('hidden'), 5000);
+        }
+
+        function openAddDisciplinaModal() {
+            disciplinaForm.reset();
+            document.getElementById('id_disciplina').value = '';
+            disciplinaModalTitle.textContent = 'Cadastrar Nova Disciplina';
+            disciplinaModalMessageArea.classList.add('hidden');
+            disciplinaModal.style.display = 'flex';
+        }
+
+        async function openEditDisciplinaModal(id) {
+            showLoader();
+            disciplinaForm.reset();
+            disciplinaModalTitle.textContent = 'Carregando dados para edição...';
+            disciplinaModalMessageArea.classList.add('hidden');
+            disciplinaModal.style.display = 'flex';
+
+            try {
+                const response = await fetch(`${API_BASE_URL_DISCIPLINAS}/${id}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!response.ok) throw new Error('Falha ao carregar dados da disciplina.');
+                const result = await response.json();
+
+                if (result.success) {
+                    const disciplina = result.data;
+                    disciplinaModalTitle.textContent = `Editar Disciplina (ID: ${disciplina.id_disciplina})`;
+                    document.getElementById('id_disciplina').value = disciplina.id_disciplina;
+                    document.getElementById('nome_disciplina').value = disciplina.nome_disciplina;
+                } else {
+                    displayMessage(result.message, 'error', disciplinaModalMessageArea);
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error', disciplinaModalMessageArea);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function closeDisciplinaModal() {
+            disciplinaModal.style.display = 'none';
+        }
+
+        disciplinaForm.addEventListener('submit', async (e) => {
+            showLoader();
+            e.preventDefault();
+            const id = document.getElementById('id_disciplina').value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_BASE_URL_DISCIPLINAS}/${id}` : API_BASE_URL_DISCIPLINAS;
+
+            const disciplinaData = {
+                nome_disciplina: document.getElementById('nome_disciplina').value
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                    body: JSON.stringify(disciplinaData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success');
+                    closeDisciplinaModal();
+                    fetchDisciplinas();
+                } else {
+                    displayMessage(result.message, 'error', disciplinaModalMessageArea);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao salvar disciplina. Verifique o console para mais detalhes.', 'error', disciplinaModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        async function fetchDisciplinas() {
+            showLoader();
+            disciplinasTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">Carregando...</td></tr>';
+            try {
+                const response = await fetch(API_BASE_URL_DISCIPLINAS, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                if (!response.ok) throw new Error('Falha ao carregar disciplinas.');
+                const result = await response.json();
+
+                disciplinasTableBody.innerHTML = '';
+                if (result.success && result.data.length > 0) {
+                    result.data.forEach(disciplina => {
+                        const row = `
+                            <tr>
+                                <td class="px-4 py-2">${disciplina.id_disciplina}</td>
+                                <td class="px-4 py-2 font-medium">${disciplina.nome_disciplina}</td>
+                                <td class="px-4 py-2 whitespace-nowrap">
+                                    <button class="btn btn-edit text-sm" onclick="openEditDisciplinaModal(${disciplina.id_disciplina})">Editar</button>
+                                    <button class="btn btn-info text-sm ml-2" onclick="openTurmasDisciplinaModal(${disciplina.id_disciplina}, '${disciplina.nome_disciplina}')">Turmas</button>
+                                    <button class="btn btn-delete text-sm ml-2" onclick="deleteDisciplina(${disciplina.id_disciplina})">Excluir</button>
+                                </td>
+                            </tr>
+                        `;
+                        disciplinasTableBody.innerHTML += row;
+                    });
+                } else {
+                    disciplinasTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">Nenhuma disciplina encontrada.</td></tr>';
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error');
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        window.deleteDisciplina = async (id) => {
+            showLoader();
+            if (!confirm('Tem certeza que deseja excluir esta disciplina? Isso removerá todas as associações com turmas.')) return;
+            try {
+                const response = await fetch(`${API_BASE_URL_DISCIPLINAS}/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                displayMessage(result.message, result.success ? 'success' : 'error');
+                if (result.success) fetchDisciplinas();
+            } catch (error) {
+                displayMessage('Erro de conexão ao excluir disciplina.', 'error');
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        // Funções para o Modal de Turmas da Disciplina
+        async function openTurmasDisciplinaModal(idDisciplina, nomeDisciplina) {
+            currentDisciplinaIdForTurmas.value = idDisciplina;
+            disciplinaNameTurmas.textContent = nomeDisciplina;
+            disciplinaTurmasList.innerHTML = '';
+            noTurmasMessageDisciplina.classList.add('hidden');
+            turmasDisciplinaModal.style.display = 'flex';
+            await fetchDisciplinaTurmas(idDisciplina);
+            await fetchAllTurmasForDisciplinaSelect();
+        }
+
+        function closeTurmasDisciplinaModal() {
+            turmasDisciplinaModal.style.display = 'none';
+        }
+
+        async function fetchDisciplinaTurmas(idDisciplina) {
+            showLoader();
+            disciplinaTurmasList.innerHTML = '<li><p class="text-center p-2 text-gray-500">Carregando turmas...</p></li>';
+            try {
+                // Nova requisição para obter as turmas *associadas* a esta disciplina
+                const associatedTurmasResponse = await fetch(`${API_BASE_URL_DISCIPLINAS}/${idDisciplina}/turmas`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!associatedTurmasResponse.ok) {
+                    const errorBody = await associatedTurmasResponse.json();
+                    throw new Error(errorBody.message || 'Falha ao carregar turmas associadas à disciplina.');
+                }
+                const associatedTurmasResult = await associatedTurmasResponse.json();
+
+                disciplinaTurmasList.innerHTML = '';
+                if (associatedTurmasResult.success && associatedTurmasResult.data.length > 0) {
+                    associatedTurmasResult.data.forEach(turma => {
+                        const listItem = `
+                            <li class="turmas-list-item">
+                                <span>${turma.nome_turma}</span>
+                                <button class="btn btn-delete text-xs" onclick="removeDisciplinaFromTurma(${turma.id_turma}, ${idDisciplina}, '${turma.nome_turma}')">Remover</button>
+                            </li>
+                        `;
+                        disciplinaTurmasList.innerHTML += listItem;
+                    });
+                } else {
+                    noTurmasMessageDisciplina.classList.remove('hidden');
+                }
+            } catch (error) {
+                displayMessage(error.message, 'error', disciplinaModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function fetchAllTurmasForDisciplinaSelect() {
+            showLoader();
+            addIdTurmaDisciplinaSelect.innerHTML = '<option value="">Selecione uma turma</option>';
+            try {
+                const responseAllTurmas = await fetch(API_BASE_URL_TURMAS, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                if (!responseAllTurmas.ok) throw new Error('Falha ao carregar todas as turmas disponíveis.');
+                const resultAllTurmas = await responseAllTurmas.json();
+
+                if (resultAllTurmas.success && resultAllTurmas.data.length > 0) {
+                    const currentIdDisciplina = currentDisciplinaIdForTurmas.value;
+
+                    // Busca as turmas já associadas a esta disciplina
+                    const responseAssociatedTurmas = await fetch(`${API_BASE_URL_DISCIPLINAS}/${currentIdDisciplina}/turmas`, {
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                    });
+                    if (!responseAssociatedTurmas.ok) throw new Error('Falha ao carregar turmas já associadas.');
+                    const resultAssociatedTurmas = await responseAssociatedTurmas.json();
+
+                    const associatedTurmaIds = new Set();
+                    if (resultAssociatedTurmas.success) {
+                        resultAssociatedTurmas.data.forEach(t => associatedTurmaIds.add(t.id_turma));
+                    }
+
+                    // Adiciona apenas as turmas que AINDA NÃO ESTÃO associadas
+                    resultAllTurmas.data.forEach(turma => {
+                        if (!associatedTurmaIds.has(turma.id_turma)) {
+                            addIdTurmaDisciplinaSelect.innerHTML += `<option value="${turma.id_turma}">${turma.nome_turma}</option>`;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao buscar turmas para o select:", error);
+                displayMessage(error.message, 'error', disciplinaModalMessageArea);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        addTurmaDisciplinaForm.addEventListener('submit', async (e) => {
+            showLoader();
+            e.preventDefault();
+            const idDisciplina = currentDisciplinaIdForTurmas.value;
+            const idTurma = addIdTurmaDisciplinaSelect.value;
+
+            const associationData = {
+                id_disciplina: idDisciplina
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL_TURMAS}/${idTurma}/disciplinas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` },
+                    body: JSON.stringify(associationData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    displayMessage(result.message, 'success', disciplinaModalMessageArea);
+                    addTurmaDisciplinaForm.reset();
+                    fetchDisciplinaTurmas(idDisciplina); // Recarrega a lista de turmas associadas
+                    fetchAllTurmasForDisciplinaSelect(); // Recarrega o select de turmas disponíveis
+                } else {
+                    displayMessage(result.message, 'error', disciplinaModalMessageArea);
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao adicionar turma à disciplina.', 'error', disciplinaModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        window.removeDisciplinaFromTurma = async (idTurma, idDisciplina, nomeTurma) => {
+            showLoader();
+            if (!confirm(`Tem certeza que deseja remover a disciplina desta turma?`)) return; // Mensagem mais genérica
+            try {
+                const response = await fetch(`${API_BASE_URL_TURMAS}/${idTurma}/disciplinas/${idDisciplina}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` }
+                });
+                const result = await response.json();
+                displayMessage(result.message, result.success ? 'success' : 'error', disciplinaModalMessageArea);
+                if (result.success) {
+                    fetchDisciplinaTurmas(idDisciplina); // Recarrega a lista de turmas associadas
+                    fetchAllTurmasForDisciplinaSelect(); // Recarrega o select de turmas disponíveis
+                }
+            } catch (error) {
+                displayMessage('Erro de conexão ao remover disciplina da turma.', 'error', disciplinaModalMessageArea);
+                console.error('Fetch error:', error);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+            if (!token || role !== 'admin') { // Apenas admin gerencia disciplinas
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+            fetchDisciplinas();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Financeiro - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js" defer></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .grafico-btn.active,
+        .tab-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            font-weight: 500;
+        }
+
+        .filtro-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        /* Estilo padrão para os links da navbar */
+        .nav-link {
+            color: #D1D5DB;
+            /* cinza claro */
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link:hover {
+            background-color: #374151;
+            /* cinza mais escuro */
+            color: #FFFFFF;
+        }
+
+        /* Estilo para o link da PÁGINA ATUAL */
+        .nav-link.active {
+            background-color: #111827;
+            /* cinza bem escuro */
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
+                Financeiro</a>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link">Turmas</a>
+                <a href="crud_professores.html" class="nav-link">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link ">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="gerenciar_contratos.html" class="nav-link">Contratos</a>
+                <a href="financeiro.html" class="nav-link active">Financeiro</a>
+
+
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Painel de Gestão Financeira</h1>
+        <p class="text-gray-500 mt-1 text-center mb-6">Controle suas entradas, saídas e visualize o balanço do seu
+            negócio.</p>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-6">
+            <div class="flex items-center gap-4">
+                <label for="filtroMes" class="block text-sm font-medium text-gray-700 whitespace-nowrap">Visualizar
+                    Mês:</label>
+                <select id="filtroMes"
+                    class="block w-full max-w-xs border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <div class="bg-green-100 p-6 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-green-800">Total de Entradas</h3>
+                <p id="totalEntradas" class="text-3xl font-semibold text-green-900 mt-2">R$ 0,00</p>
+            </div>
+            <div class="bg-red-100 p-6 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-red-800">Total de Saídas</h3>
+                <p id="totalSaidas" class="text-3xl font-semibold text-red-900 mt-2">R$ 0,00</p>
+            </div>
+            <div class="bg-blue-100 p-6 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-blue-800">Saldo do Mês</h3>
+                <p id="saldoAtual" class="text-3xl font-semibold text-blue-900 mt-2">R$ 0,00</p>
+            </div>
+            <div class="bg-yellow-100 p-6 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-yellow-800">Mensalidades a Receber</h3>
+                <p id="mensalidadesPendentes" class="text-3xl font-semibold text-yellow-900 mt-2">0</p>
+            </div>
+            <div class="bg-indigo-100 p-6 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-indigo-800">Mensalidades Recebidas</h3>
+                <p id="mensalidadesPagas" class="text-3xl font-semibold text-indigo-900 mt-2">0</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+
+                <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Adicionar Nova Transação</h2>
+                    <form id="formTransacao" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2 form-group">
+                            <label for="descricao">Descrição</label>
+                            <input type="text" id="descricao" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valor">Valor (R$)</label>
+                            <input type="number" id="valor" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="data">Data da Transação</label>
+                            <input type="date" id="data" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoTransacao">Tipo de Transação</label>
+                            <select id="tipoTransacao">
+                                <option value="saida">Saída (Despesa)</option>
+                                <option value="entrada">Entrada (Receita)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoCusto">Tipo de Custo (se for saída)</label>
+                            <select id="tipoCusto">
+                                <option value="">Nenhum</option>
+                            </select>
+                        </div>
+                        <div id="grupoTipoReceita" class="hidden form-group">
+                            <label for="tipoReceita">Tipo de Receita (se for entrada)</label>
+                            <select id="tipoReceita">
+                                <option value="">Nenhum</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <button type="submit" class="btn btn-primary w-full">
+                                Adicionar Transação
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-xl font-semibold text-gray-700">Histórico de Transações</h2>
+                            <div class="flex items-center gap-2">
+                                <button id="btnSelecionar"
+                                    class="flex items-center px-4 py-2 text-sm font-semibold text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+
+                                    Apagar Selecionados
+                                </button>
+                                <button id="btnApagarSelecionados"
+                                    class="hidden px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span id="contadorSelecionados">Apagar (0)</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="filtroTabsContainer"
+                            class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-3">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="th-checkbox hidden px-2 py-3"></th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Descrição</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Valor</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Data</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Categoria</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaTransacoes" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <div class="flex-shrink-0">
+                            <h2 class="text-xl font-semibold text-gray-700 mb-2">Relatório de Mensalidades</h2>
+                            <div class="flex border border-gray-300 rounded-lg p-1">
+                                <button id="tab-pendentes"
+                                    class="tab-btn w-full md:w-auto px-6 py-2 text-sm font-semibold rounded-md transition-colors duration-200">A
+                                    Receber</button>
+                                <button id="tab-pagas"
+                                    class="tab-btn w-full md:w-auto px-6 py-2 text-sm font-semibold rounded-md transition-colors duration-200">Recebidas</button>
+                            </div>
+                        </div>
+                        <div class="flex-grow form-group !mb-0">
+                            <label for="search-mensalidades-input" class="!mb-2">Buscar Aluno ou Responsável</label>
+                            <input type="text" id="search-mensalidades-input" placeholder="Digite para buscar...">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aluno
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Responsável</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Vencimento/Pagamento</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatorio-mensalidades-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                        <div id="relatorio-total-sum" class="text-right font-bold text-lg mt-4 mr-4"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="space-y-8">
+                <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <h2 class="text-xl font-semibold text-gray-700">Análise Gráfica</h2>
+                        <div id="graficoControles"
+                            class="flex items-center border border-gray-200 rounded-lg p-1 text-sm text-gray-600">
+                            <button data-grafico="categoria"
+                                class="grafico-btn active px-3 py-1 rounded-md transition-colors duration-200">Categoria</button>
+                            <button data-grafico="fluxo"
+                                class="grafico-btn px-3 py-1 rounded-md transition-colors duration-200">Fluxo
+                                Mensal</button>
+                        </div>
+                    </div>
+                    <div class="relative h-64">
+                        <canvas id="graficoCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                        <h2 class="text-lg font-semibold text-gray-700 mb-3">Gerenciar Tipos de Custo</h2>
+                        <form id="formTipoCusto" class="flex items-center gap-2 mb-4">
+
+                            <div class="form-group flex-grow !mb-0">
+                                <label for="nomeTipoCusto" class="sr-only">Nova despesa</label>
+                                <input type="text" id="nomeTipoCusto" placeholder="Nova despesa" required>
+                            </div>
+
+                            <button type="submit"
+                                class="btn btn-primary text-sm whitespace-nowrap border border-indigo-600 hover:border-indigo-700">Add</button>
+
+                        </form>
+                        <ul id="listaTiposCusto" class="space-y-2 max-h-32 overflow-y-auto pr-2"></ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                        <h2 class="text-lg font-semibold text-gray-700 mb-3">Gerenciar Tipos de Receita</h2>
+                        <form id="formTipoReceita" class="flex items-center gap-2 mb-4">
+
+                            <div class="form-group flex-grow !mb-0">
+                                <label for="nomeTipoReceita" class="sr-only">Nova receita</label>
+                                <input type="text" id="nomeTipoReceita" placeholder="Nova receita" required>
+                            </div>
+
+                            <button type="submit"
+                                class="btn btn-primary text-sm whitespace-nowrap border border-indigo-600 hover:border-indigo-700">Add</button>
+
+                        </form>
+                        <ul id="listaTiposReceita" class="space-y-2 max-h-32 overflow-y-auto pr-2"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // --- CONFIGURAÇÕES E ESTADO DA APLICAÇÃO ---
+            const API_BASE_URL = '/api/financeiro';
+            const token = localStorage.getItem('jwt_token');
+
+            let todasTransacoes = [];
+            let transacoes = [];
+            let tiposCusto = [];
+
+            let mesFiltroAtual = 'todos';
+            let filtroAtual = 'todos';
+
+            let tipoFiltroAtual = 'todos';
+
+            let tiposReceita = [];
+
+            let graficoAtivo = 'categoria';
+            let graficoCanvasChart = null;
+
+            let pollingInterval = null;
+            const POLLING_RATE_MS = 30000; // Verifica por atualizações a cada 30 segundos
+
+            const API_BASE_URL_MENSALIDADES = '/api/mensalidades';
+            let currentStatusFilter = 'open'; // 'open' ou 'approved'
+
+            let isSelectionMode = false;
+            let selectedIds = new Set();
+
+
+            // --- ELEMENTOS DO DOM ---
+            const filtroMesSelect = document.getElementById('filtroMes');
+            const formTransacao = document.getElementById('formTransacao');
+            const formTipoCusto = document.getElementById('formTipoCusto');
+            const tabelaTransacoes = document.getElementById('tabelaTransacoes');
+            const listaTiposCusto = document.getElementById('listaTiposCusto');
+            const selectTipoCusto = document.getElementById('tipoCusto');
+            const totalEntradasEl = document.getElementById('totalEntradas');
+            const totalSaidasEl = document.getElementById('totalSaidas');
+            const saldoAtualEl = document.getElementById('saldoAtual');
+            const dataInput = document.getElementById('data');
+            const filtroTabsContainer = document.getElementById('filtroTabsContainer');
+            const graficoControles = document.getElementById('graficoControles');
+            const tipoTransacaoSelect = document.getElementById('tipoTransacao');
+            const formTipoReceita = document.getElementById('formTipoReceita');
+            const listaTiposReceita = document.getElementById('listaTiposReceita');
+            const selectTipoReceita = document.getElementById('tipoReceita');
+            const grupoTipoCusto = document.getElementById('tipoCusto').parentElement;
+            const grupoTipoReceita = document.getElementById('grupoTipoReceita');
+            const relatorioTableBody = document.getElementById('relatorio-mensalidades-body');
+            const searchMensalidadesInput = document.getElementById('search-mensalidades-input');
+            const tabPendentes = document.getElementById('tab-pendentes');
+            const tabPagas = document.getElementById('tab-pagas');
+            const relatorioTotalSumEl = document.getElementById('relatorio-total-sum');
+            const btnSelecionar = document.getElementById('btnSelecionar');
+            const btnApagarSelecionados = document.getElementById('btnApagarSelecionados');
+            const contadorSelecionados = document.getElementById('contadorSelecionados');
+
+
+            async function apiFetch(endpoint, options = {}) {
+                showLoader();
+                options.headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    ...options.headers,
+                };
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                    if (response.status === 401 || response.status === 403) {
+                        alert('Sessão expirada ou não autorizada. Redirecionando para o login.');
+                        window.location.href = '/public/login.html';
+                        return null;
+                    }
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Ocorreu um erro na requisição.');
+                    }
+                    return response.json();
+                } catch (error) {
+                    console.error('Erro na chamada da API:', error);
+                    alert(`Erro: ${error.message}`);
+                    return null;
+                } finally {
+                    hideLoader();
+                }
+            }
+
+            function logout() {
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+
+            async function renderizarRelatorioMensalidades() {
+                showLoader();
+                relatorioTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">Carregando...</td></tr>`;
+                relatorioTotalSumEl.textContent = '';
+
+                const searchTerm = searchMensalidadesInput.value.trim();
+                const params = new URLSearchParams({
+                    status: currentStatusFilter,
+                    mes: mesFiltroAtual
+                });
+                if (searchTerm) {
+                    params.append('search', searchTerm);
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL_MENSALIDADES}?${params.toString()}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) throw new Error('Falha ao carregar relatório.');
+                    const result = await response.json();
+
+                    relatorioTableBody.innerHTML = '';
+                    let totalValor = 0;
+
+                    if (result.success && result.data.length > 0) {
+                        result.data.forEach(m => {
+                            const valorFinal = m.valor_total_devido || m.valor_mensalidade;
+                            totalValor += parseFloat(valorFinal);
+
+                            const dataExibida = currentStatusFilter === 'approved' ? m.data_pagamento : m.data_vencimento;
+
+                            const row = `
+                    <tr>
+                        <td class="px-4 py-4 font-medium text-gray-900">${m.nome_aluno}</td>
+                        <td class="px-4 py-4 text-gray-600">${m.responsavel || 'N/A'}</td>
+                        <td class="px-4 py-4 font-semibold text-gray-800">${formatarMoeda(valorFinal)}</td>
+                        <td class="px-4 py-4 text-gray-600">${formatarData(dataExibida)}</td>
+                        <td class="px-4 py-4"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${m.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${m.status === 'approved' ? 'Pago' : 'Pendente'}</span></td>
+                    </tr>`;
+                            relatorioTableBody.innerHTML += row;
+                        });
+                        relatorioTotalSumEl.textContent = `Total: ${formatarMoeda(totalValor)}`;
+                    } else {
+                        relatorioTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">Nenhum registro encontrado.</td></tr>`;
+                    }
+                } catch (error) {
+                    console.error("Erro no relatório:", error);
+                } finally {
+                    hideLoader();
+                }
+            }
+
+            function updateTabsRelatorio() {
+                tabPendentes.classList.toggle('active', currentStatusFilter === 'open');
+                tabPagas.classList.toggle('active', currentStatusFilter !== 'open');
+                renderizarRelatorioMensalidades();
+            }
+
+
+            async function carregarResumoDoMes(mes) {
+                const mesParaApi = mes === 'todos' ? new Date().toISOString().slice(0, 7) : mes;
+                const endpoint = `/dashboard-summary?mes=${mesParaApi}`;
+                const response = await apiFetch(endpoint);
+
+                if (response && response.success) {
+                    const { pagas_no_mes, pendentes_no_mes } = response.data;
+                    document.getElementById('mensalidadesPendentes').textContent = pendentes_no_mes || '0';
+                    document.getElementById('mensalidadesPagas').textContent = pagas_no_mes || '0';
+                }
+            }
+
+            async function carregarDadosIniciais(isUpdate = false) {
+                if (!isUpdate) {
+                    showLoader();
+                }
+
+                try {
+                    const [tiposCustoRes, tiposReceitaRes, transacoesRes, mensalidadesRes] = await Promise.all([
+                        apiFetch('/tipos-custo'),
+                        apiFetch('/tipos-receita'),
+                        apiFetch('/transacoes'),
+                        apiFetch('/receitas-mensalidades')
+                    ]);
+
+                    if (tiposCustoRes && tiposCustoRes.success) tiposCusto = tiposCustoRes.data;
+                    if (tiposReceitaRes && tiposReceitaRes.success) tiposReceita = tiposReceitaRes.data;
+
+                    let dadosCombinados = [];
+                    if (transacoesRes && transacoesRes.success) dadosCombinados.push(...transacoesRes.data);
+                    if (mensalidadesRes && mensalidadesRes.success) dadosCombinados.push(...mensalidadesRes.data);
+
+                    todasTransacoes = dadosCombinados.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+                    if (!isUpdate) {
+                        renderizarFiltroMes();
+                        const mesAtual = new Date().toISOString().slice(0, 7);
+                        if ([...filtroMesSelect.options].some(o => o.value === mesAtual)) {
+                            filtroMesSelect.value = mesAtual;
+                        }
+                        mesFiltroAtual = filtroMesSelect.value || 'todos';
+                    }
+                    aplicarFiltros();
+                    atualizarTudo();
+                    await carregarResumoDoMes(mesFiltroAtual);
+                    await renderizarRelatorioMensalidades();
+
+                } catch (error) {
+                    console.error("Falha ao carregar dados:", error);
+                    document.body.innerHTML = `<div class="p-8 text-center text-red-600">
+                    <h2 class="text-2xl font-bold">Erro Crítico ao Carregar Dados</h2>
+                    <p class="mt-2">Não foi possível carregar as informações financeiras. Verifique o console (F12) para detalhes técnicos e certifique-se que o backend está funcionando corretamente.</p>
+                    <p class="mt-4 text-sm text-gray-500">${error.message}</p>
+                    </div>`;
+                    stopPolling();
+                } finally {
+                    if (!isUpdate) {
+                        hideLoader();
+                    }
+                }
+            }
+
+            function renderizarFiltroMes() {
+                const mesesDisponiveis = [...new Set(todasTransacoes.map(t => t.data.substring(0, 7)))].sort().reverse();
+                const selectedValue = filtroMesSelect.value;
+                filtroMesSelect.innerHTML = '<option value="todos">Todos os Meses</option>';
+                mesesDisponiveis.forEach(mes => {
+                    const option = document.createElement('option');
+                    option.value = mes;
+                    const dataMes = new Date(mes + '-02');
+                    option.textContent = dataMes.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                    filtroMesSelect.appendChild(option);
+                });
+                filtroMesSelect.value = selectedValue;
+            }
+
+            function aplicarFiltros() {
+                let dadosFiltrados = [...todasTransacoes];
+                if (mesFiltroAtual !== 'todos') {
+                    dadosFiltrados = dadosFiltrados.filter(t => t.data.startsWith(mesFiltroAtual));
+                }
+                transacoes = dadosFiltrados;
+            }
+
+            function atualizarTudo() {
+                renderizarFiltroTabs();
+                renderizarTransacoes();
+                renderizarTiposReceita();
+                calcularBalanco();
+                renderizarGrafico();
+                renderizarTiposCusto();
+            }
+
+            const formatarMoeda = (valor) => parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const formatarData = (data) => new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+
+            function renderizarFiltroTabs() {
+                filtroTabsContainer.innerHTML = '';
+                const todosBtn = document.createElement('button');
+                todosBtn.textContent = 'Todas';
+                todosBtn.dataset.filtro = 'todos';
+                todosBtn.dataset.tipoFiltro = 'todos';
+                todosBtn.className = 'filtro-btn px-4 py-1.5 text-sm font-medium border rounded-full transition-colors duration-200';
+                filtroTabsContainer.appendChild(todosBtn);
+                if (transacoes.some(t => t.descricao.toLowerCase().includes('mensalidade'))) {
+                    const mensalidadesBtn = document.createElement('button');
+                    mensalidadesBtn.textContent = 'Mensalidades';
+                    mensalidadesBtn.dataset.filtro = 'mensalidade';
+                    mensalidadesBtn.dataset.tipoFiltro = 'mensalidade';
+                    mensalidadesBtn.className = 'filtro-btn px-4 py-1.5 text-sm font-medium border rounded-full transition-colors duration-200';
+                    filtroTabsContainer.appendChild(mensalidadesBtn);
+                }
+                tiposReceita.forEach(tipo => {
+                    const tipoBtn = document.createElement('button');
+                    tipoBtn.textContent = tipo.nome;
+                    tipoBtn.dataset.filtro = tipo.id;
+                    tipoBtn.dataset.tipoFiltro = 'receita';
+                    tipoBtn.className = 'filtro-btn px-4 py-1.5 text-sm font-medium border rounded-full transition-colors duration-200';
+                    filtroTabsContainer.appendChild(tipoBtn);
+                });
+                tiposCusto.forEach(tipo => {
+                    const tipoBtn = document.createElement('button');
+                    tipoBtn.textContent = tipo.nome;
+                    tipoBtn.dataset.filtro = tipo.id;
+                    tipoBtn.dataset.tipoFiltro = 'custo';
+                    tipoBtn.className = 'filtro-btn px-4 py-1.5 text-sm font-medium border rounded-full transition-colors duration-200';
+                    filtroTabsContainer.appendChild(tipoBtn);
+                });
+                atualizarFiltroAtivoUI();
+            }
+
+            function renderizarTiposReceita() {
+                listaTiposReceita.innerHTML = '';
+                selectTipoReceita.innerHTML = '<option value="">Nenhum</option>';
+                tiposReceita.forEach(tipo => {
+                    const option = document.createElement('option');
+                    option.value = tipo.id;
+                    option.textContent = tipo.nome;
+                    selectTipoReceita.appendChild(option);
+                    const li = document.createElement('li');
+                    li.className = 'bg-gray-100 p-2 rounded-md text-sm text-gray-700';
+                    li.textContent = tipo.nome;
+                    listaTiposReceita.appendChild(li);
+                });
+            }
+
+            function renderizarTiposCusto() {
+                listaTiposCusto.innerHTML = '';
+                selectTipoCusto.innerHTML = '<option value="">Nenhum</option>';
+                tiposCusto.forEach(tipo => {
+                    const optionForm = document.createElement('option');
+                    optionForm.value = tipo.id;
+                    optionForm.textContent = tipo.nome;
+                    selectTipoCusto.appendChild(optionForm);
+                    const li = document.createElement('li');
+                    li.className = 'bg-gray-100 p-2 rounded-md text-sm text-gray-700 flex justify-between';
+                    const totalGasto = transacoes
+                        .filter(d => d.id_tipo_custo === tipo.id)
+                        .reduce((acc, d) => acc + parseFloat(d.valor), 0);
+                    li.innerHTML = `<span>${tipo.nome}</span> <span class="font-semibold">${formatarMoeda(totalGasto)}</span>`;
+                    listaTiposCusto.appendChild(li);
+                });
+            }
+
+            function renderizarTransacoes() {
+                let transacoesParaRenderizar = [...transacoes];
+
+                if (filtroAtual !== 'todos') {
+                    if (tipoFiltroAtual === 'custo') {
+                        transacoesParaRenderizar = transacoes.filter(t => String(t.id_tipo_custo) === filtroAtual);
+                    } else if (tipoFiltroAtual === 'receita') {
+                        transacoesParaRenderizar = transacoes.filter(t => String(t.id_tipo_receita) === filtroAtual);
+                    } else if (tipoFiltroAtual === 'mensalidade') {
+                        transacoesParaRenderizar = transacoes.filter(t => t.descricao.toLowerCase().includes('mensalidade'));
+                    }
+                }
+
+                tabelaTransacoes.innerHTML = '';
+                if (transacoesParaRenderizar.length === 0) {
+                    tabelaTransacoes.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-500">Nenhuma transação encontrada.</td></tr>`;
+                    return;
+                }
+
+                transacoesParaRenderizar.forEach(transacao => {
+                    if (transacao.id_mensalidade) return;
+
+                    const tr = document.createElement('tr');
+                    let categoria = transacao.tipo === 'entrada'
+                        ? (transacao.tipo_receita_nome || 'Receita Diversa')
+                        : (transacao.tipo_custo_nome || 'Sem Categoria');
+
+                    if (transacao.descricao.toLowerCase().includes('mensalidade')) {
+                        categoria = 'Mensalidades';
+                    }
+
+                    const corValor = transacao.tipo === 'entrada' ? 'text-green-600' : 'text-red-600';
+                    const simbolo = transacao.tipo === 'entrada' ? '+' : '-';
+
+                    tr.innerHTML = `
+                        <td class="td-checkbox hidden px-2 py-3">
+                            <input type="checkbox" data-id="${transacao.id}" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${transacao.descricao}</div></td>
+                        <td class="px-4 py-3 whitespace-nowrap"><span class="font-semibold ${corValor}">${simbolo} ${formatarMoeda(transacao.valor)}</span></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${formatarData(transacao.data)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${transacao.tipo === 'entrada' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} ">${categoria}</span></td>
+                    `;
+                    tabelaTransacoes.appendChild(tr);
+                });
+            }
+
+            function calcularBalanco() {
+                const totalEntradas = transacoes.filter(t => t.tipo === 'entrada').reduce((acc, t) => acc + parseFloat(t.valor), 0);
+                const totalSaidas = transacoes.filter(t => t.tipo === 'saida').reduce((acc, t) => acc + parseFloat(t.valor), 0);
+                const saldoAtual = totalEntradas - totalSaidas;
+                totalEntradasEl.textContent = formatarMoeda(totalEntradas);
+                totalSaidasEl.textContent = formatarMoeda(totalSaidas);
+                saldoAtualEl.textContent = formatarMoeda(saldoAtual);
+                saldoAtualEl.parentElement.className = `p-6 rounded-lg shadow-sm ${saldoAtual >= 0 ? 'bg-blue-100' : 'bg-red-100'}`;
+                saldoAtualEl.className = `text-3xl font-semibold mt-2 ${saldoAtual >= 0 ? 'text-blue-900' : 'text-red-900'}`;
+            }
+
+            function atualizarFiltroAtivoUI() {
+                document.querySelectorAll('.filtro-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filtro == filtroAtual);
+                });
+            }
+
+            function renderizarGrafico() {
+                if (graficoCanvasChart) {
+                    graficoCanvasChart.destroy();
+                }
+                const ctx = document.getElementById('graficoCanvas').getContext('2d');
+                if (graficoAtivo === 'categoria') {
+                    renderizarGraficoCategorias(ctx);
+                } else {
+                    renderizarGraficoFluxoMensal(ctx);
+                }
+            }
+
+            function renderizarGraficoCategorias(ctx) {
+                const despesas = transacoes.filter(t => t.tipo === 'saida');
+                const dadosAgrupados = tiposCusto.map(tipo => ({
+                    nome: tipo.nome,
+                    total: despesas.filter(d => d.id_tipo_custo === tipo.id).reduce((acc, d) => acc + parseFloat(d.valor), 0)
+                })).filter(item => item.total > 0);
+
+                if (dadosAgrupados.length === 0) {
+                    return exibirMensagemNoCanvas(ctx, "Sem despesas para exibir.");
+                }
+                graficoCanvasChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: dadosAgrupados.map(i => i.nome),
+                        datasets: [{
+                            data: dadosAgrupados.map(i => i.total),
+                            backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b', '#10b981', '#8b5cf6', '#f97316', '#6b7280'],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.label}: ${formatarMoeda(c.parsed)}` } } } }
+                });
+            }
+
+            function renderizarGraficoFluxoMensal(ctx) {
+                const dadosMensais = transacoes.reduce((acc, t) => {
+                    const mes = t.data.substring(0, 7);
+                    if (!acc[mes]) {
+                        acc[mes] = { entradas: 0, saidas: 0 };
+                    }
+                    if (t.tipo === 'entrada') {
+                        acc[mes].entradas += parseFloat(t.valor);
+                    } else {
+                        acc[mes].saidas += parseFloat(t.valor);
+                    }
+                    return acc;
+                }, {});
+
+                const labels = Object.keys(dadosMensais).sort();
+                if (labels.length === 0) {
+                    return exibirMensagemNoCanvas(ctx, "Sem transações para exibir.");
+                }
+                graficoCanvasChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels.map(l => new Date(l + '-02').toLocaleString('pt-BR', { month: 'short', year: 'numeric' })),
+                        datasets: [
+                            { label: 'Entradas', data: labels.map(mes => dadosMensais[mes].entradas), backgroundColor: '#22c55e' },
+                            { label: 'Saídas', data: labels.map(mes => dadosMensais[mes].saidas), backgroundColor: '#ef4444' }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: (v) => formatarMoeda(v) } } }, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatarMoeda(c.parsed.y)}` } } } }
+                });
+            }
+
+            function exibirMensagemNoCanvas(ctx, mensagem) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#9ca3af";
+                ctx.font = "16px 'Inter'";
+                ctx.fillText(mensagem, ctx.canvas.width / 2, ctx.canvas.height / 2);
+            }
+
+            function startPolling() {
+                if (pollingInterval) clearInterval(pollingInterval);
+                pollingInterval = setInterval(() => {
+                    console.log("Verificando atualizações...", new Date().toLocaleTimeString());
+                    carregarDadosIniciais(true);
+                }, POLLING_RATE_MS);
+            }
+
+            function stopPolling() {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    stopPolling();
+                } else {
+                    console.log("Aba visível, atualizando dados e reiniciando polling.");
+                    carregarDadosIniciais(true);
+                    startPolling();
+                }
+            });
+
+            function toggleSelectionMode() {
+                isSelectionMode = !isSelectionMode;
+                selectedIds.clear();
+
+                document.querySelectorAll('.th-checkbox, .td-checkbox').forEach(el => {
+                    el.classList.toggle('hidden', !isSelectionMode);
+                });
+
+                document.querySelectorAll('#tabelaTransacoes input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+                if (isSelectionMode) {
+                    btnSelecionar.textContent = 'Cancelar';
+                    btnSelecionar.classList.add('bg-yellow-400', 'hover:bg-yellow-500');
+                    btnApagarSelecionados.classList.remove('hidden');
+                } else {
+                    btnSelecionar.textContent = 'Selecionar';
+                    btnSelecionar.classList.remove('bg-yellow-400', 'hover:bg-yellow-500');
+                    btnApagarSelecionados.classList.add('hidden');
+                }
+                updateDeleteButtonState();
+            }
+
+            function updateDeleteButtonState() {
+                const count = selectedIds.size;
+                contadorSelecionados.textContent = `Apagar (${count})`;
+                btnApagarSelecionados.disabled = count === 0;
+                btnApagarSelecionados.classList.toggle('opacity-50', count === 0);
+                btnApagarSelecionados.classList.toggle('cursor-not-allowed', count === 0);
+            }
+
+            btnSelecionar.addEventListener('click', toggleSelectionMode);
+
+            btnApagarSelecionados.addEventListener('click', async () => {
+                const count = selectedIds.size;
+                if (count === 0) return;
+
+                if (confirm(`Tem certeza que deseja apagar as ${count} transações selecionadas? Esta ação não pode ser desfeita.`)) {
+                    const idsToDelete = Array.from(selectedIds);
+                    const response = await apiFetch('/transacoes', {
+                        method: 'DELETE',
+                        body: JSON.stringify({ ids: idsToDelete })
+                    });
+
+                    if (response && response.success) {
+                        alert(`${response.data.deleted_count} transações foram apagadas com sucesso.`);
+                        toggleSelectionMode();
+                        await carregarDadosIniciais(true);
+                    } else {
+                        alert('Ocorreu um erro ao apagar as transações.');
+                    }
+                }
+            });
+
+            tabelaTransacoes.addEventListener('change', (e) => {
+                if (e.target.matches('input[type="checkbox"]')) {
+                    const id = parseInt(e.target.dataset.id, 10);
+                    if (e.target.checked) {
+                        selectedIds.add(id);
+                    } else {
+                        selectedIds.delete(id);
+                    }
+                    updateDeleteButtonState();
+                }
+            });
+
+            formTipoReceita.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nomeNovoTipo = document.getElementById('nomeTipoReceita').value;
+                const response = await apiFetch('/tipos-receita', { method: 'POST', body: JSON.stringify({ nome: nomeNovoTipo }) });
+                if (response && response.success) {
+                    await carregarDadosIniciais();
+                    formTipoReceita.reset();
+                }
+            });
+
+            tipoTransacaoSelect.addEventListener('change', (e) => {
+                const isEntrada = e.target.value === 'entrada';
+                grupoTipoCusto.classList.toggle('hidden', isEntrada);
+                grupoTipoReceita.classList.toggle('hidden', !isEntrada);
+                if (isEntrada) selectTipoCusto.value = "";
+                else selectTipoReceita.value = "";
+            });
+
+            tabPendentes.addEventListener('click', () => {
+                currentStatusFilter = 'open';
+                updateTabsRelatorio();
+            });
+
+            tabPagas.addEventListener('click', () => {
+                currentStatusFilter = 'approved';
+                updateTabsRelatorio();
+            });
+
+            searchMensalidadesInput.addEventListener('input', () => {
+                renderizarRelatorioMensalidades();
+            });
+
+            filtroMesSelect.addEventListener('change', async (e) => {
+                mesFiltroAtual = e.target.value;
+                aplicarFiltros();
+                atualizarTudo();
+                await carregarResumoDoMes(mesFiltroAtual);
+                await renderizarRelatorioMensalidades();
+            });
+
+            filtroTabsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filtro-btn')) {
+                    filtroAtual = e.target.dataset.filtro;
+                    tipoFiltroAtual = e.target.dataset.tipoFiltro || 'todos';
+                    atualizarFiltroAtivoUI();
+                    renderizarTransacoes();
+                }
+            });
+
+            formTransacao.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const tipoTransacao = tipoTransacaoSelect.value;
+                const novaTransacao = {
+                    descricao: document.getElementById('descricao').value,
+                    valor: parseFloat(document.getElementById('valor').value),
+                    data: dataInput.value,
+                    tipo: tipoTransacao,
+                    id_tipo_custo: tipoTransacao === 'saida' ? (document.getElementById('tipoCusto').value || null) : null,
+                    id_tipo_receita: tipoTransacao === 'entrada' ? (document.getElementById('tipoReceita').value || null) : null
+                };
+                const response = await apiFetch('/transacoes', { method: 'POST', body: JSON.stringify(novaTransacao) });
+                if (response && response.success) {
+                    await carregarDadosIniciais(true);
+                    formTransacao.reset();
+                    dataInput.valueAsDate = new Date();
+                }
+            });
+
+            formTipoCusto.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nomeNovoTipo = document.getElementById('nomeTipoCusto').value;
+                const response = await apiFetch('/tipos-custo', { method: 'POST', body: JSON.stringify({ nome: nomeNovoTipo }) });
+                if (response && response.success) {
+                    await carregarDadosIniciais(true);
+                    formTipoCusto.reset();
+                }
+            });
+
+            graficoControles.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    graficoAtivo = e.target.dataset.grafico;
+                    document.querySelectorAll('.grafico-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderizarGrafico();
+                }
+            });
+
+            // --- INICIALIZAÇÃO ---
+            dataInput.valueAsDate = new Date();
+            tipoTransacaoSelect.dispatchEvent(new Event('change'));
+            carregarDadosIniciais();
+            startPolling();
+            updateTabsRelatorio();
+        });
+    </script>
+</body>
+
+</html>
