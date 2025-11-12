@@ -7,3 +7,5 @@ Thumbs.db
 
 # Ignora a pasta de dependências do Composer (MUITO IMPORTANTE)
 /vendor/
+
+/uploads/

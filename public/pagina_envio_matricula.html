@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Administrador - Matrículas</title>
+    <!-- Carregando o Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fonte Inter (padrão do Tailwind) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar para o modal */
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Classe de loading para botões */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            left: calc(50% - 0.75rem);
+            top: calc(50% - 0.75rem);
+            height: 1.5rem;
+            width: 1.5rem;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- NAVBAR INSERIDA -->
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
+                Financeiro</a>
+            <div class="flex items-center space-x-4">
+
+                <div class="relative group">
+                    <button
+                        class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        Consultas <span class="ml-1">▼</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Alunos</a>
+                <a href="crud_turmas.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Turmas</a>
+                <a href="crud_professores.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Professores</a>
+                <a href="crud_disciplinas.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Disciplinas</a>
+                <a href="conteudo_programatico.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ">Conteúdo
+                    Programático</a>
+                <a href="crud_mensalidades.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Mensalidades</a>
+                <a href="gerenciar_contratos.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Contratos</a>
+                <a href="financeiro.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Financeiro</a>
+
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Gerenciar
+                    Usuários</a>
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
+            </div>
+        </div>
+    </nav>
+    <!-- FIM DA NAVBAR -->
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Painel de Novas Matrículas</h1>
+            <p class="text-gray-600">Inicie um novo processo ou acompanhe os formulários enviados.</p>
+        </header>
+
+        <section id="novo-processo" class="bg-white p-6 rounded-lg shadow-md mb-10">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-5 border-b pb-3">Iniciar Novo Processo</h2>
+
+            <form id="form-iniciar-processo" class="space-y-6">
+                <!-- Passo 1: Consulta -->
+                <fieldset id="fieldset-step-1">
+                    <legend class="text-lg font-medium text-gray-900 mb-2">Passo 1: Consultar Responsável</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="resp_nome" class="block text-sm font-medium text-gray-700">Nome Completo <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="resp_nome" name="resp_nome"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Nome do Responsável Financeiro" required>
+                        </div>
+                        <div>
+                            <label for="resp_cpf" class="block text-sm font-medium text-gray-700">CPF <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="resp_cpf" name="resp_cpf" maxlength="11"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Apenas números" required>
+                        </div>
+                        <div>
+                            <label for="resp_celular" class="block text-sm font-medium text-gray-700">Celular <span
+                                    class="text-red-500">*</span></label>
+                            <div class="mt-1 flex items-center gap-2">
+                                <select id="resp_celular_ddi"
+                                    class="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    style="flex-shrink: 0; width: auto; padding-right: 2.5rem;">
+                                    <option value="55" selected>🇧🇷 +55</option>
+                                    <option value="1">🇺🇸 +1</option>
+                                    <option value="351">🇵🇹 +351</option>
+                                    <option value="44">🇬🇧 +44</option>
+                                    <option value="49">🇩🇪 +49</option>
+                                    <option value="999">Outro</option>
+                                </select>
+                                <input type="tel" id="resp_celular" name="resp_celular" maxlength="15"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="(11) 90000-0000" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-consultar"
+                        class="mt-4 inline-flex justify-center rounded-lg border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Consultar CPF
+                    </button>
+                    <div id="consulta-spinner" class="hidden mt-4 inline-flex items-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span class="text-gray-600">Consultando...</span>
+                    </div>
+                    <div id="consulta-resultado" class="hidden mt-4 text-sm"></div>
+                </fieldset>
+
+                <!-- Passo 2: Definir Valores (Inicialmente Oculto) -->
+                <fieldset id="fieldset-step-2"
+                    class="hidden opacity-0 transition-opacity duration-500 space-y-6 pt-6 border-t">
+                    <legend class="text-lg font-medium text-gray-900 mb-2">Passo 2: Configurar Proposta</legend>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md border">
+                        <div>
+                            <label for="ano_inicio" class="block text-sm font-medium text-gray-700">Ano de Início (Ano
+                                Letivo) <span class="text-red-500">*</span></label>
+                            <input type="number" id="ano_inicio" name="ano_inicio"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Ex: 2025" required>
+                            <p class="text-xs text-gray-500 mt-1">Essencial para gerar o RA SEF.</p>
+                        </div>
+                        <div>
+                            <label for="id_turma" class="block text-sm font-medium text-gray-700">Turma <span
+                                    class="text-red-500">*</span></label>
+                            <select id="id_turma" name="id_turma"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                required>
+                                <option value="">Selecione a turma...</option>
+                                <!-- Turmas serão populadas pelo JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="valor_anuidade" class="block text-sm font-medium text-gray-700">Valor
+                                Anuidade</label>
+                            <input type="number" id="valor_anuidade" name="valor_anuidade" step="0.01"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Ex: 6000.00">
+                        </div>
+                        <div>
+                            <label for="valor_matricula" class="block text-sm font-medium text-gray-700">Valor
+                                Matrícula</label>
+                            <input type="number" id="valor_matricula" name="valor_matricula" step="0.01"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Ex: 500.00">
+                        </div>
+                        <div>
+                            <label for="dia_vencimento" class="block text-sm font-medium text-gray-700">Dia de
+                                Vencimento</label>
+                            <input type="number" id="dia_vencimento" name="dia_vencimento" min="1" max="31"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Ex: 10">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="valor_material" class="block text-sm font-medium text-gray-700">Valor
+                                Material</label>
+                            <input type="number" id="valor_material" name="valor_material" step="0.01"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="Ex: 1200.00">
+                        </div>
+                        <div>
+                            <label for="parcelas_material" class="block text-sm font-medium text-gray-700">Parcelamento
+                                Material</label>
+                            <select id="parcelas_material" name="parcelas_material"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                <option value="1">1x</option>
+                                <option value="2">2x</option>
+                                <option value="3">3x</option>
+                                <option value="4">4x</option>
+                                <option value="5">5x</option>
+                                <option value="6">6x</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="flex items-center pt-6">
+                            <input id="bolsista" name="bolsista" type="checkbox"
+                                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label for="bolsista" class="ml-2 block text-sm font-medium text-gray-900">É
+                                bolsista?</label>
+                        </div>
+                        <div>
+                            <label for="prazo_resposta" class="block text-sm font-medium text-gray-700">Prazo para
+                                Resposta <span class="text-red-500">*</span></label>
+                            <input type="date" id="prazo_resposta" name="prazo_resposta"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 text-right">
+                        <button type="submit" id="btn-enviar-webhook"
+                            class="inline-flex justify-center rounded-lg border border-transparent bg-green-600 py-2 px-6 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                            Enviar Formulário ao Responsável
+                        </button>
+                    </div>
+                    <div id="envio-spinner" class="hidden mt-4 inline-flex items-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span class="text-gray-600">Enviando via Webhook (N8N)...</span>
+                    </div>
+                    <div id="envio-resultado" class="hidden mt-4 text-sm"></div>
+                </fieldset>
+            </form>
+        </section>
+
+        <!-- Seção 2: Acompanhamento (Passo 4) -->
+        <section id="acompanhamento">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-5 border-b pb-3">Acompanhamento de Envios</h2>
+
+            <div class="mb-4 flex space-x-2">
+                <button class="filter-btn bg-blue-600 text-white py-1 px-3 rounded-full text-sm"
+                    data-status="all">Todos</button>
+                <button class="filter-btn bg-white text-gray-700 py-1 px-3 rounded-full text-sm"
+                    data-status="Aguardando">Aguardando</button>
+                <button class="filter-btn bg-white text-gray-700 py-1 px-3 rounded-full text-sm"
+                    data-status="Preenchido">Preenchido</button>
+                <button class="filter-btn bg-white text-gray-700 py-1 px-3 rounded-full text-sm"
+                    data-status="Fora do Prazo">Fora do Prazo</button>
+            </div>
+
+            <div id="submission-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Blocos serão inseridos aqui pelo JavaScript -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Modal (Passo 5) -->
+    <div id="modal-backdrop"
+        class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 hidden">
+        <div id="modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+
+            <header class="p-5 border-b flex justify-between items-center">
+                <h3 id="modal-title" class="text-2xl font-semibold text-gray-800">Dados do Responsável</h3>
+                <button id="btn-fechar-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </header>
+
+            <div id="modal-body" class="p-6 overflow-y-auto modal-body">
+                <!-- Formulário preenchido será inserido aqui pelo JavaScript -->
+            </div>
+
+            <footer
+                class="p-5 bg-gray-50 border-t flex flex-col md:flex-row justify-end items-center md:space-x-4 space-y-2 md:space-y-0">
+                <div id="modal-status-info" class="text-sm text-gray-600 mr-auto"></div>
+                <button id="btn-excluir"
+                    class="w-full md:w-auto inline-flex justify-center rounded-lg border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700">
+                    Excluir Processo
+                </button>
+                <!-- <button id="btn-salvar-edicoes" class="w-full md:w-auto inline-flex justify-center rounded-lg border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                    Salvar Edições
+                </button> -->
+                <button id="btn-aceitar"
+                    class="w-full md:w-auto inline-flex justify-center rounded-lg border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700">
+                    Aceitar e Criar Aluno
+                </button>
+            </footer>
+
+        </div>
+    </div>
+
+    <div id="toast"
+        class="fixed bottom-5 right-5 bg-gray-900 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-60">
+        <span id="toast-message"></span>
+    </div>
+
+
+    <script>
+        // --- CONFIGURAÇÕES DA API ---
+        const API_BASE_URL = '/api'; // Ajuste se o seu index.php estiver em outro local
+        let TURMAS_CACHE = []; // Cache para armazenar a lista de turmas
+
+        // --- HELPERS ---
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+
+            toastMessage.textContent = message;
+            toast.classList.remove('bg-gray-900', 'bg-red-600');
+
+            if (type === 'error') {
+                toast.classList.add('bg-red-600');
+            } else {
+                toast.classList.add('bg-gray-900');
+            }
+
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 3000);
+        }
+
+        function formatarData(dateString) {
+            if (!dateString) return 'N/A';
+            const [ano, mes, dia] = dateString.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Preenchido':
+                    return 'bg-green-100 text-green-800';
+                case 'Aguardando':
+                    return 'bg-yellow-100 text-yellow-800';
+                case 'Fora do Prazo':
+                    return 'bg-red-100 text-red-800';
+                default:
+                    return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        /**
+         * Busca turmas da API e popula o <select> e o cache
+         */
+        async function popularTurmas() {
+            const selectTurma = document.getElementById('id_turma');
+            selectTurma.options.length = 1;
+
+            try {
+                const token = localStorage.getItem('jwt_token');
+                if (!token) {
+                    logout(); // Redireciona se não houver token
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/turmas`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) logout();
+                    throw new Error('Falha ao buscar turmas');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    TURMAS_CACHE = result.data; // Salva no cache
+                    result.data.forEach(turma => {
+                        const option = new Option(turma.nome_turma, turma.id_turma);
+                        selectTurma.add(option);
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao buscar turmas:", error);
+                showToast("Erro ao carregar turmas. Verifique seu login.", "error");
+            }
+        }
+
+        // --- RENDERIZAÇÃO DA LISTA (Passo 4) ---
+
+        const submissionList = document.getElementById('submission-list');
+
+        /**
+         * Renderiza os blocos na tela a partir dos dados da API
+         * @param {Array} submissionsData - Array de objetos vindo da API
+         */
+        function renderSubmissions(submissionsData = []) {
+            submissionList.innerHTML = ''; // Limpa a lista
+
+            if (submissionsData.length === 0) {
+                submissionList.innerHTML = `<p class="text-gray-500 col-span-full text-center">Nenhum envio encontrado.</p>`;
+                return;
+            }
+
+            submissionsData.forEach(sub => {
+                const statusClass = getStatusClass(sub.status);
+
+                // Os dados da API (getAllByEscola) são: id, admin_resp_nome, admin_resp_cpf, status, prazo
+                const cardHTML = `
+                <div class="submission-card bg-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer" data-id="${sub.id}">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-semibold text-gray-800 truncate" title="${sub.admin_resp_nome}">${sub.admin_resp_nome}</h4>
+                        <span class="status-badge ${statusClass} text-xs font-semibold px-3 py-1 rounded-full">${sub.status}</span>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>CPF:</strong> ${sub.admin_resp_cpf}</p>
+                        <p><strong>Prazo:</strong> ${formatarData(sub.prazo)}</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-100 text-right">
+                        <button class="btn-reenviar text-sm text-blue-600 hover:text-blue-800 font-medium" data-id="${sub.id}">
+                            Reenviar
+                        </button>
+                    </div>
+                </div>
+                `;
+                submissionList.innerHTML += cardHTML;
+            });
+        }
+
+        /**
+         * Busca os dados da API e chama a renderização
+         */
+        async function fetchSubmissions() {
+            submissionList.innerHTML = `<p class="text-gray-500 col-span-full text-center">Carregando...</p>`;
+            const filterStatus = document.querySelector('.filter-btn.bg-blue-600').dataset.status;
+
+            try {
+                const token = localStorage.getItem('jwt_token');
+                const response = await fetch(`${API_BASE_URL}/matricula/pendentes`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) logout();
+                    throw new Error('Falha ao buscar dados.');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    const filteredData = result.data.filter(sub =>
+                        filterStatus === 'all' || sub.status === filterStatus
+                    );
+                    renderSubmissions(filteredData);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar submissões:", error);
+                showToast(error.message, "error");
+                submissionList.innerHTML = `<p class="text-red-500 col-span-full text-center">Erro ao carregar dados.</p>`;
+            }
+        }
+
+
+        // --- LÓGICA DO FORMULÁRIO (Passos 1 e 2) ---
+
+        const btnConsultar = document.getElementById('btn-consultar');
+        const fieldsetStep2 = document.getElementById('fieldset-step-2');
+        const consultaSpinner = document.getElementById('consulta-spinner');
+        const consultaResultado = document.getElementById('consulta-resultado');
+
+        btnConsultar.addEventListener('click', () => {
+            // Simula uma consulta (API, etc.)
+            consultaSpinner.classList.remove('hidden');
+            consultaResultado.classList.add('hidden');
+            btnConsultar.disabled = true;
+
+            // Simulação de chamada de API de consulta de CPF (ex: Serasa, etc.)
+            // Por enquanto, vamos apenas simular o sucesso.
+            setTimeout(() => {
+                const nome = document.getElementById('resp_nome').value;
+                const cpf = document.getElementById('resp_cpf').value.replace(/\D/g, ''); // Garante apenas números
+
+                // --- MODIFICADO PARA INCLUIR DDI ---
+                const ddi = document.getElementById('resp_celular_ddi').value;
+                const numero = document.getElementById('resp_celular').value.replace(/\D/g, '');
+                const celularCompleto = ddi + numero;
+                // --- FIM DA MODIFICAÇÃO ---
+
+                consultaSpinner.classList.add('hidden');
+
+                // Valida o número, não o celular completo
+                if (!nome || cpf.length !== 11 || !numero) {
+                    let errorMsg = "Erro: Nome, CPF (11 dígitos) e Celular são obrigatórios.";
+                    if (cpf.length !== 11 && nome && numero) errorMsg = "Erro: O CPF deve ter 11 dígitos.";
+
+                    consultaResultado.innerHTML = `<span class="text-red-600 font-medium">${errorMsg}</span>`;
+                    consultaResultado.classList.remove('hidden');
+                    btnConsultar.disabled = false;
+                    return;
+                }
+
+                // Simulação de sucesso
+                consultaResultado.innerHTML = `<span class="text-green-600 font-medium">OK: Responsável validado. Preencha os dados financeiros.</span>`;
+                consultaResultado.classList.remove('hidden');
+
+                fieldsetStep2.classList.remove('hidden');
+                setTimeout(() => fieldsetStep2.classList.add('opacity-100'), 50); // Efeito de fade-in
+
+                // Popula a data de prazo com +7 dias
+                const today = new Date();
+                today.setDate(today.getDate() + 7);
+                document.getElementById('prazo_resposta').value = today.toISOString().split('T')[0];
+
+                // Popula o ano letivo com o próximo ano
+                document.getElementById('ano_inicio').value = new Date().getFullYear() + 1;
+
+            }, 500); // Simula 0.5s
+        });
+
+        // Envio do Webhook (Passo 2)
+        const formIniciarProcesso = document.getElementById('form-iniciar-processo');
+        const btnEnviarWebhook = document.getElementById('btn-enviar-webhook');
+
+        formIniciarProcesso.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            btnEnviarWebhook.disabled = true;
+            btnEnviarWebhook.classList.add('btn-loading');
+
+            const formData = new FormData(formIniciarProcesso);
+
+            // --- MODIFICADO PARA INCLUIR DDI ---
+            const ddi = document.getElementById('resp_celular_ddi').value;
+            const numero = formData.get('resp_celular').replace(/\D/g, '');
+            const celularCompleto = ddi + numero;
+            // --- FIM DA MODIFICAÇÃO ---
+
+            // Mapeia os nomes do formulário para os nomes da API
+            const payload = {
+                admin_resp_nome: formData.get('resp_nome'),
+                admin_resp_cpf: formData.get('resp_cpf').replace(/\D/g, ''), // Garante apenas números
+                admin_resp_celular: celularCompleto, // Usa o valor combinado
+                admin_ano_inicio: formData.get('ano_inicio'),
+                admin_id_turma: formData.get('id_turma'),
+                admin_anuidade: formData.get('valor_anuidade') || null,
+                admin_matricula: formData.get('valor_matricula') || null,
+                admin_vencimento: formData.get('dia_vencimento') || null,
+                admin_material: formData.get('valor_material') || null,
+                admin_parcelas_material: formData.get('parcelas_material') || 1,
+                admin_bolsista: formData.get('bolsista') === 'on',
+                prazo: formData.get('prazo_resposta')
+            };
+
+            try {
+                const token = localStorage.getItem('jwt_token');
+                const response = await fetch(`${API_BASE_URL}/matricula/iniciar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message);
+
+                showToast(result.message, 'success');
+                fetchSubmissions(); // Atualiza a lista
+
+                // Reseta o formulário
+                formIniciarProcesso.reset();
+                // Reseta o DDI para 55 (Brasil)
+                document.getElementById('resp_celular_ddi').value = '55';
+
+                fieldsetStep2.classList.add('hidden');
+                fieldsetStep2.classList.remove('opacity-100');
+                consultaResultado.classList.add('hidden');
+                btnConsultar.disabled = false;
+
+            } catch (error) {
+                console.error("Erro ao iniciar processo:", error);
+                showToast(error.message, "error");
+            } finally {
+                btnEnviarWebhook.disabled = false;
+                btnEnviarWebhook.classList.remove('btn-loading');
+            }
+        });
+
+
+        // --- LÓGICA DO MODAL (Passo 5) ---
+
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalStatusInfo = document.getElementById('modal-status-info');
+        const btnFecharModal = document.getElementById('btn-fechar-modal');
+        const btnExcluir = document.getElementById('btn-excluir');
+        //const btnSalvarEdicoes = document.getElementById('btn-salvar-edicoes');
+        const btnAceitar = document.getElementById('btn-aceitar');
+        let currentEditingId = null;
+
+        /**
+         * Cria o HTML do formulário (agora baseado nos dados reais da API)
+         */
+        function createModalForm(sub) {
+            // A API getById retorna *todos* os campos
+            const turmaSelecionada = TURMAS_CACHE.find(t => t.id_turma == sub.admin_id_turma);
+
+            if (sub.status !== 'Preenchido') {
+                return `
+                <div class="text-center p-10">
+                    <h3 class="text-xl font-medium text-gray-700">Aguardando Preenchimento</h3>
+                    <p class="text-gray-500 mt-2">O responsável financeiro (${sub.admin_resp_nome}) ainda não preencheu o formulário.</p>
+                    <p class="text-gray-500 mt-1">O prazo expira em ${formatarData(sub.prazo)}.</p>
+                </div>
+                `;
+            }
+
+            return `
+            <form id="form-modal-edit" class="space-y-8">
+                <fieldset>
+                    <legend class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Dados do Aluno</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                            <input type="text" value="${sub.resp_aluno_nome || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                            <input type="date" value="${sub.resp_aluno_nascimento || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Turma (Definida)</label>
+                            <input type="text" value="${turmaSelecionada?.nome_turma || 'N/A'}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm bg-gray-50" readonly>
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">RG</label>
+                            <input type="text" value="${sub.resp_aluno_rg || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">CPF</label>
+                            <input type="text" value="${sub.resp_aluno_cpf || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Endereço</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">CEP</label>
+                            <input type="text" value="${sub.resp_cep || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700">Endereço (Rua, N°)</label>
+                            <input type="text" value="${sub.resp_endereco || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Bairro</label>
+                            <input type="text" value="${sub.resp_bairro || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Cidade</label>
+                            <input type="text" value="${sub.resp_cidade || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Estado (UF)</label>
+                            <input type="text" value="${sub.resp_estado || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Complemento</label>
+                            <input type="text" value="${sub.resp_complemento || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <fieldset>
+                    <legend class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Responsável Financeiro</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome (Confirmado)</label>
+                            <input type="text" value="${sub.admin_resp_nome}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm bg-gray-50" readonly>
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" value="${sub.resp_fin_email || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                            <input type="date" value="${sub.resp_fin_nascimento || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Responsável Pedagógico</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome</label>
+                            <input type="text" value="${sub.resp_ped_nome || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">CPF</label>
+                            <input type="text" value="${sub.resp_ped_cpf || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Celular</label>
+                            <input type="text" value="${sub.resp_ped_celular || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" value="${sub.resp_ped_email || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                            <input type="date" value="${sub.resp_ped_nascimento || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                    </div>
+                </fieldset>
+                
+                 <fieldset>
+                    <legend class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Dados Financeiros (Definido pelo Admin)</legend>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Anuidade</label>
+                            <input type="number" value="${sub.admin_anuidade || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Matrícula</label>
+                            <input type="number" value="${sub.admin_matricula || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Vencimento</label>
+                            <input type="number" value="${sub.admin_vencimento || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        </div>
+                        <div class="flex items-center pt-6">
+                            <input type="checkbox" ${sub.admin_bolsista ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label class="ml-2 block text-sm font-medium text-gray-900">Bolsista</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            `;
+        }
+
+        /** Abre o Modal */
+        async function openModal(id) {
+            currentEditingId = id;
+            modalBody.innerHTML = '<p class="text-center p-10">Carregando dados...</p>';
+            modalBackdrop.classList.remove('hidden');
+
+            try {
+                const token = localStorage.getItem('jwt_token');
+                const response = await fetch(`${API_BASE_URL}/matricula/pendentes/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Falha ao carregar detalhes.');
+
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message);
+
+                const sub = result.data;
+                modalTitle.textContent = `Detalhes de: ${sub.admin_resp_nome}`;
+                modalBody.innerHTML = createModalForm(sub);
+
+                const statusClass = getStatusClass(sub.status);
+                modalStatusInfo.innerHTML = `Status: <span class="font-semibold ${statusClass} px-2 py-0.5 rounded-full">${sub.status}</span>`;
+
+                if (sub.status === 'Preenchido') {
+                    //btnSalvarEdicoes.classList.remove('hidden'); // Desabilitado por enquanto
+                    btnAceitar.classList.remove('hidden');
+                } else {
+                    //btnSalvarEdicoes.classList.add('hidden');
+                    btnAceitar.classList.add('hidden');
+                }
+
+            } catch (error) {
+                showToast(error.message, 'error');
+                modalBody.innerHTML = `<p class="text-red-500 text-center p-10">${error.message}</p>`;
+            }
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('hidden');
+            modalBody.innerHTML = ''; // Limpa o conteúdo
+            currentEditingId = null;
+        }
+
+        // --- EVENT LISTENERS (Gatilhos de Interação) ---
+
+        submissionList.addEventListener('click', async (e) => {
+            const reenviarBtn = e.target.closest('.btn-reenviar');
+            if (reenviarBtn) {
+                e.stopPropagation();
+                const id = parseInt(reenviarBtn.dataset.id);
+
+                reenviarBtn.textContent = 'Enviando...';
+                reenviarBtn.disabled = true;
+
+                try {
+                    const token = localStorage.getItem('jwt_token');
+                    const response = await fetch(`${API_BASE_URL}/matricula/reenviar/${id}`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+
+                    showToast(result.message, 'success');
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    reenviarBtn.textContent = 'Reenviar';
+                    reenviarBtn.disabled = false;
+                }
+                return;
+            }
+
+            const card = e.target.closest('.submission-card');
+            if (card) {
+                const id = parseInt(card.dataset.id);
+                openModal(id);
+            }
+        });
+
+        btnFecharModal.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) {
+                closeModal();
+            }
+        });
+
+        btnExcluir.addEventListener('click', async () => {
+            if (currentEditingId && confirm('Tem certeza que deseja excluir este processo?')) {
+                btnExcluir.classList.add('btn-loading');
+                try {
+                    const token = localStorage.getItem('jwt_token');
+                    const response = await fetch(`${API_BASE_URL}/matricula/pendentes/${currentEditingId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+
+                    showToast(result.message, 'success');
+                    fetchSubmissions();
+                    closeModal();
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    btnExcluir.classList.remove('btn-loading');
+                }
+            }
+        });
+
+        /*
+        btnSalvarEdicoes.addEventListener('click', () => {
+             // Lógica de salvar edições (ainda não implementada no backend)
+             showToast('Função "Salvar Edições" ainda não implementada.', 'error');
+        });
+        */
+
+        btnAceitar.addEventListener('click', async () => {
+            if (currentEditingId) {
+                btnAceitar.classList.add('btn-loading');
+
+                try {
+                    const token = localStorage.getItem('jwt_token');
+                    // A rota de "Aceitar" é um POST
+                    const response = await fetch(`${API_BASE_URL}/matricula/aceitar/${currentEditingId}`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+
+                    showToast(result.message, 'success');
+                    fetchSubmissions(); // Atualiza a lista, o item sumirá
+                    closeModal();
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    btnAceitar.classList.remove('btn-loading');
+                }
+            }
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-blue-600', 'text-white');
+                    b.classList.add('bg-white', 'text-gray-700');
+                });
+                btn.classList.add('bg-blue-600', 'text-white');
+                btn.classList.remove('bg-white', 'text-gray-700');
+
+                fetchSubmissions(); // Busca dados com o novo filtro
+            });
+        });
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verifica o token antes de carregar qualquer coisa
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                logout();
+                return;
+            }
+
+            popularTurmas();
+            fetchSubmissions('all'); // Busca os dados reais
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+    </script>
+
+</body>
+
+</html>

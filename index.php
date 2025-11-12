@@ -38,6 +38,7 @@ require_once __DIR__ . '/api/controllers/FinanceiroController.php';
 require_once __DIR__ . '/api/controllers/AvisoController.php';
 require_once __DIR__ . '/api/controllers/ConteudoProgramaticoController.php';
 require_once __DIR__ . '/api/controllers/SuperAdminController.php';
+require_once __DIR__ . '/api/controllers/MatriculaController.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -81,6 +82,7 @@ $publicRoutes = [
     '/api/auth/forgot-password' => true, // <-- ADICIONE ESTA LINHA
     '/api/auth/reset-password' => true,  // <-- ADICIONE ESTA LINHA
     '/api/auth/confirm-email-and-send-code' => true,
+    '/api/matricula/preencher' => true,
 ];
 
 if (!isset($publicRoutes[$requestUri]) && strpos($requestUri, '/api/') === 0) {
@@ -153,6 +155,7 @@ $financeiroController = new FinanceiroController();
 $avisoController = new AvisoController();
 $conteudoProgramaticoController = new ConteudoProgramaticoController();
 $superAdminController = new SuperAdminController();
+$matriculaController = new MatriculaController();
 
 switch (true) {
     case $requestUri === '/' || $requestUri === '/index.php':
@@ -674,6 +677,50 @@ switch (true) {
         requireRole(['super_admin']);
         if ($requestMethod === 'POST')
             $superAdminController->consultarAlunoGlobal();
+        break;
+
+
+
+    case $requestUri === '/api/matricula/iniciar':
+        requireRole(['admin']); // Só admin pode iniciar
+        if ($requestMethod === 'POST')
+            $matriculaController->iniciarProcesso();
+        break;
+
+    // (Passo 3) Responsável preenche o form (Rota Pública)
+    case $requestUri === '/api/matricula/preencher':
+        if ($requestMethod === 'POST')
+            $matriculaController->preencherFormulario();
+        break;
+
+    // (Passo 4) Admin lista os pendentes
+    case $requestUri === '/api/matricula/pendentes':
+        requireRole(['admin']);
+        if ($requestMethod === 'GET')
+            $matriculaController->getMatriculasPendentes();
+        break;
+
+    // (Passo 5) Admin vê detalhes ou exclui
+    case preg_match('/^\/api\/matricula\/pendentes\/(\d+)$/', $requestUri, $matches):
+        requireRole(['admin']);
+        $id = $matches[1];
+        if ($requestMethod === 'GET')
+            $matriculaController->getDetalheMatricula($id);
+        elseif ($requestMethod === 'DELETE')
+            $matriculaController->excluirProcesso($id);
+        break;
+
+    // (Passo 5) Admin clica em "Aceitar"
+    case preg_match('/^\/api\/matricula\/aceitar\/(\d+)$/', $requestUri, $matches):
+        requireRole(['admin']);
+        if ($requestMethod === 'POST')
+            $matriculaController->aceitarMatricula($matches[1]);
+        break;
+
+    case preg_match('/^\/api\/matricula\/reenviar\/(\d+)$/', $requestUri, $matches):
+        requireRole(['admin']);
+        if ($requestMethod === 'POST')
+            $matriculaController->reenviarFormulario($matches[1]);
         break;
 
     // --- ROTA PADRÃO (Endpoint não encontrado) ---

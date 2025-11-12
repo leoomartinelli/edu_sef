@@ -10,13 +10,21 @@ class Database
 
     public function getConnection()
     {
-        $this->host = getenv('DB_HOST');
-        $this->db_name = getenv('DB_NAME');
-        $this->username = getenv('DB_USER');
-        $this->password = getenv('DB_PASS');
+        // --- INÍCIO DA CORREÇÃO ---
+        // Tenta buscar de getenv() primeiro (padrão).
+        // Se falhar (retornar false), tenta buscar de $_ENV (que o loadEnv.php preencheu).
+        // Se ambos falharem, o valor final é 'false'.
+
+        $this->host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? false);
+        $this->db_name = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? false);
+        $this->username = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? false);
+        $this->password = getenv('DB_PASS') ?: ($_ENV['DB_PASS'] ?? false);
+
+        // --- FIM DA CORREÇÃO ---
 
         $this->conn = null;
 
+        // Esta verificação agora vai funcionar
         if ($this->host === false || $this->db_name === false || $this->username === false) {
             http_response_code(500);
             // Use json_encode para formatar a saída como API
