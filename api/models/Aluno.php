@@ -374,6 +374,19 @@ class Aluno
         // Esta função não precisa de mudanças, pois deleta pelo id_aluno
         $this->conn->beginTransaction();
         try {
+            // =================================================================
+            // ===               NOVO: DELETAR O USUÁRIO ASSOCIADO           ===
+            // =================================================================
+            // Adicionamos esta query para excluir o login do aluno
+            $queryUsuario = "DELETE FROM usuarios WHERE id_aluno = :id_aluno";
+            $stmtUsuario = $this->conn->prepare($queryUsuario);
+            $stmtUsuario->bindParam(':id_aluno', $id, PDO::PARAM_INT);
+            $stmtUsuario->execute();
+            // =================================================================
+            // ===                        FIM DA ADIÇÃO                      ===
+            // =================================================================
+
+
             $queryMensalidades = "DELETE FROM mensalidades WHERE id_aluno = :id_aluno";
             $stmtMensalidades = $this->conn->prepare($queryMensalidades);
             $stmtMensalidades->bindParam(':id_aluno', $id);
@@ -391,6 +404,9 @@ class Aluno
             $stmtAluno->execute();
 
             if ($stmtAluno->rowCount() == 0) {
+                // Se não deletou o aluno (talvez não pertencesse à escola), 
+                // não há usuário para deletar (ou já foi deletado na query acima, o que não é um problema).
+                // Mantemos a exceção para o rollback funcionar.
                 throw new Exception("Tentativa de exclusão de aluno de outra escola ou aluno não encontrado.");
             }
 
