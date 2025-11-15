@@ -39,5 +39,59 @@ Adicionar Filtro Mensalidade por RA_SEF
 
 
 
+GEMINI, preciso criar uma tela, onde siga meus passos
 
+
+
+passo 1
+
+Consultar o CPF do responsavel financeiro, com Nome completo, numero com DD e CPF. 
+
+
+
+PASSO 2, caso o CPF esteja tudo certo, o admnistrador ira colocar a anuidade, a matricula e o dia de vencimento. Ira colocar o material e o parcelamento do material. Do mesmo jeito do Home.html. Podendo escolher se é bolsista. e estimular um prazo para a resposta
+
+chamar o webhook para enviar mensagem (estou usando o N8N para envio de mensagem)
+
+
+
+PASSO 3: 
+
+Na mensagem ira mandar um link com um formulario, parecido com o forms do google para o responsavel financeiro preencher todos os dados que hoje é preenchido pelo administrador da escola, o responsavel vai preencher.
+
+
+
+passo 4:
+
+Após preencher, na tela do admnistrador, ira aparecer uma listagem em bloco de todos os Responsaveis que foram "enviados" ira aparece o status, de aguradando preenchimento, Preenchido, ou fora do prazo. Tera um botão para enviar novamente também.
+
+
+
+Dai preciso que ao clicar no bloco do Responsavel, ira abrir um modal com todas as informa~ções preenchidas e um botão para aceitar ou excluír. Poedendo editar as informações também. Assim seguindo o fluxo de criar aluno normalmente, com contrato, enviamento de mensagem ETC
+
+
+
+
+
+
+
+
+
+
+
+
+
+Link para assinatura no contrato.
+Inserir na hora da assinatura o pai assinar mais próximo do seu documento
+enviar foto documento FRENTE/VERSO
+Avisar que a primeira senha de padrão é sempre o aniversario do estudante
+Separar Mensalidade de Material.
+Tirar consultar usuário.
+Excel para disparo em massa
+Financeiro remodelado.
+
+
+
+
+nota fiscal
 

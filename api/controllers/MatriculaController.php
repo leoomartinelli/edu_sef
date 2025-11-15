@@ -238,6 +238,8 @@ class MatriculaController
             return;
         }
 
+        $db = null; // Inicializa a variável do banco
+
         try {
             $db = (new Database())->getConnection();
             $db->beginTransaction();
@@ -319,8 +321,10 @@ class MatriculaController
             $dadosParaContrato['dia_vencimento_mensalidades'] = $matricula['admin_vencimento'];
             $dadosParaContrato['nome_resp_financeiro'] = $matricula['admin_resp_nome'];
             $dadosParaContrato['cpf_resp_financeiro'] = $matricula['admin_resp_cpf'];
+            $dadosParaContrato['celular_resp_financeiro'] = $matricula['admin_resp_celular'];
             $dadosParaContrato['valor_anuidade_material'] = $matricula['admin_material'];
             $dadosParaContrato['numero_parcelas_material'] = $matricula['admin_parcelas_material'];
+
 
             // 6. Gerar Contrato (reutilizando sua lógica)
             // CORREÇÃO: Passar $id_escola e $userRole
@@ -331,15 +335,27 @@ class MatriculaController
                 throw new Exception("Aluno criado (RA: {$ra_sef_gerado}), mas falha ao gerar o PDF do contrato.");
             }
 
-            // 7. Gerar Mensalidades (reutilizando sua lógica)
-            // (Esta lógica é uma cópia da lógica do AlunoController)
+            // =================================================================
+            // ===               INÍCIO DA CORREÇÃO (MENSALIDADES)           ===
+            // =================================================================
+
+            // 7. Gerar Mensalidades (lógica ATUALIZADA)
             $valorAnuidadeTotal = (float) ($matricula['admin_anuidade'] ?? 0);
             $valorMatricula = (float) ($matricula['admin_matricula'] ?? 0);
             $diaVencimentoMensalidade = $matricula['admin_vencimento'] ?? 10;
             $valorMaterial = (float) ($matricula['admin_material'] ?? 0);
             $parcelasMaterial = (int) ($matricula['admin_parcelas_material'] ?? 1);
 
+            // Pega o ano do formulário (ex: 2026)
+            $anoLetivo = (int) ($matricula['admin_ano_inicio'] ?? date('Y'));
+
+            // SIMPLIFICADO: Sempre começa do Mês 1 (Janeiro) do Ano Letivo
+            $mesInicial = 1;
+            $totalParcelasAnuidade = 12;
+
+            // --- GERAÇÃO DA ANUIDADE (MENSALIDADES) ---
             if ($valorAnuidadeTotal > 0 && !$matricula['admin_bolsista']) {
+                // 1. Cria a Matrícula
                 $this->mensalidadeModel->create([
                     'id_aluno' => $id_aluno,
                     'valor_mensalidade' => $valorMatricula,
@@ -347,35 +363,50 @@ class MatriculaController
                     'descricao' => 'Matrícula'
                 ], $id_escola);
 
-                $valorMensalidadeCalculada = ($valorAnuidadeTotal - $valorMatricula) / 12;
-                $anoLetivo = (int) ($matricula['admin_ano_inicio'] ?? date('Y'));
+                // 2. Calcula e cria as mensalidades
+                if ($totalParcelasAnuidade > 0 && ($valorAnuidadeTotal > $valorMatricula)) {
+                    $valorMensalidadeCalculada = ($valorAnuidadeTotal - $valorMatricula) / 12;
 
-                for ($i = 1; $i <= 12; $i++) {
-                    $dataVencimento = new DateTime("{$anoLetivo}-{$i}-{$diaVencimentoMensalidade}");
-                    $this->mensalidadeModel->create([
-                        'id_aluno' => $id_aluno,
-                        'valor_mensalidade' => $valorMensalidadeCalculada,
-                        'data_vencimento' => $dataVencimento->format('Y-m-d'),
-                        'descricao' => "Mensalidade " . ($i) . "/" . $anoLetivo
-                    ], $id_escola);
+                    for ($i = 0; $i < $totalParcelasAnuidade; $i++) {
+                        $mesDaParcela = $mesInicial + $i;
+
+                        // Usa $anoLetivo (o ano do formulário) para criar a data
+                        $dataVencimento = new DateTime("{$anoLetivo}-{$mesDaParcela}-{$diaVencimentoMensalidade}");
+
+                        $this->mensalidadeModel->create([
+                            'id_aluno' => $id_aluno,
+                            'valor_mensalidade' => $valorMensalidadeCalculada,
+                            'data_vencimento' => $dataVencimento->format('Y-m-d'),
+                            'descricao' => "Mensalidade " . ($mesDaParcela) . "/" . $anoLetivo
+                        ], $id_escola);
+                    }
                 }
             }
 
-            if ($valorMaterial > 0 && !$matricula['admin_bolsista']) {
+            // --- GERAÇÃO DO MATERIAL DIDÁTICO ---
+            if ($valorMaterial > 0 && $parcelasMaterial > 0 && !$matricula['admin_bolsista']) {
                 $valorParcelaMaterial = $valorMaterial / $parcelasMaterial;
-                $anoLetivo = (int) ($matricula['admin_ano_inicio'] ?? date('Y'));
+                // $anoLetivo and $mesInicial já foram definidos acima
 
                 for ($i = 0; $i < $parcelasMaterial; $i++) {
-                    $mesDaParcela = 1 + $i; // Começa a cobrar em Janeiro
-                    $dataVencimento = new DateTime("{$anoLetivo}-{$mesDaParcela}-{$diaVencimentoMensalidade}");
-                    $this->mensalidadeModel->create([
-                        'id_aluno' => $id_aluno,
-                        'valor_mensalidade' => $valorParcelaMaterial,
-                        'data_vencimento' => $dataVencimento->format('Y-m-d'),
-                        'descricao' => "Material Didático " . ($i + 1) . "/{$parcelasMaterial}"
-                    ], $id_escola);
+                    $mesDaParcela = $mesInicial + $i; // Começa a cobrar no mesmo mês da anuidade (Janeiro)
+                    if ($mesDaParcela <= 12) {
+                        // Usa $anoLetivo aqui também
+                        $dataVencimento = new DateTime("{$anoLetivo}-{$mesDaParcela}-{$diaVencimentoMensalidade}");
+                        $this->mensalidadeModel->create([
+                            'id_aluno' => $id_aluno,
+                            'valor_mensalidade' => $valorParcelaMaterial,
+                            'data_vencimento' => $dataVencimento->format('Y-m-d'),
+                            'descricao' => "Material Didático " . ($i + 1) . "/{$parcelasMaterial}"
+                        ], $id_escola);
+                    }
                 }
             }
+
+            // =================================================================
+            // ===                FIM DA CORREÇÃO (MENSALIDADES)             ===
+            // =================================================================
+
 
             // 8. Se tudo deu certo, excluir o registro pendente
             $this->model->deleteById($id, $id_escola);
@@ -385,7 +416,9 @@ class MatriculaController
             $this->sendResponse(201, ['success' => true, 'message' => "Matrícula aceita! Aluno (RA: {$ra_sef_gerado}), contrato e mensalidades foram criados com sucesso."]);
 
         } catch (Exception $e) {
-            $db->rollBack();
+            if ($db && $db->inTransaction()) {
+                $db->rollBack();
+            }
             $this->sendResponse(500, ['success' => false, 'message' => 'Erro ao aceitar matrícula: ' . $e->getMessage()]);
         }
     }
@@ -527,8 +560,14 @@ class MatriculaController
         $filePath = $uploadDir . $fileName;
         file_put_contents($filePath, $dompdf->output());
 
-        // (O envio do contrato por webhook já está no AlunoController, 
-        // mas poderia ser chamado aqui também se necessário)
+        // =================================================================
+        // ===               INÍCIO DA CORREÇÃO (WEBHOOK)                ===
+        // =================================================================
+        // Chama a função de webhook recém-adicionada a este controller
+        $this->enviarContratoPorWebhook($filePath, $aluno, $formData);
+        // =================================================================
+        // ===                FIM DA CORREÇÃO (WEBHOOK)                  ===
+        // =================================================================
 
         return 'uploads/contratos/' . $fileName;
     }
@@ -564,5 +603,70 @@ class MatriculaController
 
         curl_close($ch);
         return $response;
+    }
+
+    // =================================================================
+    // ===               FUNÇÃO DE WEBHOOK ADICIONADA                ===
+    // =================================================================
+    /**
+     * Envia o contrato para o N8N (para o responsável)
+     */
+    private function enviarContratoPorWebhook($filePath, $aluno, $formData)
+    {
+        try {
+            if (!file_exists($filePath)) {
+                error_log("Webhook: Arquivo PDF não encontrado em {$filePath}");
+                return;
+            }
+            $pdfData = file_get_contents($filePath);
+            $pdfBase64 = base64_encode($pdfData);
+
+            $nomeResponsavel = $formData['nome_resp_financeiro'] ?? null;
+            $raAluno = $aluno['ra_sef'] ?? null; // Usa ra_sef
+            $celularResponsavel = $formData['celular_resp_financeiro'] ?? null;
+            $dataNascimentoRaw = $aluno['data_nascimento'] ?? null;
+            $dataNascimentoFormatada = null;
+
+            if ($dataNascimentoRaw) {
+                try {
+                    $dateObj = new DateTime($dataNascimentoRaw);
+                    $dataNascimentoFormatada = $dateObj->format('d/m/Y');
+                } catch (Exception $e) {
+                    error_log("Webhook: Data de nascimento inválida para o RA {$raAluno}: {$dataNascimentoRaw}");
+                    $dataNascimentoFormatada = null;
+                }
+            }
+
+            $payload = [
+                'pdf_base64' => $pdfBase64,
+                'nome_resp_financeiro' => $nomeResponsavel,
+                'celular_resp_financeiro' => $celularResponsavel,
+                'ra_aluno' => $raAluno,
+                'data_nascimento_aluno' => $dataNascimentoFormatada
+            ];
+
+            $jsonPayload = json_encode($payload);
+            $webhookUrl = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/enviar-contrato';
+
+            $ch = curl_init($webhookUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($jsonPayload)
+            ]);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $response = curl_exec($ch);
+            if (curl_errno($ch)) {
+                error_log("Webhook: Erro ao enviar cURL para n8n: " . curl_error($ch));
+            } else {
+                error_log("Webhook: Contrato do RA {$raAluno} enviado. Resposta: {$response}");
+            }
+            curl_close($ch);
+        } catch (Exception $e) {
+            error_log("Webhook: Exceção ao enviar contrato: " . $e->getMessage());
+        }
     }
 }

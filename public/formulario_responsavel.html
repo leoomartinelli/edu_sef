@@ -294,14 +294,26 @@
                 const data = Object.fromEntries(formData.entries());
                 data.token = token; // Adiciona o token ao payload
 
-                // Se o checkbox estiver marcado, garante que os campos pedagógicos sejam nulos
+                // 2. Lógica do Responsável Pedagógico
                 if (checkPedIgualFin.checked) {
-                    data.resp_ped_nome = null;
-                    data.resp_ped_cpf = null;
-                    data.resp_ped_celular = null;
-                    data.resp_ped_email = null;
-                    data.resp_ped_nascimento = null;
+                    // Se a caixa está MARCADA:
+
+                    // a. Remove os campos do pedagógico que vieram vazios do form
+                    delete data.resp_ped_nome;
+                    delete data.resp_ped_cpf;
+                    delete data.resp_ped_celular;
+
+                    // b. Copia os dados preenchidos do financeiro
+                    data.resp_ped_email = data.resp_fin_email;
+                    data.resp_ped_nascimento = data.resp_fin_nascimento;
+
+                } else {
+                    // Se a caixa NÃO está marcada:
+                    // Os dados já estão corretos vindos do Object.fromEntries
+                    // Nenhum ajuste necessário.
                 }
+
+                delete data.ped_igual_fin;
 
                 try {
                     const response = await fetch(`${API_BASE_URL}/matricula/preencher`, {
