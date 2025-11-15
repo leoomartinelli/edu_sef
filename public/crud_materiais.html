@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Material Pedagógico - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
+    <link rel="stylesheet" href="css/loader.css">
+    <link rel="stylesheet" href="httpsfile://app.zip/css/style.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-success {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.hidden {
+            display: none;
+        }
+        .modal.visible {
+            display: flex;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 0.75rem;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .nav-link {
+            color: #D1D5DB;
+            background-color: transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            background-color: #374151;
+            color: #FFFFFF;
+        }
+        .nav-link.active {
+            background-color: #111827;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
+            <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
+                Financeiro</a>
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="nav-link">
+                        Consultas <span class="ml-1">&#9660;</span>
+                    </button>
+                    <div
+                        class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                        <a href="crud_consultar_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta SEF</a>
+                        <a href="crud_consulta_detalhada_cpf.html"
+                            class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Consulta Detalhada</a>
+                    </div>
+                </div>
+                <a href="crud_alunos.html" class="nav-link">Alunos</a>
+                <a href="crud_turmas.html" class="nav-link">Turmas</a>
+                <a href="crud_professores.html" class="nav-link">Professores</a>
+                <a href="crud_disciplinas.html" class="nav-link">Disciplinas</a>
+                <a href="conteudo_programatico.html" class="nav-link ">Conteúdo Programático</a>
+                <a href="crud_mensalidades.html" class="nav-link">Mensalidades</a>
+                <a href="crud_materiais.html" class="nav-link active">Material</a>
+                <a href="gerenciar_contratos.html" class="nav-link">Contratos</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html" class="nav-link">Gerenciar Usuários</a>
+                <button onclick="logout()" class="nav-link">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Gerenciamento de Material Pedagógico</h1>
+        <div id="message-area" class="message hidden"></div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Lançar Parcelas de Material</h2>
+            <form id="form-add-material" class="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
+                
+                <div class="form-group relative md:col-span-2">
+                    <label for="add-aluno-search">Aluno</label>
+                    <input type="text" id="add-aluno-search" autocomplete="off" required
+                        placeholder="Digite para buscar um aluno..." class="bg-white">
+                    <input type="hidden" id="add-aluno-id" name="id_aluno">
+                    <div id="add-aluno-results"
+                        class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg hidden max-h-60 overflow-y-auto">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="valor-total">Valor Total (R$)</label>
+                    <input type="number" step="0.01" id="valor-total" name="valor_total_material" required placeholder="Ex: 300.00">
+                </div>
+                <div class="form-group">
+                    <label for="num-parcelas">Nº de Parcelas</label>
+                    <input type="number" step="1" id="num-parcelas" name="numero_parcelas" required placeholder="Ex: 3">
+                </div>
+                 <div class="form-group">
+                    <label for="primeiro-vencimento">1º Vencimento</label>
+                    <input type="date" id="primeiro-vencimento" name="data_primeiro_vencimento" required>
+                </div>
+                <button type="submit" class="btn btn-primary h-12">Adicionar</button>
+            </form>
+        </div>
+        <div id="view-turmas" class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-700">Resumo por Turmas</h2>
+                <div class="form-group w-full max-w-xs">
+                    <label for="filter-month">Filtrar por Período</label>
+                    <select id="filter-month" class="!mt-0"></select>
+                </div>
+            </div>
+            <div id="turmas-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            </div>
+        </div>
+
+        <div id="view-alunos-turma" class="bg-white p-6 rounded-lg shadow-md mt-8 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="alunos-turma-titulo" class="text-2xl font-semibold text-gray-700"></h2>
+                <button id="btn-voltar-para-turmas" class="btn btn-secondary">← Voltar para Turmas</button>
+            </div>
+            <div id="alunos-container" class="divide-y divide-gray-200">
+            </div>
+        </div>
+
+        <div id="view-detalhes" class="bg-white p-6 rounded-lg shadow-md mt-8 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="detalhes-titulo" class="text-2xl font-semibold text-gray-700"></h2>
+                <button id="btn-voltar" class="btn btn-secondary">← Voltar</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th id="th-aluno" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">
+                                Aluno</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Descrição</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Vencimento</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Valor Parcela</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Juros/Multa</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Total a Pagar</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-detalhes-material"></tbody> </table>
+            </div>
+        </div>
+        </div>
+
+    <div id="modal-pagamento" class="modal hidden">
+        <div class="modal-content">
+            <span id="close-modal-pagamento" class="close-button">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Confirmar Pagamento de Material</h2>
+            <form id="form-pagamento" class="space-y-4">
+                <input type="hidden" id="pagamento-id-material"> <div class="form-group"><label for="pagamento-valor">Valor Pago (R$)</label><input type="number"
+                        step="0.01" id="pagamento-valor" required></div>
+                <div class="form-group"><label for="pagamento-data">Data do Pagamento</label><input type="date"
+                        id="pagamento-data" required></div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="submit" class="btn btn-success">Confirmar Pagamento</button>
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-pagamento">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="global-loader" class="loader-container">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="js/app_materiais.js"></script>
+    </body>
+
+</html>

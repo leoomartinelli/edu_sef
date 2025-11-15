@@ -8,6 +8,7 @@ require_once __DIR__ . '/../models/Mensalidade.php';
 require_once __DIR__ . '/../models/Responsavel.php';
 require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../models/Material.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -20,6 +21,7 @@ class MatriculaController
     private $contratoModel;
     private $mensalidadeModel;
     private $responsavelModel;
+    private $materialModel;
 
     // URL do seu Webhook N8N para envio do link
     private $webhookUrl = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/envio-matricula';
@@ -34,6 +36,7 @@ class MatriculaController
         $this->contratoModel = new Contrato();
         $this->mensalidadeModel = new Mensalidade();
         $this->responsavelModel = new Responsavel();
+        $this->materialModel = new Material();
 
         // --- CÓDIGO ADICIONADO PARA PEGAR A URL AUTOMATICAMENTE ---
 
@@ -385,20 +388,30 @@ class MatriculaController
 
             // --- GERAÇÃO DO MATERIAL DIDÁTICO ---
             if ($valorMaterial > 0 && $parcelasMaterial > 0 && !$matricula['admin_bolsista']) {
-                $valorParcelaMaterial = $valorMaterial / $parcelasMaterial;
-                // $anoLetivo and $mesInicial já foram definidos acima
+
+                // Adiciona lógica de arredondamento para a última parcela
+                $valorParcelaMaterial = round($valorMaterial / $parcelasMaterial, 2);
+                $valorTotalCalculado = $valorParcelaMaterial * ($parcelasMaterial - 1);
+                $valorUltimaParcela = $valorMaterial - $valorTotalCalculado;
+
+                // $anoLetivo and $mesInicial já foram definidos acima (Janeiro)
 
                 for ($i = 0; $i < $parcelasMaterial; $i++) {
-                    $mesDaParcela = $mesInicial + $i; // Começa a cobrar no mesmo mês da anuidade (Janeiro)
+                    $mesDaParcela = $mesInicial + $i;
                     if ($mesDaParcela <= 12) {
-                        // Usa $anoLetivo aqui também
+
                         $dataVencimento = new DateTime("{$anoLetivo}-{$mesDaParcela}-{$diaVencimentoMensalidade}");
-                        $this->mensalidadeModel->create([
+                        $valorDaParcelaAtual = ($i == $parcelasMaterial - 1) ? $valorUltimaParcela : $valorParcelaMaterial;
+
+                        // vvvvvvvvvvv MUDANÇA PRINCIPAL vvvvvvvvvvv
+                        // Agora usa o materialModel e 'valor_parcela'
+                        $this->materialModel->create([
                             'id_aluno' => $id_aluno,
-                            'valor_mensalidade' => $valorParcelaMaterial,
+                            'valor_parcela' => $valorDaParcelaAtual,
                             'data_vencimento' => $dataVencimento->format('Y-m-d'),
                             'descricao' => "Material Didático " . ($i + 1) . "/{$parcelasMaterial}"
                         ], $id_escola);
+                        // ^^^^^^^^^^^ MUDANÇA PRINCIPAL ^^^^^^^^^^^
                     }
                 }
             }

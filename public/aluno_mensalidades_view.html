@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Mensalidades - Sistema SEF</title>
+    <title>Meu Financeiro - Sistema SEF</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="./img/EDU SEF.png"> 
+    <link rel="icon" type="image/png" href="./img/EDU SEF.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -128,7 +128,7 @@
                 <a href="aluno_dashboard.html"
                     class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Meu
                     Painel</a>
-                
+
                 <button onclick="logout()"
                     class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Sair</button>
             </div>
@@ -137,22 +137,22 @@
 
     <main class="container mx-auto max-w-7xl py-12 px-4 space-y-8">
         <div class="text-left">
-            <h1 id="welcome-message-mensalidades" class="text-4xl font-extrabold text-gray-800">Minhas Mensalidades</h1>
-            <p id="aluno-info-mensalidades" class="text-lg text-gray-600 mt-1"></p>
+            <h1 id="welcome-message-financeiro" class="text-4xl font-extrabold text-gray-800">Meu Financeiro</h1>
+            <p id="aluno-info-financeiro" class="text-lg text-gray-600 mt-1"></p>
         </div>
 
         <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-2xl font-bold text-gray-700 mb-4">Resumo Financeiro</h2>
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Resumo Financeiro Total</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div id="card-atrasadas"
                     class="bg-gray-50 rounded-lg p-6 flex flex-col justify-center items-center text-center border-l-4 border-red-500">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Em Atraso</p>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Em Atraso (Total)</p>
                     <p id="valor-atrasadas" class="text-3xl font-bold text-red-600 mt-2">R$ 0,00</p>
-                    <p id="qtde-atrasadas" class="text-xs text-gray-500 mt-1">0 mensalidades</p>
+                    <p id="qtde-atrasadas" class="text-xs text-gray-500 mt-1">0 pendência(s)</p>
                 </div>
                 <div id="card-proxima"
                     class="bg-gray-50 rounded-lg p-6 flex flex-col justify-center items-center text-center border-l-4 border-indigo-500">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Próximo Vencimento</p>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Próximo Vencimento</POST>
                     <p id="valor-proxima" class="text-3xl font-bold text-indigo-600 mt-2">R$ 0,00</p>
                     <p id="data-proxima" class="text-xs text-gray-500 mt-1">--/--/----</p>
                 </div>
@@ -161,13 +161,16 @@
 
         <div id="financeiro-section" class="bg-white rounded-xl shadow-md p-6">
             <h2 class="text-2xl font-bold text-gray-700 mb-4">Histórico de Mensalidades</h2>
-            <div id="loading-message" class="text-center text-gray-500 my-8">Carregando mensalidades...</div>
-            <div id="error-message" class="hidden my-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+            <div id="loading-message-mensalidade" class="text-center text-gray-500 my-8">Carregando mensalidades...
+            </div>
+            <div id="error-message-mensalidade" class="hidden my-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Descrição</th>
                             <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                                 Vencimento</th>
                             <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
@@ -179,6 +182,32 @@
                         </tr>
                     </thead>
                     <tbody id="tabela-mensalidades" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="material-section" class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Material Pedagógico</h2>
+            <div id="loading-message-material" class="text-center text-gray-500 my-8">Carregando materiais...</div>
+            <div id="error-message-material" class="hidden my-8 p-4 bg-red-100 text-red-700 rounded-lg"></div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Descrição</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Vencimento</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Valor da Parcela</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-materiais" class="bg-white divide-y divide-gray-200">
                     </tbody>
                 </table>
             </div>
@@ -220,13 +249,23 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'http://localhost/Sistema/api';
+        // MUDANÇA: API_BASE_URL agora é relativa
+        const API_BASE_URL = '/api'; // Assumindo que está na mesma origem
+        // MUDANÇA: Nova URL de API para materiais
+        const API_URL_ALUNO_MENALIDADES = `${API_BASE_URL}/aluno/mensalidades`;
+        const API_URL_ALUNO_MATERIAIS = `${API_BASE_URL}/aluno/materiais`;
+
         const PIX_WEBHOOK_URL = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/4c35783f-aaee-4537-8bc5-70b019247ab3'; // MANTENHA OU ATUALIZE SUA URL DO WEBHOOK PIX
         const POLLING_INTERVAL = 5000;
         const PIX_EXPIRATION_MINUTES = 30;
 
         let currentAlunoData = null;
         let pollingManager = {};
+
+        // MUDANÇA: Variáveis globais para o resumo financeiro
+        let globalTotalAtrasado = 0;
+        let globalQtdeAtrasadas = 0;
+        let globalProximaPendente = null;
 
         function logout() {
             Object.values(pollingManager).forEach(clearInterval); // Limpa todos os polls ativos
@@ -255,50 +294,63 @@
                 const alunoRA = decodedToken?.data?.username;
                 if (!alunoRA) throw new Error("Token inválido ou incompleto para aluno.");
 
-                // Obter dados do aluno para exibir nome e RA/Turma
-                const alunoRes = await fetch(`${API_BASE_URL}/alunos?ra=${alunoRA}`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (!alunoRes.ok) {
-                    const errorBody = await alunoRes.json();
-                    throw new Error(errorBody.message || "Falha ao carregar dados do aluno para mensalidades.");
-                }
+                // MUDANÇA: Carregamento em paralelo (Aluno, Mensalidades, Materiais)
+                const headers = { 'Authorization': `Bearer ${token}` };
+
+                const alunoPromise = fetch(`${API_BASE_URL}/alunos?ra=${alunoRA}`, { headers });
+                const mensalidadesPromise = fetch(API_URL_ALUNO_MENALIDADES, { headers });
+                const materiaisPromise = fetch(API_URL_ALUNO_MATERIAIS, { headers });
+
+                const [alunoRes, mensalidadesRes, materiaisRes] = await Promise.all([
+                    alunoPromise,
+                    mensalidadesPromise,
+                    materiaisPromise
+                ]);
+
+                // 1. Processar Aluno
+                if (!alunoRes.ok) throw new Error("Falha ao carregar dados do aluno.");
                 const alunoResult = await alunoRes.json();
                 if (alunoResult.success && alunoResult.data.length > 0) {
                     currentAlunoData = alunoResult.data[0];
-                    document.getElementById('aluno-info-mensalidades').textContent = `Aluno: ${currentAlunoData.nome_aluno} | RA: ${currentAlunoData.ra} | Turma: ${currentAlunoData.nome_turma || 'Não atribuída'}`;
-
-                    // Configurar o link do boletim na navbar
-                    const navbarBoletimLink = document.getElementById('navbar-boletim-link-mensalidades');
-                    if (navbarBoletimLink) {
-                        const currentYear = new Date().getFullYear();
-                        navbarBoletimLink.href = `boletim_aluno_view.html?idAluno=${currentAlunoData.id_aluno}&nomeAluno=${encodeURIComponent(currentAlunoData.nome_aluno)}&raAluno=${currentAlunoData.ra}&turmaAluno=${encodeURIComponent(currentAlunoData.nome_turma || 'N/A')}&anoLetivo=${currentYear}`;
-                    }
-
+                    // MUDANÇA: IDs atualizados
+                    document.getElementById('welcome-message-financeiro').textContent = `Meu Financeiro`;
+                    document.getElementById('aluno-info-financeiro').textContent = `Aluno: ${currentAlunoData.nome_aluno} | RA: ${currentAlunoData.ra_sef} | Turma: ${currentAlunoData.nome_turma || 'Não atribuída'}`;
                 } else {
-                    throw new Error(alunoResult.message || "Dados do aluno não encontrados para mensalidades.");
+                    throw new Error(alunoResult.message || "Dados do aluno não encontrados.");
                 }
 
-
-                // Carregar mensalidades
-                const mensalidadesRes = await fetch(`${API_BASE_URL}/aluno/mensalidades`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (!mensalidadesRes.ok) {
-                    const errorBody = await mensalidadesRes.json();
-                    throw new Error(errorBody.message || "Falha ao carregar mensalidades.");
-                }
+                // 2. Processar Mensalidades
+                if (!mensalidadesRes.ok) throw new Error("Falha ao carregar mensalidades.");
                 const mensalidadesResult = await mensalidadesRes.json();
-
                 if (mensalidadesResult.success) {
                     renderMensalidades(mensalidadesResult.data);
+                    document.getElementById('loading-message-mensalidade').classList.add('hidden');
                 } else {
                     throw new Error(mensalidadesResult.message);
                 }
 
-                document.getElementById('loading-message').classList.add('hidden');
-                document.getElementById('financeiro-section').classList.remove('hidden');
+                // 3. Processar Materiais
+                if (!materiaisRes.ok) throw new Error("Falha ao carregar materiais.");
+                const materiaisResult = await materiaisRes.json();
+                if (materiaisResult.success) {
+                    renderMateriais(materiaisResult.data); // MUDANÇA: Nova função
+                    document.getElementById('loading-message-material').classList.add('hidden');
+                } else {
+                    throw new Error(materiaisResult.message);
+                }
+
+                // 4. Atualizar Resumo Global
+                updateGlobalSummaryCards(); // MUDANÇA: Nova função
+
             } catch (error) {
-                console.error("Erro no carregamento da página de mensalidades:", error);
-                document.getElementById('loading-message').textContent = 'Erro ao carregar dados financeiros. Tente novamente.';
-                document.getElementById('error-message').textContent = `Detalhes: ${error.message}`;
-                document.getElementById('error-message').classList.remove('hidden');
+                console.error("Erro no carregamento da página:", error);
+                document.getElementById('error-message-mensalidade').textContent = `Erro ao carregar mensalidades: ${error.message}`;
+                document.getElementById('error-message-mensalidade').classList.remove('hidden');
+                document.getElementById('loading-message-mensalidade').classList.add('hidden');
+
+                document.getElementById('error-message-material').textContent = `Erro ao carregar materiais: ${error.message}`;
+                document.getElementById('error-message-material').classList.remove('hidden');
+                document.getElementById('loading-message-material').classList.add('hidden');
             }
         });
 
@@ -328,84 +380,202 @@
                     const isPixPending = statusLower === 'pending';
                     const isExpired = m.pix_expiration_time && new Date(m.pix_expiration_time) < hoje;
 
-                    // LÓGICA CORRETA PARA OS STATUS
                     if (statusLower === 'open') {
                         if (dataVencimento < hoje) {
                             statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Atrasado</span>`;
                         } else {
                             statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Em Aberto</span>`;
                         }
-                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)})' class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 shadow-sm">Pagar com PIX</button>`;
+                        // MUDANÇA: Passa o tipo 'mensalidade'
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)}, "mensalidade")' class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 shadow-sm">Pagar com PIX</button>`;
 
                     } else if (isPixPending && isExpired) {
                         statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pix Expirado</span>`;
-                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)})' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
+                        // MUDANÇA: Passa o tipo 'mensalidade'
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)}, "mensalidade")' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
 
                     } else if (isPixPending && !isExpired) {
                         statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Aguardando Pagamento</span>`;
-                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)})' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
-                        startPolling(m.id_mensalidade);
+                        // MUDANÇA: Passa o tipo 'mensalidade'
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)}, "mensalidade")' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
+                        startPolling(m, 'mensalidade'); // MUDANÇA: Passa o item e o tipo
                     }
                 }
 
-                tabelaBody.innerHTML += `<tr id="row-${m.id_mensalidade}" class="align-middle"><td class="px-6 py-4">${formatDate(m.data_vencimento)}</td><td class="px-6 py-4 font-medium">${formatCurrency(m.valor_total_devido || m.valor_mensalidade)}</td><td class="px-6 py-4 status-cell">${statusBadge}</td><td class="px-6 py-4 text-center action-cell">${acaoBotao}</td></tr>`;
+                // MUDANÇA: Adiciona descrição e ID único
+                tabelaBody.innerHTML += `<tr id="row-mensalidade-${m.id_mensalidade}" class="align-middle">
+                    <td class="px-6 py-4">${m.descricao || 'Mensalidade'}</td>
+                    <td class="px-6 py-4">${formatDate(m.data_vencimento)}</td>
+                    <td class="px-6 py-4 font-medium">${formatCurrency(m.valor_total_devido || m.valor_mensalidade)}</td>
+                    <td class="px-6 py-4 status-cell">${statusBadge}</td>
+                    <td class="px-6 py-4 text-center action-cell">${acaoBotao}</td>
+                </tr>`;
             });
 
-            document.getElementById('valor-atrasadas').textContent = formatCurrency(totalAtrasado);
-            document.getElementById('qtde-atrasadas').textContent = `${qtdeAtrasadas} mensalidade(s)`;
-            if (proximaMensalidade) {
-                document.getElementById('valor-proxima').textContent = formatCurrency(proximaMensalidade.valor_total_devido || proximaMensalidade.valor_mensalidade);
-                document.getElementById('data-proxima').textContent = `Vence em: ${formatDate(proximaMensalidade.data_vencimento)}`;
+            // MUDANÇA: Atualiza o resumo global em vez dos cards
+            globalTotalAtrasado += totalAtrasado;
+            globalQtdeAtrasadas += qtdeAtrasadas;
+            if (!globalProximaPendente || (proximaMensalidade && new Date(proximaMensalidade.data_vencimento) < new Date(globalProximaPendente.data_vencimento))) {
+                globalProximaPendente = proximaMensalidade;
+            }
+        }
+
+        // MUDANÇA: Nova função para renderizar materiais
+        function renderMateriais(materiais) {
+            const tabelaBody = document.getElementById('tabela-materiais');
+            tabelaBody.innerHTML = '';
+            let totalAtrasado = 0, qtdeAtrasadas = 0, proximoMaterial = null;
+
+            materiais.forEach(m => {
+                const statusLower = m.status?.toLowerCase();
+                let acaoBotao = '-', statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Pago</span>`;
+
+                if (statusLower !== 'approved' && statusLower !== 'pago') {
+                    const hoje = new Date();
+                    const dataVencimento = new Date(m.data_vencimento + 'T03:00:00Z');
+
+                    if (dataVencimento < hoje) {
+                        totalAtrasado += parseFloat(m.valor_total_devido || m.valor_parcela);
+                        qtdeAtrasadas++;
+                    }
+
+                    if ((!proximoMaterial || dataVencimento < new Date(proximoMaterial.data_vencimento + 'T03:00:00Z')) && dataVencimento >= hoje.setHours(0, 0, 0, 0)) {
+                        proximoMaterial = m;
+                    }
+
+                    const isPixPending = statusLower === 'pending';
+                    const isExpired = m.pix_expiration_time && new Date(m.pix_expiration_time) < hoje;
+
+                    if (statusLower === 'open') {
+                        if (dataVencimento < hoje) {
+                            statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Atrasado</span>`;
+                        } else {
+                            statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Em Aberto</span>`;
+                        }
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)}, "material")' class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 shadow-sm">Pagar com PIX</button>`;
+                    } else if (isPixPending && isExpired) {
+                        statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pix Expirado</span>`;
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)}, "material")' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
+                    } else if (isPixPending && !isExpired) {
+                        statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Aguardando Pagamento</span>`;
+                        acaoBotao = `<button onclick='handlePayment(${JSON.stringify(m)}, "material")' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
+                        startPolling(m, 'material'); // Passa o item e o tipo
+                    }
+                }
+
+                // Renderiza a linha da tabela de materiais
+                tabelaBody.innerHTML += `<tr id="row-material-${m.id_material}" class="align-middle">
+                    <td class="px-6 py-4">${m.descricao || 'Material'}</td>
+                    <td class="px-6 py-4">${formatDate(m.data_vencimento)}</td>
+                    <td class="px-6 py-4 font-medium">${formatCurrency(m.valor_total_devido || m.valor_parcela)}</td>
+                    <td class="px-6 py-4 status-cell">${statusBadge}</td>
+                    <td class="px-6 py-4 text-center action-cell">${acaoBotao}</td>
+                </tr>`;
+            });
+
+            // Atualiza o resumo global
+            globalTotalAtrasado += totalAtrasado;
+            globalQtdeAtrasadas += qtdeAtrasadas;
+            if (!globalProximaPendente || (proximoMaterial && new Date(proximoMaterial.data_vencimento) < new Date(globalProximaPendente.data_vencimento))) {
+                globalProximaPendente = proximoMaterial;
+            }
+        }
+
+        // MUDANÇA: Nova função para atualizar os cards de resumo com dados combinados
+        function updateGlobalSummaryCards() {
+            document.getElementById('valor-atrasadas').textContent = formatCurrency(globalTotalAtrasado);
+            document.getElementById('qtde-atrasadas').textContent = `${globalQtdeAtrasadas} pendência(s)`;
+
+            if (globalProximaPendente) {
+                const valorProximo = globalProximaPendente.valor_total_devido || globalProximaPendente.valor_mensalidade || globalProximaPendente.valor_parcela;
+                document.getElementById('valor-proxima').textContent = formatCurrency(valorProximo);
+                document.getElementById('data-proxima').textContent = `Vence em: ${formatDate(globalProximaPendente.data_vencimento)}`;
             } else {
                 document.getElementById('card-proxima').innerHTML = `<p class="text-sm font-medium text-gray-500 uppercase">Situação</p><p class="text-2xl font-bold text-green-600 mt-2">Tudo em dia!</p><p class="text-xs text-gray-500 mt-1">Nenhuma pendência encontrada.</p>`;
             }
         }
 
-        async function handlePayment(mensalidade) {
-            const statusLower = mensalidade.status?.toLowerCase();
+        // MUDANÇA: Função de pagamento refatorada para aceitar 'mensalidade' ou 'material'
+        async function handlePayment(item, itemType) {
+            const itemIdField = itemType === 'mensalidade' ? 'id_mensalidade' : 'id_material';
+            const valorField = itemType === 'mensalidade' ? 'valor_mensalidade' : 'valor_parcela';
+            const itemId = item[itemIdField];
+            const valor = item.valor_total_devido || item[valorField];
+
+            const statusLower = item.status?.toLowerCase();
             const isPixPending = statusLower === 'pending';
-            const isExpired = mensalidade.pix_expiration_time && new Date(mensalidade.pix_expiration_time) < new Date();
+            const isExpired = item.pix_expiration_time && new Date(item.pix_expiration_time) < new Date();
             showModalSection('pix-loading');
 
+            const apiStatusUrl = `${API_BASE_URL}/aluno/${itemType}s/${itemId}/status`;
+            const apiDetailsUrl = `${API_BASE_URL}/${itemType}s/${itemId}`;
+
             if (isPixPending && !isExpired) {
+                // Apenas exibe o PIX existente
                 try {
-                    const res = await fetch(`${API_BASE_URL}/mensalidades/${mensalidade.id_mensalidade}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                    const res = await fetch(apiDetailsUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
                     const result = await res.json();
                     if (!result.success) throw new Error(result.message);
-                    displayPix(result.data, mensalidade);
+                    displayPix(result.data, item, itemType);
                 } catch (error) { showModalSection('pix-error'); document.getElementById('pix-error-message').textContent = error.message; }
             } else {
+                // Gera um novo PIX
                 try {
                     const token = localStorage.getItem('jwt_token');
-                    await fetch(`${API_BASE_URL}/aluno/mensalidades/${mensalidade.id_mensalidade}/status`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'pending' }) });
-                    const nomeCompleto = currentAlunoData.nome_aluno.split(' ');
-                    const payload = [{ id_mensalidade: String(mensalidade.id_mensalidade), first_name: nomeCompleto[0], last_name: nomeCompleto.slice(1).join(' ') || nomeCompleto[0], email: currentAlunoData.email_responsavel, number: String(currentAlunoData.celular_responsavel).replace(/\D/g, ''), cpf: String(currentAlunoData.cpf_responsavel).replace(/\D/g, ''), valor_mensalidade: String(mensalidade.valor_total_devido || mensalidade.valor_mensalidade) }];
+                    // 1. Atualiza status para 'pending'
+                    await fetch(apiStatusUrl, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'pending' }) });
 
+                    // 2. Monta o payload para o N8N
+                    const nomeCompleto = currentAlunoData.nome_aluno.split(' ');
+                    const payload = [{
+                        [itemIdField]: String(itemId), // id_mensalidade OU id_material
+                        first_name: nomeCompleto[0],
+                        last_name: nomeCompleto.slice(1).join(' ') || nomeCompleto[0],
+                        email: currentAlunoData.email_responsavel, // Assumindo que o controller de aluno foi atualizado para buscar isso
+                        number: String(currentAlunoData.celular_responsavel).replace(/\D/g, ''),
+                        cpf: String(currentAlunoData.cpf_responsavel).replace(/\D/g, ''),
+                        valor_mensalidade: String(valor) // Webhook N8N provavelmente espera este nome de campo
+                    }];
+
+                    // 3. Chama o Webhook
                     const pixResponse = await fetch(PIX_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                     if (!pixResponse.ok) throw new Error("Falha ao gerar o código PIX.");
 
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    const res = await fetch(`${API_BASE_URL}/mensalidades/${mensalidade.id_mensalidade}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Espera o webhook processar
+
+                    // 4. Busca os dados do PIX recém-gerado
+                    const res = await fetch(apiDetailsUrl, { headers: { 'Authorization': `Bearer ${token}` } });
                     const result = await res.json();
                     if (!result.success) throw new Error("Não foi possível buscar os dados do PIX recém-gerado.");
 
-                    displayPix(result.data, mensalidade);
-                    startPolling(mensalidade.id_mensalidade);
+                    // 5. Exibe o PIX e inicia o polling
+                    displayPix(result.data, item, itemType);
+                    startPolling(item, itemType); // Passa o item todo
 
-                    const row = document.getElementById(`row-${mensalidade.id_mensalidade}`);
+                    // 6. Atualiza a linha na tabela
+                    const row = document.getElementById(`row-${itemType}-${itemId}`);
                     if (row) {
                         row.querySelector('.status-cell').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Aguardando Pagamento</span>`;
                         const actionCell = row.querySelector('.action-cell');
-                        mensalidade.status = 'pending';
-                        actionCell.innerHTML = `<button onclick='handlePayment(${JSON.stringify(mensalidade)})' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
+                        item.status = 'pending'; // Atualiza o status no objeto para o próximo clique
+                        actionCell.innerHTML = `<button onclick='handlePayment(${JSON.stringify(item)}, "${itemType}")' class="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-600 shadow-sm">Ver Pix</button>`;
                     }
-                } catch (error) { showModalSection('pix-error'); document.getElementById('pix-error-message').textContent = error.message; }
+                } catch (error) {
+                    showModalSection('pix-error');
+                    document.getElementById('pix-error-message').textContent = error.message;
+                    // Reverte o status para 'open' se falhou
+                    await fetch(apiStatusUrl, { method: 'PUT', headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'open' }) });
+                }
             }
         }
 
-        function displayPix(pixData, mensalidade) {
+        // MUDANÇA: Função de display refatorada (genérica)
+        function displayPix(pixData, item, itemType) {
             showModalSection('pix-content');
-            const valor = mensalidade.valor_total_devido || mensalidade.valor_mensalidade;
+
+            const valorField = itemType === 'mensalidade' ? 'valor_mensalidade' : 'valor_parcela';
+            const valor = item.valor_total_devido || item[valorField];
+
             const expiracao = pixData.pix_expiration_time;
             document.getElementById('pix-valor').textContent = `Valor a Pagar: ${formatCurrency(valor)}`;
             document.getElementById('pix-expiracao').textContent = expiracao ? `Válido até as ${formatTime(expiracao)}.` : 'Não foi possível determinar a validade do PIX.';
@@ -413,27 +583,44 @@
             document.getElementById('pix-copia-cola').value = pixData.copiaECola || pixData.pix_copia_e_cola;
         }
 
-        function startPolling(mensalidadeId) {
-            if (pollingManager[mensalidadeId]) { clearInterval(pollingManager[mensalidadeId]); }
+        // MUDANÇA: Função de polling refatorada (genérica)
+        function startPolling(item, itemType) {
+            const itemIdField = itemType === 'mensalidade' ? 'id_mensalidade' : 'id_material';
+            const valorField = itemType === 'mensalidade' ? 'valor_mensalidade' : 'valor_parcela';
+            const itemId = item[itemIdField];
+
+            const pollKey = `${itemType}-${itemId}`;
+            const apiUrl = `${API_BASE_URL}/${itemType}s/${itemId}`;
+            const row = document.getElementById(`row-${itemType}-${itemId}`);
+
+            if (pollingManager[pollKey]) {
+                clearInterval(pollingManager[pollKey]);
+            }
+
             const pollingStartTime = Date.now();
-            pollingManager[mensalidadeId] = setInterval(async () => {
+            pollingManager[pollKey] = setInterval(async () => {
+                // Parar polling se expirou
                 if (Date.now() - pollingStartTime > PIX_EXPIRATION_MINUTES * 60 * 1000) {
-                    clearInterval(pollingManager[mensalidadeId]);
-                    delete pollingManager[mensalidadeId];
-                    const row = document.getElementById(`row-${mensalidadeId}`);
+                    clearInterval(pollingManager[pollKey]);
+                    delete pollingManager[pollKey];
                     if (row) {
                         row.querySelector('.status-cell').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pix Expirado</span>`;
-                        row.querySelector('.action-cell').innerHTML = `<button onclick='handlePayment(${JSON.stringify({ id_mensalidade: mensalidadeId, valor_mensalidade: row.cells[1].textContent.replace('R$&nbsp;', '').replace('.', '').replace(',', '.') })})' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
+                        // Atualiza o objeto do item para o botão "Gerar Novo Pix"
+                        item.status = 'open'; // Reseta o status para permitir nova geração
+                        row.querySelector('.action-cell').innerHTML = `<button onclick='handlePayment(${JSON.stringify(item)}, "${itemType}")' class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm">Gerar Novo Pix</button>`;
                     }
                     return;
                 }
+
+                // Continuar polling
                 try {
-                    const res = await fetch(`${API_BASE_URL}/mensalidades/${mensalidadeId}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
+                    const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } });
                     const result = await res.json();
+
                     if (result.success && (result.data.status?.toLowerCase() === 'approved' || result.data.status?.toLowerCase() === 'pago')) {
-                        clearInterval(pollingManager[mensalidadeId]);
-                        delete pollingManager[mensalidadeId];
-                        const row = document.getElementById(`row-${mensalidadeId}`);
+                        clearInterval(pollingManager[pollKey]);
+                        delete pollingManager[pollKey];
+
                         if (row) {
                             row.querySelector('.status-cell').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Pago</span>`;
                             row.querySelector('.action-cell').innerHTML = '-';
@@ -442,11 +629,13 @@
                             showModalSection('pix-success');
                             setTimeout(closePixModal, 3000);
                         }
+                        // Recarregar tudo para atualizar os resumos
+                        location.reload();
                     }
                 } catch (error) {
                     console.error("Erro durante polling:", error);
-                    clearInterval(pollingManager[mensalidadeId]);
-                    delete pollingManager[mensalidadeId];
+                    clearInterval(pollingManager[pollKey]);
+                    delete pollingManager[pollKey];
                 }
             }, POLLING_INTERVAL);
         }

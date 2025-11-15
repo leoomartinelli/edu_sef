@@ -1,2 +1,35 @@
 ALTER TABLE `alunos`
 ADD COLUMN `ano_inicio` SMALLINT(4) NULL DEFAULT NULL AFTER `data_inicio`;
+
+
+
+
+CREATE TABLE material_pedagogico (
+    id_material INT AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT NOT NULL,
+    id_escola INT NOT NULL,
+    descricao VARCHAR(255) DEFAULT 'Parcela de Material',
+    valor_parcela DECIMAL(10, 2) NOT NULL,
+    data_vencimento DATE NOT NULL,
+    status ENUM('open', 'approved', 'pending', 'failed', 'cancelled', 'refunded', 'charged_back') NOT NULL DEFAULT 'open',
+    data_pagamento DATE,
+    valor_pago DECIMAL(10, 2),
+    dias_atraso INT DEFAULT 0,
+    multa_aplicada DECIMAL(10, 2) DEFAULT 0.00,
+    juros_aplicados DECIMAL(10, 2) DEFAULT 0.00,
+    
+    -- Campos para integração com gateway de pagamento (copiados de mensalidades)
+    id_transacao_gateway VARCHAR(255), 
+    pix_qr_code_base64 TEXT,
+    pix_copia_e_cola TEXT,
+    pix_expiration_time DATETIME,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno) ON DELETE CASCADE,
+    FOREIGN KEY (id_escola) REFERENCES escolas(id_escola),
+    
+    -- Índice para evitar duplicatas exatas
+    UNIQUE KEY uk_material (id_aluno, id_escola, data_vencimento, valor_parcela)
+);

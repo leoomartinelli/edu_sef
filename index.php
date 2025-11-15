@@ -28,6 +28,7 @@ require_once __DIR__ . '/api/controllers/AlunoController.php';
 require_once __DIR__ . '/api/controllers/TurmaController.php';
 require_once __DIR__ . '/api/controllers/AuthController.php';
 require_once __DIR__ . '/api/controllers/MensalidadeController.php';
+require_once __DIR__ . '/api/controllers/MaterialController.php';
 require_once __DIR__ . '/api/controllers/ProfessorController.php';
 require_once __DIR__ . '/api/controllers/DisciplinaController.php';
 require_once __DIR__ . '/api/controllers/BoletimController.php';
@@ -145,6 +146,7 @@ $alunoController = new AlunoController();
 $turmaController = new TurmaController();
 $authController = new AuthController();
 $mensalidadeController = new MensalidadeController();
+$materialController = new MaterialController();
 $professorController = new ProfessorController();
 $disciplinaController = new DisciplinaController();
 $boletimController = new BoletimController();
@@ -430,13 +432,13 @@ switch (true) {
         break;
 
     case $requestUri === '/api/mensalidades/summary':
-        requireRole(['admin', 'professor']);
+        requireRole(['admin']);
         if ($requestMethod === 'GET')
             $mensalidadeController->getSummaryByTurma();
         break;
     // --- ROTAS DE MENSALIDADES ---
     case $requestUri === '/api/mensalidades':
-        requireRole(['admin', 'professor']);
+        requireRole(['admin']);
         if ($requestMethod === 'GET')
             $mensalidadeController->getAll();
         elseif ($requestMethod === 'POST')
@@ -721,6 +723,55 @@ switch (true) {
         requireRole(['admin']);
         if ($requestMethod === 'POST')
             $matriculaController->reenviarFormulario($matches[1]);
+        break;
+
+    case $requestUri === '/api/materiais/summary': // <-- ADICIONE ESTE BLOCO
+        requireRole(['admin']);
+        if ($requestMethod === 'GET')
+            $materialController->getSummaryByTurma();
+        break;
+
+    case $requestUri === '/api/materiais':
+        requireRole(['admin']);
+        if ($requestMethod === 'GET')
+            $materialController->getAll();
+        elseif ($requestMethod === 'POST')
+            $materialController->create();
+        break;
+
+    case preg_match('/^\/api\/materiais\/(\d+)$/', $requestUri, $matches):
+        if ($requestMethod === 'GET') {
+            $materialController->getMaterialDetails($matches[1]);
+        } elseif ($requestMethod === 'DELETE') {
+            requireRole(['admin']);
+            $materialController->delete($matches[1]);
+        }
+        break;
+
+    case preg_match('/^\/api\/materiais\/(\d+)\/pagar$/', $requestUri, $matches):
+        requireRole(['admin']);
+        if ($requestMethod === 'PUT')
+            $materialController->registerPayment($matches[1]);
+        break;
+
+    case $requestUri === '/api/aluno/materiais':
+        requireRole(['aluno']);
+        if ($requestMethod === 'GET') {
+            $alunoRa = getUsernameFromToken();
+            if ($alunoRa) {
+                $materialController->getByAluno($alunoRa);
+            } else {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Não foi possível identificar o aluno a partir do token.']);
+            }
+        }
+        break;
+
+    case preg_match('/^\/api\/aluno\/materiais\/(\d+)\/status$/', $requestUri, $matches):
+        requireRole(['aluno']);
+        if ($requestMethod === 'PUT') {
+            $materialController->updateStudentMaterialStatus($matches[1]);
+        }
         break;
 
     // --- ROTA PADRÃO (Endpoint não encontrado) ---

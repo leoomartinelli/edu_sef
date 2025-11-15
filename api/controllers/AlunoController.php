@@ -5,6 +5,7 @@ require_once __DIR__ . '/../models/Contrato.php';
 require_once __DIR__ . '/../models/Mensalidade.php';
 require_once __DIR__ . '/../models/Responsavel.php';
 require_once __DIR__ . '/../models/Turma.php';
+require_once __DIR__ . '/../models/Material.php';
 require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -18,12 +19,14 @@ class AlunoController
     private $contratoModel;
     private $mensalidadeModel;
     private $responsavelModel;
+    private $materialModel;
 
     public function __construct()
     {
         $this->model = new Aluno();
         $this->contratoModel = new Contrato();
         $this->mensalidadeModel = new Mensalidade();
+        $this->materialModel = new Material();
         $this->responsavelModel = new Responsavel();
     }
 
@@ -229,31 +232,41 @@ class AlunoController
             }
 
             // =================================================================
-            // ===               CORREÇÃO (MATERIAL DIDÁTICO)                ===
+            // ===               LÓGICA DO MATERIAL DIDÁTICO (NOVA)          ===
             // =================================================================
             if ($valorMaterial > 0 && $parcelasMaterial > 0) {
-                $valorParcelaMaterial = $valorMaterial / $parcelasMaterial;
-                // $anoLetivo and $mesInicial já foram definidos acima
+                $valorParcelaMaterial = round($valorMaterial / $parcelasMaterial, 2);
+
+                // Ajuste de centavos para a última parcela
+                $valorTotalCalculado = $valorParcelaMaterial * ($parcelasMaterial - 1);
+                $valorUltimaParcela = $valorMaterial - $valorTotalCalculado;
+
                 $materialCriadoCount = 0;
 
                 for ($i = 0; $i < $parcelasMaterial; $i++) {
-                    $mesDaParcela = $mesInicial + $i; // Começa a cobrar no mesmo mês da anuidade
+                    $mesDaParcela = $mesInicial + $i;
                     if ($mesDaParcela <= 12) {
-                        // Usa $anoLetivo aqui também
                         $dataVencimento = new DateTime("{$anoLetivo}-{$mesDaParcela}-{$diaVencimentoMensalidade}");
-                        $this->mensalidadeModel->create([
+
+                        // Define o valor da parcela (com ajuste na última)
+                        $valorDaParcelaAtual = ($i == $parcelasMaterial - 1) ? $valorUltimaParcela : $valorParcelaMaterial;
+
+                        // vvvvvvvvvv ESTA É A NOVA LÓGICA vvvvvvvvvv
+                        $this->materialModel->create([
                             'id_aluno' => $id_aluno,
-                            'valor_mensalidade' => $valorParcelaMaterial,
+                            'valor_parcela' => $valorDaParcelaAtual, // <-- MUDOU O NOME
                             'data_vencimento' => $dataVencimento->format('Y-m-d'),
                             'descricao' => "Material Didático " . ($i + 1) . "/{$parcelasMaterial}"
                         ], $id_escola);
+                        // ^^^^^^^^^^ ESTA É A NOVA LÓGICA ^^^^^^^^^^
+
                         $materialCriadoCount++;
                     }
                 }
                 $finalMessage .= " {$materialCriadoCount} cobrança(s) de material didático gerada(s).";
             }
             // =================================================================
-            // ===               FIM DA CORREÇÃO (MATERIAL)                  ===
+            // ===               FIM DA LÓGICA DO MATERIAL                 ===
             // =================================================================
 
             $this->sendResponse(201, ['success' => true, 'message' => $finalMessage]);
@@ -736,6 +749,39 @@ class AlunoController
                                 }
                             } catch (Exception $e) {
                                 $erros[] = "Linha {$rowIndex} (Aluno '{$nome_aluno}'): OK, mas falhou ao gerar mensalidades: " . $e->getMessage();
+                            }
+                        }
+
+                        // =================================================================
+                        // ===               LÓGICA DE MATERIAL (IMPORTAÇÃO)             ===
+                        // =================================================================
+                        // Usamos as variáveis já lidas da planilha
+                        $valorMaterial = (float) ($valor_anuidade_material ?? 0);
+                        $parcelasMaterial = (int) ($numero_parcelas_material ?? 0);
+                        $diaVencimentoMaterial = (int) ($vencimento ?? 10);
+
+                        if ($valorMaterial > 0 && $parcelasMaterial > 0) {
+                            $valorParcelaMaterial = round($valorMaterial / $parcelasMaterial, 2);
+                            $valorTotalCalculado = $valorParcelaMaterial * ($parcelasMaterial - 1);
+                            $valorUltimaParcela = $valorMaterial - $valorTotalCalculado;
+
+                            $anoAtual = (int) date('Y');
+                            $mesAtual = (int) date('m');
+
+                            for ($i = 0; $i < $parcelasMaterial; $i++) {
+                                $mesDaParcela = $mesAtual + $i;
+                                if ($mesDaParcela > 12)
+                                    break; // Não cria parcelas para o ano seguinte na importação
+
+                                $dataVencimento = new DateTime("{$anoAtual}-{$mesDaParcela}-{$diaVencimentoMaterial}");
+                                $valorDaParcelaAtual = ($i == $parcelasMaterial - 1) ? $valorUltimaParcela : $valorParcelaMaterial;
+
+                                $this->materialModel->create([
+                                    'id_aluno' => $id_aluno,
+                                    'valor_parcela' => $valorDaParcelaAtual,
+                                    'data_vencimento' => $dataVencimento->format('Y-m-d'),
+                                    'descricao' => "Material Didático " . ($i + 1) . "/{$parcelasMaterial}"
+                                ], $id_escola);
                             }
                         }
                         // MODIFICADO: Checa o novo retorno e usa a variável correta
