@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Administrador - Matrículas</title>
-    <!-- Carregando o Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Fonte Inter (padrão do Tailwind) */
@@ -64,7 +63,6 @@
 
 <body class="bg-gray-100">
 
-    <!-- NAVBAR INSERIDA -->
     <nav class="bg-gray-800 p-4 shadow-md">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4">
             <a href="home.html" class="text-white text-2xl font-bold text-left">EDU SEF - Sistema Educacional
@@ -110,8 +108,6 @@
             </div>
         </div>
     </nav>
-    <!-- FIM DA NAVBAR -->
-
     <div class="container mx-auto p-4 md:p-8">
 
         <header class="mb-8">
@@ -119,178 +115,158 @@
             <p class="text-gray-600">Inicie um novo processo ou acompanhe os formulários enviados.</p>
         </header>
 
-        <section id="novo-processo" class="bg-white p-6 rounded-lg shadow-md mb-10">
+        <div class="mb-10">
+            <button id="btn-toggle-formulario"
+                class="w-full md:w-auto inline-flex justify-center rounded-lg border border-transparent bg-blue-600 py-3 px-6 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                ➕ Iniciar Novo Processo
+            </button>
+        </div>
+        <section id="novo-processo" class="bg-white p-6 rounded-lg shadow-md mb-10 hidden">
             <h2 class="text-2xl font-semibold text-gray-700 mb-5 border-b pb-3">Iniciar Novo Processo</h2>
 
             <form id="form-iniciar-processo" class="space-y-6">
-                <!-- Passo 1: Consulta -->
-                <fieldset id="fieldset-step-1">
-                    <legend class="text-lg font-medium text-gray-900 mb-2">Passo 1: Consultar Responsável</legend>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label for="resp_nome" class="block text-sm font-medium text-gray-700">Nome Completo <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="resp_nome" name="resp_nome"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Nome do Responsável Financeiro" required>
-                        </div>
-                        <div>
-                            <label for="resp_cpf" class="block text-sm font-medium text-gray-700">CPF <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="resp_cpf" name="resp_cpf" maxlength="11"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Apenas números" required>
-                        </div>
-                        <div>
-                            <label for="resp_celular" class="block text-sm font-medium text-gray-700">Celular <span
-                                    class="text-red-500">*</span></label>
-                            <div class="mt-1 flex items-center gap-2">
-                                <select id="resp_celular_ddi"
-                                    class="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    style="flex-shrink: 0; width: auto; padding-right: 2.5rem;">
-                                    <option value="55" selected>🇧🇷 +55</option>
-                                    <option value="1">🇺🇸 +1</option>
-                                    <option value="351">🇵🇹 +351</option>
-                                    <option value="44">🇬🇧 +44</option>
-                                    <option value="49">🇩🇪 +49</option>
-                                    <option value="999">Outro</option>
-                                </select>
-                                <input type="tel" id="resp_celular" name="resp_celular" maxlength="15"
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="(11) 90000-0000" required>
-                            </div>
+
+                <legend class="text-lg font-medium text-gray-900 mb-2">Dados do Responsável</legend>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="resp_nome" class="block text-sm font-medium text-gray-700">Nome Completo <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="resp_nome" name="resp_nome"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Nome do Responsável Financeiro" required>
+                    </div>
+                    <div>
+                        <label for="resp_cpf" class="block text-sm font-medium text-gray-700">CPF <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="resp_cpf" name="resp_cpf" maxlength="11"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Apenas números" required>
+                    </div>
+                    <div>
+                        <label for="resp_celular" class="block text-sm font-medium text-gray-700">Celular <span
+                                class="text-red-500">*</span></label>
+                        <div class="mt-1 flex items-center gap-2">
+                            <select id="resp_celular_ddi"
+                                class="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                style="flex-shrink: 0; width: auto; padding-right: 2.5rem;">
+                                <option value="55" selected>🇧🇷 +55</option>
+                                <option value="1">🇺🇸 +1</option>
+                                <option value="351">🇵🇹 +351</option>
+                                <option value="44">🇬🇧 +44</option>
+                                <option value="49">🇩🇪 +49</option>
+                                <option value="999">Outro</option>
+                            </select>
+                            <input type="tel" id="resp_celular" name="resp_celular" maxlength="15"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="(11) 90000-0000" required>
                         </div>
                     </div>
-                    <button type="button" id="btn-consultar"
-                        class="mt-4 inline-flex justify-center rounded-lg border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        Consultar CPF
+                </div>
+
+                <legend class="text-lg font-medium text-gray-900 mb-2 pt-6 border-t">Configurar Proposta</legend>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md border">
+                    <div>
+                        <label for="ano_inicio" class="block text-sm font-medium text-gray-700">Ano de Início (Ano
+                            Letivo) <span class="text-red-500">*</span></label>
+                        <input type="number" id="ano_inicio" name="ano_inicio"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Ex: 2025" required>
+                        <p class="text-xs text-gray-500 mt-1">Essencial para gerar o RA SEF.</p>
+                    </div>
+                    <div>
+                        <label for="id_turma" class="block text-sm font-medium text-gray-700">Turma <span
+                                class="text-red-500">*</span></label>
+                        <select id="id_turma" name="id_turma"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            required>
+                            <option value="">Selecione a turma...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="valor_anuidade" class="block text-sm font-medium text-gray-700">Valor
+                            Anuidade</label>
+                        <input type="number" id="valor_anuidade" name="valor_anuidade" step="0.01"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Ex: 6000.00">
+                    </div>
+                    <div>
+                        <label for="valor_matricula" class="block text-sm font-medium text-gray-700">Valor
+                            Matrícula</label>
+                        <input type="number" id="valor_matricula" name="valor_matricula" step="0.01"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Ex: 500.00">
+                    </div>
+                    <div>
+                        <label for="dia_vencimento" class="block text-sm font-medium text-gray-700">Dia de
+                            Vencimento</label>
+                        <input type="number" id="dia_vencimento" name="dia_vencimento" min="1" max="31"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Ex: 10">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="valor_material" class="block text-sm font-medium text-gray-700">Valor
+                            Material</label>
+                        <input type="number" id="valor_material" name="valor_material" step="0.01"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Ex: 1200.00">
+                    </div>
+                    <div>
+                        <label for="parcelas_material" class="block text-sm font-medium text-gray-700">Parcelamento
+                            Material</label>
+                        <select id="parcelas_material" name="parcelas_material"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option value="1">1x</option>
+                            <option value="2">2x</option>
+                            <option value="3">3x</option>
+                            <option value="4">4x</option>
+                            <option value="5">5x</option>
+                            <option value="6">6x</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-center pt-6">
+                        <input id="bolsista" name="bolsista" type="checkbox"
+                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="bolsista" class="ml-2 block text-sm font-medium text-gray-900">É
+                            bolsista?</label>
+                    </div>
+                    <div>
+                        <label for="prazo_resposta" class="block text-sm font-medium text-gray-700">Prazo para
+                            Resposta <span class="text-red-500">*</span></label>
+                        <input type="date" id="prazo_resposta" name="prazo_resposta"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            required>
+                    </div>
+                </div>
+
+                <div class="pt-4 text-right">
+                    <button type="submit" id="btn-enviar-webhook"
+                        class="inline-flex justify-center rounded-lg border border-transparent bg-green-600 py-2 px-6 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                        Enviar Formulário ao Responsável
                     </button>
-                    <div id="consulta-spinner" class="hidden mt-4 inline-flex items-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        <span class="text-gray-600">Consultando...</span>
-                    </div>
-                    <div id="consulta-resultado" class="hidden mt-4 text-sm"></div>
-                </fieldset>
-
-                <!-- Passo 2: Definir Valores (Inicialmente Oculto) -->
-                <fieldset id="fieldset-step-2"
-                    class="hidden opacity-0 transition-opacity duration-500 space-y-6 pt-6 border-t">
-                    <legend class="text-lg font-medium text-gray-900 mb-2">Passo 2: Configurar Proposta</legend>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md border">
-                        <div>
-                            <label for="ano_inicio" class="block text-sm font-medium text-gray-700">Ano de Início (Ano
-                                Letivo) <span class="text-red-500">*</span></label>
-                            <input type="number" id="ano_inicio" name="ano_inicio"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Ex: 2025" required>
-                            <p class="text-xs text-gray-500 mt-1">Essencial para gerar o RA SEF.</p>
-                        </div>
-                        <div>
-                            <label for="id_turma" class="block text-sm font-medium text-gray-700">Turma <span
-                                    class="text-red-500">*</span></label>
-                            <select id="id_turma" name="id_turma"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                required>
-                                <option value="">Selecione a turma...</option>
-                                <!-- Turmas serão populadas pelo JS -->
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label for="valor_anuidade" class="block text-sm font-medium text-gray-700">Valor
-                                Anuidade</label>
-                            <input type="number" id="valor_anuidade" name="valor_anuidade" step="0.01"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Ex: 6000.00">
-                        </div>
-                        <div>
-                            <label for="valor_matricula" class="block text-sm font-medium text-gray-700">Valor
-                                Matrícula</label>
-                            <input type="number" id="valor_matricula" name="valor_matricula" step="0.01"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Ex: 500.00">
-                        </div>
-                        <div>
-                            <label for="dia_vencimento" class="block text-sm font-medium text-gray-700">Dia de
-                                Vencimento</label>
-                            <input type="number" id="dia_vencimento" name="dia_vencimento" min="1" max="31"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Ex: 10">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label for="valor_material" class="block text-sm font-medium text-gray-700">Valor
-                                Material</label>
-                            <input type="number" id="valor_material" name="valor_material" step="0.01"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Ex: 1200.00">
-                        </div>
-                        <div>
-                            <label for="parcelas_material" class="block text-sm font-medium text-gray-700">Parcelamento
-                                Material</label>
-                            <select id="parcelas_material" name="parcelas_material"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                                <option value="1">1x</option>
-                                <option value="2">2x</option>
-                                <option value="3">3x</option>
-                                <option value="4">4x</option>
-                                <option value="5">5x</option>
-                                <option value="6">6x</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="flex items-center pt-6">
-                            <input id="bolsista" name="bolsista" type="checkbox"
-                                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <label for="bolsista" class="ml-2 block text-sm font-medium text-gray-900">É
-                                bolsista?</label>
-                        </div>
-                        <div>
-                            <label for="prazo_resposta" class="block text-sm font-medium text-gray-700">Prazo para
-                                Resposta <span class="text-red-500">*</span></label>
-                            <input type="date" id="prazo_resposta" name="prazo_resposta"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                required>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 text-right">
-                        <button type="submit" id="btn-enviar-webhook"
-                            class="inline-flex justify-center rounded-lg border border-transparent bg-green-600 py-2 px-6 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                            Enviar Formulário ao Responsável
-                        </button>
-                    </div>
-                    <div id="envio-spinner" class="hidden mt-4 inline-flex items-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        <span class="text-gray-600">Enviando via Webhook (N8N)...</span>
-                    </div>
-                    <div id="envio-resultado" class="hidden mt-4 text-sm"></div>
-                </fieldset>
+                </div>
+                <div id="envio-spinner" class="hidden mt-4 inline-flex items-center">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <span class="text-gray-600">Enviando via Webhook (N8N)...</span>
+                </div>
+                <div id="envio-resultado" class="hidden mt-4 text-sm"></div>
             </form>
         </section>
-
-        <!-- Seção 2: Acompanhamento (Passo 4) -->
         <section id="acompanhamento">
             <h2 class="text-2xl font-semibold text-gray-700 mb-5 border-b pb-3">Acompanhamento de Envios</h2>
 
@@ -306,13 +282,11 @@
             </div>
 
             <div id="submission-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Blocos serão inseridos aqui pelo JavaScript -->
             </div>
         </section>
 
     </div>
 
-    <!-- Modal (Passo 5) -->
     <div id="modal-backdrop"
         class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 hidden">
         <div id="modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -329,7 +303,6 @@
             </header>
 
             <div id="modal-body" class="p-6 overflow-y-auto modal-body">
-                <!-- Formulário preenchido será inserido aqui pelo JavaScript -->
             </div>
 
             <footer
@@ -339,9 +312,6 @@
                     class="w-full md:w-auto inline-flex justify-center rounded-lg border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700">
                     Excluir Processo
                 </button>
-                <!-- <button id="btn-salvar-edicoes" class="w-full md:w-auto inline-flex justify-center rounded-lg border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
-                    Salvar Edições
-                </button> -->
                 <button id="btn-aceitar"
                     class="w-full md:w-auto inline-flex justify-center rounded-lg border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700">
                     Aceitar e Criar Aluno
@@ -515,84 +485,47 @@
         }
 
 
-        // --- LÓGICA DO FORMULÁRIO (Passos 1 e 2) ---
+        // --- LÓGICA DO FORMULÁRIO (Passos 1 e 2 JUNTOS) ---
 
-        const btnConsultar = document.getElementById('btn-consultar');
-        const fieldsetStep2 = document.getElementById('fieldset-step-2');
-        const consultaSpinner = document.getElementById('consulta-spinner');
-        const consultaResultado = document.getElementById('consulta-resultado');
+        // (Lógica de consulta removida)
 
-        btnConsultar.addEventListener('click', () => {
-            // Simula uma consulta (API, etc.)
-            consultaSpinner.classList.remove('hidden');
-            consultaResultado.classList.add('hidden');
-            btnConsultar.disabled = true;
-
-            // Simulação de chamada de API de consulta de CPF (ex: Serasa, etc.)
-            // Por enquanto, vamos apenas simular o sucesso.
-            setTimeout(() => {
-                const nome = document.getElementById('resp_nome').value;
-                const cpf = document.getElementById('resp_cpf').value.replace(/\D/g, ''); // Garante apenas números
-
-                // --- MODIFICADO PARA INCLUIR DDI ---
-                const ddi = document.getElementById('resp_celular_ddi').value;
-                const numero = document.getElementById('resp_celular').value.replace(/\D/g, '');
-                const celularCompleto = ddi + numero;
-                // --- FIM DA MODIFICAÇÃO ---
-
-                consultaSpinner.classList.add('hidden');
-
-                // Valida o número, não o celular completo
-                if (!nome || cpf.length !== 11 || !numero) {
-                    let errorMsg = "Erro: Nome, CPF (11 dígitos) e Celular são obrigatórios.";
-                    if (cpf.length !== 11 && nome && numero) errorMsg = "Erro: O CPF deve ter 11 dígitos.";
-
-                    consultaResultado.innerHTML = `<span class="text-red-600 font-medium">${errorMsg}</span>`;
-                    consultaResultado.classList.remove('hidden');
-                    btnConsultar.disabled = false;
-                    return;
-                }
-
-                // Simulação de sucesso
-                consultaResultado.innerHTML = `<span class="text-green-600 font-medium">OK: Responsável validado. Preencha os dados financeiros.</span>`;
-                consultaResultado.classList.remove('hidden');
-
-                fieldsetStep2.classList.remove('hidden');
-                setTimeout(() => fieldsetStep2.classList.add('opacity-100'), 50); // Efeito de fade-in
-
-                // Popula a data de prazo com +7 dias
-                const today = new Date();
-                today.setDate(today.getDate() + 7);
-                document.getElementById('prazo_resposta').value = today.toISOString().split('T')[0];
-
-                // Popula o ano letivo com o próximo ano
-                document.getElementById('ano_inicio').value = new Date().getFullYear() + 1;
-
-            }, 500); // Simula 0.5s
-        });
-
-        // Envio do Webhook (Passo 2)
+        // Envio do Webhook (Agora é o único passo)
         const formIniciarProcesso = document.getElementById('form-iniciar-processo');
         const btnEnviarWebhook = document.getElementById('btn-enviar-webhook');
 
         formIniciarProcesso.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // --- VALIDAÇÃO COMBINADA ---
+            const nome = document.getElementById('resp_nome').value;
+            const cpf = document.getElementById('resp_cpf').value.replace(/\D/g, '');
+            const ddi = document.getElementById('resp_celular_ddi').value;
+            const numero = document.getElementById('resp_celular').value.replace(/\D/g, '');
+            const anoInicio = document.getElementById('ano_inicio').value;
+            const idTurma = document.getElementById('id_turma').value;
+            const prazo = document.getElementById('prazo_resposta').value;
+
+            if (!nome || cpf.length !== 11 || !numero || !anoInicio || !idTurma || !prazo) {
+                let errorMsg = "Erro: Todos os campos com * são obrigatórios.";
+                if (cpf.length !== 11 && nome && numero && anoInicio && idTurma && prazo) {
+                    errorMsg = "Erro: O CPF deve ter 11 dígitos.";
+                }
+                showToast(errorMsg, "error");
+                return; // Para a submissão
+            }
+            // --- FIM DA VALIDAÇÃO ---
+
+
             btnEnviarWebhook.disabled = true;
             btnEnviarWebhook.classList.add('btn-loading');
 
             const formData = new FormData(formIniciarProcesso);
-
-            // --- MODIFICADO PARA INCLUIR DDI ---
-            const ddi = document.getElementById('resp_celular_ddi').value;
-            const numero = formData.get('resp_celular').replace(/\D/g, '');
-            const celularCompleto = ddi + numero;
-            // --- FIM DA MODIFICAÇÃO ---
+            const celularCompleto = ddi + numero; // Usa o valor combinado
 
             // Mapeia os nomes do formulário para os nomes da API
             const payload = {
                 admin_resp_nome: formData.get('resp_nome'),
-                admin_resp_cpf: formData.get('resp_cpf').replace(/\D/g, ''), // Garante apenas números
+                admin_resp_cpf: cpf, // Usa o CPF já limpo
                 admin_resp_celular: celularCompleto, // Usa o valor combinado
                 admin_ano_inicio: formData.get('ano_inicio'),
                 admin_id_turma: formData.get('id_turma'),
@@ -627,10 +560,12 @@
                 // Reseta o DDI para 55 (Brasil)
                 document.getElementById('resp_celular_ddi').value = '55';
 
-                fieldsetStep2.classList.add('hidden');
-                fieldsetStep2.classList.remove('opacity-100');
-                consultaResultado.classList.add('hidden');
-                btnConsultar.disabled = false;
+                // MUDANÇA: Seta os valores padrão de data e ano novamente
+                const today = new Date();
+                today.setDate(today.getDate() + 7);
+                document.getElementById('prazo_resposta').value = today.toISOString().split('T')[0];
+                document.getElementById('ano_inicio').value = new Date().getFullYear() + 1;
+
 
             } catch (error) {
                 console.error("Erro ao iniciar processo:", error);
@@ -643,6 +578,7 @@
 
 
         // --- LÓGICA DO MODAL (Passo 5) ---
+        // (O restante do código do modal permanece o mesmo)
 
         const modalBackdrop = document.getElementById('modal-backdrop');
         const modalTitle = document.getElementById('modal-title');
@@ -650,15 +586,10 @@
         const modalStatusInfo = document.getElementById('modal-status-info');
         const btnFecharModal = document.getElementById('btn-fechar-modal');
         const btnExcluir = document.getElementById('btn-excluir');
-        //const btnSalvarEdicoes = document.getElementById('btn-salvar-edicoes');
         const btnAceitar = document.getElementById('btn-aceitar');
         let currentEditingId = null;
 
-        /**
-         * Cria o HTML do formulário (agora baseado nos dados reais da API)
-         */
         function createModalForm(sub) {
-            // A API getById retorna *todos* os campos
             const turmaSelecionada = TURMAS_CACHE.find(t => t.id_turma == sub.admin_id_turma);
 
             if (sub.status !== 'Preenchido') {
@@ -822,10 +753,8 @@
                 modalStatusInfo.innerHTML = `Status: <span class="font-semibold ${statusClass} px-2 py-0.5 rounded-full">${sub.status}</span>`;
 
                 if (sub.status === 'Preenchido') {
-                    //btnSalvarEdicoes.classList.remove('hidden'); // Desabilitado por enquanto
                     btnAceitar.classList.remove('hidden');
                 } else {
-                    //btnSalvarEdicoes.classList.add('hidden');
                     btnAceitar.classList.add('hidden');
                 }
 
@@ -908,13 +837,6 @@
             }
         });
 
-        /*
-        btnSalvarEdicoes.addEventListener('click', () => {
-             // Lógica de salvar edições (ainda não implementada no backend)
-             showToast('Função "Salvar Edições" ainda não implementada.', 'error');
-        });
-        */
-
         btnAceitar.addEventListener('click', async () => {
             if (currentEditingId) {
                 btnAceitar.classList.add('btn-loading');
@@ -963,8 +885,38 @@
                 return;
             }
 
+            // ================== MUDANÇA NO SCRIPT ==================
+            // Pega os elementos do novo botão e do formulário
+            const btnToggleFormulario = document.getElementById('btn-toggle-formulario');
+            const formSection = document.getElementById('novo-processo');
+
+            // Adiciona o listener para o botão de toggle
+            btnToggleFormulario.addEventListener('click', () => {
+                const isHidden = formSection.classList.contains('hidden');
+                if (isHidden) {
+                    formSection.classList.remove('hidden');
+                    btnToggleFormulario.textContent = '➖ Fechar Formulário';
+                    btnToggleFormulario.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    btnToggleFormulario.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                } else {
+                    formSection.classList.add('hidden');
+                    btnToggleFormulario.textContent = '➕ Iniciar Novo Processo';
+                    btnToggleFormulario.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    btnToggleFormulario.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                }
+            });
+            // ================== FIM DA MUDANÇA ==================
+
+
+            // Popula os campos que dependem de API
             popularTurmas();
             fetchSubmissions('all'); // Busca os dados reais
+
+            // Configura o prazo padrão e ano letivo
+            const today = new Date();
+            today.setDate(today.getDate() + 7);
+            document.getElementById('prazo_resposta').value = today.toISOString().split('T')[0];
+            document.getElementById('ano_inicio').value = new Date().getFullYear() + 1;
         });
 
         function logout() {
@@ -973,7 +925,6 @@
         }
 
     </script>
-
 </body>
 
 </html>
