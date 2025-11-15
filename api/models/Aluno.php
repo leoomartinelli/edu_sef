@@ -167,23 +167,27 @@ class Aluno
                 // ===               INÍCIO DA CORREÇÃO (GLOBAL)                 ===
                 // =================================================================
                 // MODIFICADO: Query agora é GLOBAL (removemos o WHERE id_escola)
-                $countQuery = "SELECT COUNT(id_aluno) as total FROM " . $this->table_name . " FOR UPDATE";
-                $stmtCount = $this->conn->prepare($countQuery);
-                // Não precisa mais de bindParam para id_escola
-                $stmtCount->execute();
-                $row = $stmtCount->fetch(PDO::FETCH_ASSOC);
                 // =================================================================
-                // ===                FIM DA CORREÇÃO (GLOBAL)                   ===
+                // ===          INÍCIO DA LÓGICA DE GERAÇÃO POR MAX ID           ===
+                // =================================================================
+                // MODIFICADO: Trocamos COUNT(id_aluno) por MAX(id_aluno)
+                $maxIdQuery = "SELECT MAX(id_aluno) as max_id FROM " . $this->table_name . " FOR UPDATE";
+                $stmtMaxId = $this->conn->prepare($maxIdQuery);
+                $stmtMaxId->execute();
+                $row = $stmtMaxId->fetch(PDO::FETCH_ASSOC);
+                // =================================================================
+                // ===           FIM DA LÓGICA DE GERAÇÃO POR MAX ID             ===
                 // =================================================================
 
-                $nextCount = $row ? (int) $row['total'] + 1 : 1;
-                $generated_ra_sef = str_pad($nextCount, 4, '0', STR_PAD_LEFT) . $anoRa;
+                // O próximo ID será o ID máximo + 1 (ou 1 se a tabela estiver vazia)
+                $nextId = $row ? (int) $row['max_id'] + 1 : 1;
+                $generated_ra_sef = str_pad($nextId, 4, '0', STR_PAD_LEFT) . $anoRa;
 
                 $maxTries = 5;
                 // MODIFICADO: Chamada agora é global
                 while ($this->existsByRaSef($generated_ra_sef) && $maxTries > 0) {
-                    $nextCount++;
-                    $generated_ra_sef = str_pad($nextCount, 4, '0', STR_PAD_LEFT) . $anoRa;
+                    $nextId++; // Incrementa o ID se o RA_SEF já existir (ex: conflito com importação)
+                    $generated_ra_sef = str_pad($nextId, 4, '0', STR_PAD_LEFT) . $anoRa;
                     $maxTries--;
                 }
                 if ($maxTries <= 0) {

@@ -193,7 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const carregarDetalhesMensalidades = async () => {
         showLoader();
-        tabelaDetalhes.innerHTML = `<tr><td colspan="7" class="text-center py-4">Carregando...</td></tr>`;
+        // MUDANÇA 1: O colspan agora é 8 (contando a nova coluna "Descrição")
+        tabelaDetalhes.innerHTML = `<tr><td colspan="8" class="text-center py-4">Carregando...</td></tr>`;
 
         let url;
         const thAluno = document.getElementById('th-aluno');
@@ -222,9 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const encargos = (parseFloat(m.multa_aplicada) || 0) + (parseFloat(m.juros_aplicados) || 0);
 
                     const alunoCell = isAlunoView ? '' : `<td class="px-6 py-4 font-medium">${m.nome_aluno}</td>`;
+
+                    // MUDANÇA 2: Adicionada a nova célula <td> para a descrição
                     const row = `
                         <tr class="hover:bg-gray-50">
                             ${alunoCell}
+                            <td class="px-6 py-4">${m.descricao || 'Mensalidade'}</td>
                             <td class="px-6 py-4">${formatDate(m.data_vencimento)}</td>
                             <td class="px-6 py-4">${formatCurrency(m.valor_mensalidade)}</td>
                             <td class="px-6 py-4 text-red-600">${formatCurrency(encargos)}</td>
@@ -239,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     tabelaDetalhes.insertAdjacentHTML('beforeend', row);
                 });
             } else {
-                const colspan = isAlunoView ? 6 : 7;
+                // MUDANÇA 3: O colspan de fallback também precisa ser 8 (ou 7)
+                const colspan = isAlunoView ? 7 : 8;
                 tabelaDetalhes.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4">Nenhuma mensalidade encontrada.</td></tr>`;
             }
         } catch (error) {
@@ -426,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const init = () => {
-        
+
         const { token, role } = getAuthData();
         if (!token || (role !== 'admin' && role !== 'professor')) { logout(); return; }
 

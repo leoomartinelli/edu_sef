@@ -21,7 +21,7 @@ class Mensalidade
         $query = "SELECT 
             m.id_mensalidade, m.id_aluno, a.nome_aluno, r.nome as nome_resp_financeiro,
             m.valor_mensalidade, m.data_vencimento, m.data_pagamento,
-            m.valor_pago, m.status, m.multa_aplicada, m.juros_aplicados
+            m.valor_pago, m.status, m.multa_aplicada, m.juros_aplicados, m.descricao
           FROM " . $this->table_name . " m
           JOIN alunos a ON m.id_aluno = a.id_aluno
           LEFT JOIN responsaveis r ON a.id_resp_financeiro = r.id_responsavel";
