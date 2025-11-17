@@ -293,6 +293,12 @@ class MatriculaController
                 throw new Exception('Falha ao processar o responsável financeiro.');
             }
 
+            $requestBody = json_decode(file_get_contents('php://input'), true);
+            $id_turma_final = $matricula['admin_id_turma']; // Padrão é a turma original
+
+            if (!empty($requestBody['nova_id_turma'])) {
+                $id_turma_final = (int) $requestBody['nova_id_turma'];
+            }
             // 3. Preparar dados para criar o Aluno (reutilizando seu Model)
             $dadosAluno = [
                 // Dados do Aluno
@@ -328,6 +334,7 @@ class MatriculaController
                 // IDs
                 'id_resp_financeiro' => $id_responsavel,
                 'id_escola' => $id_escola,
+                
             ];
 
             // 4. Criar o Aluno (isso também cria o Usuário)
