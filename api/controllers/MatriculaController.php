@@ -153,6 +153,31 @@ class MatriculaController
 
             // 4. Atualizar o registro no banco
             if ($this->model->updateFromForm($token, $data)) {
+
+                // ====================================================================
+                // ===               INÍCIO DA MUDANÇA (WEBHOOK)                    ===
+                // ====================================================================
+                // Chama o novo webhook de confirmação
+                try {
+                    $payloadConfirmacao = [
+                        // Pega os dados que o ADMIN digitou (guardados no banco)
+                        'nome_responsavel' => $matricula['admin_resp_nome'],
+                        'celular_responsavel' => $matricula['admin_resp_celular']
+                    ];
+                    $webhookConfirmacaoUrl = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/confirmacao-resposta';
+
+                    // Chama a função helper que já existe neste controller
+                    $this->callWebhook($webhookConfirmacaoUrl, $payloadConfirmacao);
+
+                } catch (Exception $webhookError) {
+                    // Se o webhook falhar, apenas loga o erro. 
+                    // Não para a execução, pois o formulário JÁ FOI SALVO.
+                    error_log("Webhook de confirmação de resposta falhou: " . $webhookError->getMessage());
+                }
+                // ====================================================================
+                // ===                FIM DA MUDANÇA (WEBHOOK)                      ===
+                // ====================================================================
+
                 $this->sendResponse(200, ['success' => true, 'message' => 'Dados enviados com sucesso!']);
             } else {
                 throw new Exception('Não foi possível salvar os dados.');
