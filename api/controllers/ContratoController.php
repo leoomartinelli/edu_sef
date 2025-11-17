@@ -77,6 +77,42 @@ class ContratoController
             $successRoleUpdate = $usuarioModel->liberarAcessoAluno($idAluno);
 
             if ($successRoleUpdate) {
+
+                // =================================================================
+                // ===               INÍCIO DA MUDANÇA (WEBHOOK)                   ===
+                // =================================================================
+                try {
+                    // === INÍCIO DA MUDANÇA: Busca a contagem por ano letivo ===
+                    $contagemAnoLetivo = $this->contratoModel->getValidatedCountByYear(
+                        $contrato['ano_inicio'],
+                        $id_escola,
+                        $userRole
+                    );
+                    // =========================================================
+
+                    // $contrato agora tem os dados graças à mudança no Model
+                    $payloadWebhook = [
+                        'nome_aluno' => $contrato['nome_aluno'],
+                        'nome_resp_financeiro' => $contrato['nome_resp_financeiro'],
+                        'numero_resp_financeiro' => $contrato['celular_resp_financeiro'],
+                        'ano_letivo' => $contrato['ano_inicio'],
+                        'nome_escola' => $contrato['nome_escola'],
+                        'numero_escola' => $contrato['numero_escola'],
+                        'total_contratos_ano' => $contagemAnoLetivo // <-- ADICIONADO
+                    ];
+                    $webhookUrl = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/validado-contrato';
+
+                    // Chama a função helper que acabamos de adicionar
+                    $this->callWebhook($webhookUrl, $payloadWebhook);
+
+                } catch (Exception $webhookError) {
+                    // Loga o erro, mas não para a execução principal
+                    error_log("Webhook de validação de contrato falhou: " . $webhookError->getMessage());
+                }
+                // =================================================================
+                // ===                FIM DA MUDANÇA (WEBHOOK)                     ===
+                // =================================================================
+
                 $this->sendResponse(200, ['success' => true, 'message' => 'Contrato validado e acesso do aluno liberado com sucesso.']);
             } else {
                 $this->sendResponse(500, ['success' => false, 'message' => 'Contrato validado, mas falhou ao liberar o acesso do aluno.']);
@@ -598,5 +634,33 @@ class ContratoController
             // Se falhar, envia uma resposta de erro JSON
             $this->sendResponse(500, ['success' => false, 'message' => 'Erro ao gerar o PDF do certificado: ' . $e->getMessage()]);
         }
+    }
+
+    private function callWebhook($url, $payload)
+    {
+        $jsonPayload = json_encode($payload);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($jsonPayload)
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Ajuste para ambiente de dev, se necessário
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($ch) || $httpCode >= 400) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            // Loga o erro, mas não para a execução principal
+            error_log("Webhook (ContratoController) falhou: HTTP {$httpCode} - " . $response . " | cURL Error: " . $error);
+        }
+
+        curl_close($ch);
+        return $response;
     }
 }

@@ -115,7 +115,23 @@ class Contrato
     // <-- ALTERADO: Adicionados parâmetros $id_escola e $userRole
     public function findById($id_contrato, $id_escola, $userRole)
     {
-        $query = "SELECT c.*, a.ra, a.id_aluno FROM " . $this->table_name . " c JOIN alunos a ON c.id_aluno = a.id_aluno WHERE c.id_contrato = :id_contrato";
+        // === INÍCIO DA MUDANÇA: Query agora busca dados do aluno e responsável ===
+        $query = "SELECT 
+                    c.*, 
+                    a.id_aluno, 
+                    a.nome_aluno, 
+                    a.ra_sef,
+                    a.ano_inicio,
+                    r.nome as nome_resp_financeiro, 
+                    r.celular as celular_resp_financeiro,
+                    e.nome_escola,                     -- <-- ADICIONADO
+                    e.telefone as numero_escola        -- <-- ADICIONADO (Assumindo 'telefone')
+                  FROM " . $this->table_name . " c 
+                  JOIN alunos a ON c.id_aluno = a.id_aluno
+                  LEFT JOIN responsaveis r ON a.id_resp_financeiro = r.id_responsavel
+                  LEFT JOIN escolas e ON c.id_escola = e.id_escola -- <-- ADICIONADO
+                  WHERE c.id_contrato = :id_contrato";
+        // === FIM DA MUDANÇA ===
 
         // <-- ALTERADO: Filtro de segurança
         if ($userRole !== 'superadmin') {
@@ -130,6 +146,30 @@ class Contrato
         }
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getValidatedCountByYear($ano_letivo, $id_escola, $userRole)
+    {
+        // Precisamos buscar o ano_inicio na tabela 'alunos'
+        $query = "SELECT COUNT(c.id_contrato) as total 
+                  FROM " . $this->table_name . " c
+                  JOIN alunos a ON c.id_aluno = a.id_aluno
+                  WHERE c.assinado_validado = 1 
+                  AND a.ano_inicio = :ano_letivo";
+
+        $params = [':ano_letivo' => $ano_letivo];
+
+        if ($userRole !== 'superadmin') {
+            $query .= " AND c.id_escola = :id_escola";
+            $params[':id_escola'] = $id_escola;
+        }
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Retorna a contagem (ex: 50)
+        return $row ? (int) $row['total'] : 0;
     }
 
     public function updateAssinatura($idContrato, $caminhoAssinado)
