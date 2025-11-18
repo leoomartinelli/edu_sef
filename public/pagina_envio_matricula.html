@@ -328,11 +328,38 @@
 
 
     <script>
+        // Inclui a biblioteca SimpleMaskMoney (copiado da home.html)
+        document.write('<script src="https://cdn.jsdelivr.net/npm/simple-mask-money/lib/simple-mask-money.js"><\/script>');
+    </script>
+
+    <script>
         // --- CONFIGURAÇÕES DA API ---
         const API_BASE_URL = '/api'; // Ajuste se o seu index.php estiver em outro local
         let TURMAS_CACHE = []; // Cache para armazenar a lista de turmas
 
         // --- HELPERS ---
+
+        // CONFIGURAÇÃO DA MÁSCARA DE MOEDA (Adicionado)
+        const moneyMaskConfig = {
+            prefix: 'R$ ',
+            fixed: true,
+            fractionDigits: 2,
+            decimalSeparator: ',',
+            thousandsSeparator: '.',
+            cursor: 'end'
+        };
+
+        // Função helper para obter o valor numérico puro do campo (Adicionado)
+        function getNumericValueFromCurrency(id) {
+            const element = document.getElementById(id);
+            if (element && element.SimpleMaskMoney) {
+                return element.SimpleMaskMoney.getNumber();
+            }
+            const value = element ? element.value : '0';
+            const number = parseFloat(value.replace(/R\$\s?/, '').replace(/\./g, '').replace(',', '.'));
+            return isNaN(number) ? 0 : number;
+        }
+        // FIM - ADIÇÕES DE MOEDA
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
@@ -733,6 +760,25 @@
                 return;
             }
 
+            // ================== ADIÇÃO DA MÁSCARA DE MOEDA ==================
+            const currencyFieldIds = [
+                'valor_anuidade',
+                'valor_matricula',
+                'valor_material'
+            ];
+
+            // Instancia a máscara nos campos
+            currencyFieldIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    // Remove o atributo 'type="number"' para evitar conflito
+                    element.removeAttribute('type');
+                    SimpleMaskMoney.setMask(element, moneyMaskConfig);
+                }
+            });
+            // ================== FIM DA ADIÇÃO ==================
+
+
             // ================== MUDANÇA: DECLARAÇÃO DE VARIÁVEIS MOVIDA PARA CÁ ==================
             // Pega os elementos do novo botão e do formulário
             const btnToggleFormulario = document.getElementById('btn-toggle-formulario');
@@ -781,6 +827,13 @@
                 const idTurma = document.getElementById('id_turma').value;
                 const prazo = document.getElementById('prazo_resposta').value;
 
+                // --- VALORES DE MOEDA (usando a nova função) ---
+                const anuidade = getNumericValueFromCurrency('valor_anuidade');
+                const matricula = getNumericValueFromCurrency('valor_matricula');
+                const material = getNumericValueFromCurrency('valor_material');
+                // --- FIM VALORES DE MOEDA ---
+
+
                 if (!nome || cpf.length !== 11 || !numero || !anoInicio || !idTurma || !prazo) {
                     let errorMsg = "Erro: Todos os campos com * são obrigatórios.";
                     if (cpf.length !== 11 && nome && numero && anoInicio && idTurma && prazo) {
@@ -804,10 +857,12 @@
                     admin_resp_celular: celularCompleto, // Usa o valor combinado
                     admin_ano_inicio: formData.get('ano_inicio'),
                     admin_id_turma: formData.get('id_turma'),
-                    admin_anuidade: formData.get('valor_anuidade') || null,
-                    admin_matricula: formData.get('valor_matricula') || null,
+                    // --- ATUALIZADO PARA USAR OS VALORES NUMÉRICOS PUROS ---
+                    admin_anuidade: anuidade || null,
+                    admin_matricula: matricula || null,
                     admin_vencimento: formData.get('dia_vencimento') || null,
-                    admin_material: formData.get('valor_material') || null,
+                    admin_material: material || null,
+                    // --- FIM DA ATUALIZAÇÃO ---
                     admin_parcelas_material: formData.get('parcelas_material') || 1,
                     admin_bolsista: formData.get('bolsista') === 'on',
                     prazo: formData.get('prazo_resposta')
@@ -832,6 +887,14 @@
 
                     // Reseta o formulário
                     formIniciarProcesso.reset();
+                    // Reseta os campos de moeda
+                    currencyFieldIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && el.SimpleMaskMoney) {
+                            el.SimpleMaskMoney.formatToMask(0);
+                        }
+                    });
+
                     // Reseta o DDI para 55 (Brasil)
                     document.getElementById('resp_celular_ddi').value = '55';
 
@@ -958,7 +1021,11 @@
                         // A rota de "Aceitar" é um POST
                         const response = await fetch(`${API_BASE_URL}/matricula/aceitar/${currentEditingId}`, {
                             method: 'POST',
-                            headers: { 'Authorization': `Bearer ${token}` }
+                            headers: {
+                                'Content-Type': 'application/json', // Adicionar Content-Type para enviar o body
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(bodyPayload) // Envia o ID da nova turma, se tiver sido alterado
                         });
 
                         const result = await response.json();
