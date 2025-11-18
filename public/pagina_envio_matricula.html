@@ -909,8 +909,13 @@
                     console.error("Erro ao iniciar processo:", error);
                     showToast(error.message, "error");
                 } finally {
+
                     btnEnviarWebhook.disabled = false;
                     btnEnviarWebhook.classList.remove('btn-loading');
+                    formSection.classList.add('hidden');
+                    btnToggleFormulario.textContent = '➕ Iniciar Novo Processo';
+                    btnToggleFormulario.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    btnToggleFormulario.classList.remove('bg-gray-600', 'hover:bg-gray-700');
                 }
             });
 
